@@ -12,32 +12,32 @@ export const LEVEL_INFO: Record<Level, { title: string; description: string; les
   A1: {
     title: 'A1 - Elemental',
     description: 'Construye tu base con oraciones simples y situaciones comunes',
-    lessons: 6,
+    lessons: 30,
   },
   A2: {
     title: 'A2 - Pre-Intermedio',
     description: 'Exprésate en tareas rutinarias y temas familiares',
-    lessons: 6,
+    lessons: 40,
   },
   B1: {
     title: 'B1 - Intermedio',
     description: 'Maneja la mayoría de situaciones de viaje y discute temas familiares',
-    lessons: 6,
+    lessons: 50,
   },
   B2: {
     title: 'B2 - Intermedio Alto',
     description: 'Interactúa con fluidez y comprende textos complejos',
-    lessons: 6,
+    lessons: 60,
   },
   C1: {
     title: 'C1 - Avanzado',
     description: 'Expresa ideas con fluidez y usa el lenguaje con flexibilidad',
-    lessons: 5,
+    lessons: 50,
   },
   C2: {
     title: 'C2 - Dominio',
     description: 'Domina el idioma con precisión y sutileza',
-    lessons: 5,
+    lessons: 40,
   },
 }
 

@@ -373,7 +373,7 @@ export default function Dashboard({
         </Tabs>
       </main>
 
-      <LearningStrategyModal />
+      <LearningStrategyModal onClose={() => {}} />
     </div>
   )
 }
