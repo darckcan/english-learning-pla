@@ -60,6 +60,14 @@ export interface UserProgress {
   lastActivityDate: string
   achievements: Achievement[]
   lessonScores: Record<string, LessonScore>
+  completedLevels?: CompletedLevel[]
+}
+
+export interface CompletedLevel {
+  level: Level
+  completedAt: number
+  totalLessons: number
+  averageScore: number
 }
 
 export interface LessonScore {

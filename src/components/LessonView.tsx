@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { User, UserProgress, Exercise, LessonScore } from '@/lib/types'
+import { User, UserProgress, Exercise, LessonScore, Level, CompletedLevel } from '@/lib/types'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Progress } from './ui/progress'
@@ -10,7 +10,7 @@ import { Badge } from './ui/badge'
 import { Separator } from './ui/separator'
 import { ArrowLeft, CheckCircle, XCircle, Lightbulb, SpeakerHigh } from '@phosphor-icons/react'
 import { LESSONS } from '@/lib/curriculum'
-import { checkAndAwardAchievements, updateStreak } from '@/lib/helpers'
+import { checkAndAwardAchievements, updateStreak, checkLevelCompletion } from '@/lib/helpers'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import PronunciationButton from './PronunciationButton'
@@ -137,15 +137,39 @@ export default function LessonView({
       if (newAchievements.length > 0) {
         updated.achievements = [...(updated.achievements || []), ...newAchievements]
         newAchievements.forEach((achievement) => {
-          toast.success(`Achievement Unlocked: ${achievement.title}`, {
+          toast.success(`¡Logro Desbloqueado!: ${achievement.title}`, {
             description: achievement.description,
           })
         })
       }
 
+      const certificateLevels: Level[] = ['A2', 'B1', 'B2']
+      certificateLevels.forEach(level => {
+        const levelCompletion = checkLevelCompletion(updated, level)
+        if (levelCompletion.isComplete) {
+          const completedLevels = updated.completedLevels || []
+          const alreadyHasCertificate = completedLevels.some(cl => cl.level === level)
+          
+          if (!alreadyHasCertificate) {
+            const newCompletedLevel: CompletedLevel = {
+              level,
+              completedAt: Date.now(),
+              totalLessons: levelCompletion.totalLessons,
+              averageScore: levelCompletion.averageScore
+            }
+            updated.completedLevels = [...completedLevels, newCompletedLevel]
+            
+            toast.success(`🎓 ¡Certificado Desbloqueado!`, {
+              description: `Has completado el nivel ${level}. Revisa tu certificado en la sección de Logros.`,
+              duration: 6000
+            })
+          }
+        }
+      })
+
       if (isNewCompletion) {
-        toast.success('Lesson Completed!', {
-          description: `You earned ${points} points!`,
+        toast.success('¡Lección Completada!', {
+          description: `¡Ganaste ${points} puntos!`,
         })
       }
 

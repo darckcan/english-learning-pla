@@ -92,11 +92,25 @@ Esta plataforma requiere gestión sofisticada de estado para el progreso del usu
 - **Success criteria**: Metrics update in real-time, streak increments daily, visual progress indicators accurate
 
 ### Achievement System
-- **Functionality**: Unlocks badges for milestones (first lesson, 7-day streak, level completion, perfect scores)
-- **Purpose**: Gamifies learning to increase engagement and celebrate accomplishments
-- **Trigger**: Automatically when criteria met
-- **Progression**: Achievement unlocked notification → Badge added to profile → Display in achievement gallery
-- **Success criteria**: Achievements trigger correctly, notifications appear, badges persist
+- **Functionality**: Unlocks badges for milestones (first lesson, 7-day streak, level completion, perfect scores). **NEW: Includes level completion certificates for A2, B1, and B2 with downloadable PDFs.**
+- **Purpose**: Gamifies learning to increase engagement and celebrate accomplishments. Certificates provide tangible proof of achievement.
+- **Trigger**: Automatically when criteria met (completing all lessons in a certificate-eligible level)
+- **Progression**: Achievement unlocked notification → Badge added to profile → Display in achievement gallery → View/download certificate
+- **Success criteria**: Achievements trigger correctly, notifications appear, badges persist, certificates are generated with user details and can be downloaded
+
+### Level Completion Certificates (New)
+- **Functionality**: Professional certificates awarded for completing all lessons in A2, B1, or B2 levels, featuring completion date, total lessons, average score, and unique certificate ID
+- **Purpose**: Provides tangible recognition of achievement and milestone completion
+- **Trigger**: Completing the final lesson of A2, B1, or B2 level
+- **Progression**: Complete final lesson → Level completion check → Certificate notification → Available in Achievements tab → View certificate → Download as PNG
+- **Success criteria**: Certificate awarded only once per level, displays accurate statistics, certificate can be viewed and downloaded, includes unique ID and branding
+
+### Achievement Badges (Enhanced)
+- **Functionality**: Visual badges with animated effects for level completions (A2, B1, B2), perfect scores, streaks, and other milestones
+- **Purpose**: Creates engaging visual rewards and motivates continued learning
+- **Trigger**: Various achievement criteria (level completion, streaks, perfect scores)
+- **Progression**: Achievement unlocked → Animated badge appears → Displayed in achievements gallery with unlock date
+- **Success criteria**: Badges have unique colors per level, animations work smoothly, unlock dates are tracked
 
 ### Daily Streak
 - **Functionality**: Counts consecutive days with at least one completed lesson

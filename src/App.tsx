@@ -58,6 +58,7 @@ function App() {
       lastActivityDate: new Date().toISOString(),
       achievements: [],
       lessonScores: {},
+      completedLevels: [],
     }
     setUserProgress(() => newProgress)
     setCurrentUser((prev) => (prev ? { ...prev, currentLevel: assignedLevel, unlockedLevels } : null))

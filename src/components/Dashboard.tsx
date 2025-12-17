@@ -16,12 +16,22 @@ import {
   CheckCircle,
   BookOpen,
   TrendUp,
+  Certificate,
 } from '@phosphor-icons/react'
 import { LEVELS, LEVEL_INFO, LESSONS } from '@/lib/curriculum'
-import { calculateLevelProgress, isLessonUnlocked, isStreakAtRisk, isLevelLocked } from '@/lib/helpers'
+import { 
+  calculateLevelProgress, 
+  isLessonUnlocked, 
+  isStreakAtRisk, 
+  isLevelLocked,
+  checkLevelCompletion,
+  getLevelCompletionBadges
+} from '@/lib/helpers'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import LearningStrategyModal from './LearningStrategyModal'
+import LevelCertificate from './LevelCertificate'
+import AchievementBadge from './AchievementBadge'
 
 interface DashboardProps {
   user: User
@@ -41,6 +51,8 @@ export default function Dashboard({
 }: DashboardProps) {
   const [selectedLevel, setSelectedLevel] = useState<Level>(user.currentLevel)
   const [activeTab, setActiveTab] = useState<string>('lessons')
+  const [certificateOpen, setCertificateOpen] = useState(false)
+  const [selectedCertificateLevel, setSelectedCertificateLevel] = useState<Level | null>(null)
 
   const unlockedLevels = user.unlockedLevels || ['Beginner']
   const currentLevelProgress = calculateLevelProgress(progress, selectedLevel)
@@ -48,6 +60,17 @@ export default function Dashboard({
   const completedLessons = progress.completedLessons || []
   const totalLessons = completedLessons.length
   const streakAtRisk = isStreakAtRisk(progress.lastActivityDate)
+  
+  const completedLevelsData = progress.completedLevels || []
+  const levelCompletionBadges = getLevelCompletionBadges(progress)
+
+  const handleViewCertificate = (level: Level) => {
+    const completed = completedLevelsData.find(cl => cl.level === level)
+    if (completed) {
+      setSelectedCertificateLevel(level)
+      setCertificateOpen(true)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
@@ -329,42 +352,143 @@ export default function Dashboard({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Trophy size={24} />
-                  Tus Logros
+                  <Certificate size={24} weight="fill" />
+                  Certificados de Nivel
                 </CardTitle>
                 <CardDescription>
-                  {(progress.achievements || []).length} desbloqueados
+                  Descarga tus certificados por completar niveles A2, B1 y B2
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {(progress.achievements || []).length === 0 ? (
+                {completedLevelsData.filter(cl => ['A2', 'B1', 'B2'].includes(cl.level)).length === 0 ? (
                   <div className="text-center py-12">
-                    <Trophy size={48} className="mx-auto text-muted-foreground mb-4" />
+                    <Certificate size={48} className="mx-auto text-muted-foreground mb-4" />
                     <p className="text-muted-foreground">
-                      ¡Completa lecciones para desbloquear logros!
+                      ¡Completa los niveles A2, B1 o B2 para obtener tu certificado!
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {(progress.achievements || []).map((achievement) => (
-                      <Card key={achievement.id} className="bg-gradient-to-br from-accent/5 to-primary/5">
-                        <CardContent className="p-6 text-center space-y-3">
-                          <div className="w-16 h-16 mx-auto rounded-full bg-accent/20 flex items-center justify-center animate-achievement-unlock">
-                            <Trophy size={32} weight="fill" className="text-accent" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-foreground">{achievement.title}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              {achievement.description}
-                            </p>
-                          </div>
-                          <Separator />
-                          <p className="text-xs text-muted-foreground">
-                            Desbloqueado el {new Date(achievement.unlockedAt).toLocaleDateString('es-ES')}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    ))}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {(['A2', 'B1', 'B2'] as Level[]).map((level) => {
+                      const completed = completedLevelsData.find(cl => cl.level === level)
+                      const isLocked = !completed
+                      
+                      return (
+                        <Card
+                          key={level}
+                          className={cn(
+                            'relative overflow-hidden transition-all hover:shadow-lg',
+                            !isLocked && 'cursor-pointer hover:scale-105'
+                          )}
+                          onClick={() => !isLocked && handleViewCertificate(level)}
+                        >
+                          <CardContent className="p-6">
+                            <div className="text-center space-y-4">
+                              <div className={cn(
+                                'w-20 h-20 mx-auto rounded-full flex items-center justify-center',
+                                isLocked ? 'bg-muted' : 'bg-gradient-to-br from-primary to-secondary'
+                              )}>
+                                {isLocked ? (
+                                  <Lock size={32} className="text-muted-foreground" />
+                                ) : (
+                                  <Certificate size={32} weight="fill" className="text-white" />
+                                )}
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-lg text-foreground">{level}</h3>
+                                <p className="text-sm text-muted-foreground">
+                                  {isLocked ? 'Bloqueado' : 'Certificado Disponible'}
+                                </p>
+                                {!isLocked && completed && (
+                                  <>
+                                    <p className="text-xs text-muted-foreground mt-2">
+                                      {completed.totalLessons} lecciones
+                                    </p>
+                                    <p className="text-xs text-success font-medium">
+                                      Promedio: {completed.averageScore}%
+                                    </p>
+                                  </>
+                                )}
+                              </div>
+                              {!isLocked && (
+                                <Button variant="outline" size="sm" className="w-full">
+                                  Ver Certificado
+                                </Button>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Trophy size={24} />
+                  Insignias de Logros
+                </CardTitle>
+                <CardDescription>
+                  {levelCompletionBadges.length + (progress.achievements || []).length} desbloqueados
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {levelCompletionBadges.length === 0 && (progress.achievements || []).length === 0 ? (
+                  <div className="text-center py-12">
+                    <Trophy size={48} className="mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">
+                      ¡Completa lecciones para desbloquear insignias!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    {levelCompletionBadges.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4 text-foreground">Certificaciones de Nivel</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {levelCompletionBadges.map((badge, index) => (
+                            <AchievementBadge
+                              key={badge.id}
+                              type="level-complete"
+                              level={badge.id.includes('a2') ? 'A2' : badge.id.includes('b1') ? 'B1' : 'B2'}
+                              title={badge.title}
+                              description={badge.description}
+                              unlockedAt={badge.unlockedAt}
+                              index={index}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {(progress.achievements || []).length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4 text-foreground">Logros Generales</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {(progress.achievements || []).map((achievement, index) => {
+                            let type: 'level-complete' | 'perfect-score' | 'streak' | 'all-lessons' | 'fast-learner' = 'all-lessons'
+                            
+                            if (achievement.id.includes('perfect')) type = 'perfect-score'
+                            else if (achievement.id.includes('streak')) type = 'streak'
+                            else if (achievement.id.includes('lesson')) type = 'all-lessons'
+                            
+                            return (
+                              <AchievementBadge
+                                key={achievement.id}
+                                type={type}
+                                title={achievement.title}
+                                description={achievement.description}
+                                unlockedAt={achievement.unlockedAt}
+                                index={index + levelCompletionBadges.length}
+                              />
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>
@@ -374,6 +498,21 @@ export default function Dashboard({
       </main>
 
       <LearningStrategyModal onClose={() => {}} />
+      
+      {selectedCertificateLevel && (
+        <LevelCertificate
+          level={selectedCertificateLevel}
+          user={user}
+          completedDate={completedLevelsData.find(cl => cl.level === selectedCertificateLevel)?.completedAt || Date.now()}
+          totalLessons={completedLevelsData.find(cl => cl.level === selectedCertificateLevel)?.totalLessons || 0}
+          averageScore={completedLevelsData.find(cl => cl.level === selectedCertificateLevel)?.averageScore || 0}
+          isOpen={certificateOpen}
+          onClose={() => {
+            setCertificateOpen(false)
+            setSelectedCertificateLevel(null)
+          }}
+        />
+      )}
     </div>
   )
 }

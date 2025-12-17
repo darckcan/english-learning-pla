@@ -1,4 +1,4 @@
-import { UserProgress, Level, Achievement, LessonScore, User } from './types'
+import { UserProgress, Level, Achievement, LessonScore, User, CompletedLevel } from './types'
 import { LEVELS, LEVEL_INFO, LESSONS, ACHIEVEMENT_DEFINITIONS } from './curriculum'
 
 const SUPER_ADMIN_USERNAME = 'darckcan'
@@ -205,4 +205,63 @@ export function isStreakAtRisk(lastActivityDate: string): boolean {
   const hoursSince = (now - lastActivity) / (1000 * 60 * 60)
   
   return hoursSince >= 20 && hoursSince < 24
+}
+
+export function checkLevelCompletion(
+  progress: UserProgress,
+  level: Level
+): { isComplete: boolean; totalLessons: number; averageScore: number } {
+  const levelLessons = LESSONS[level]
+  const completedLessons = progress.completedLessons || []
+  const lessonScores = progress.lessonScores || {}
+  
+  const levelLessonIds = levelLessons.map(l => l.id)
+  const completedInLevel = completedLessons.filter(id => levelLessonIds.includes(id))
+  const isComplete = completedInLevel.length === levelLessons.length
+  
+  let totalScore = 0
+  let scoredLessons = 0
+  completedInLevel.forEach(lessonId => {
+    const score = lessonScores[lessonId]
+    if (score) {
+      totalScore += (score.score / score.maxScore) * 100
+      scoredLessons++
+    }
+  })
+  
+  const averageScore = scoredLessons > 0 ? Math.round(totalScore / scoredLessons) : 0
+  
+  return {
+    isComplete,
+    totalLessons: levelLessons.length,
+    averageScore
+  }
+}
+
+export function hasLevelCertificate(progress: UserProgress, level: Level): boolean {
+  const completedLevels = progress.completedLevels || []
+  return completedLevels.some(cl => cl.level === level)
+}
+
+export function getLevelCompletionBadges(progress: UserProgress): Achievement[] {
+  const badges: Achievement[] = []
+  const completedLevels = progress.completedLevels || []
+  
+  const certificateLevels: Level[] = ['A2', 'B1', 'B2']
+  
+  certificateLevels.forEach(level => {
+    const hasCompleted = completedLevels.some(cl => cl.level === level)
+    if (hasCompleted) {
+      const completedLevel = completedLevels.find(cl => cl.level === level)!
+      badges.push({
+        id: `level-${level.toLowerCase()}-complete`,
+        title: `Nivel ${level} Completado`,
+        description: `Completaste todas las lecciones del nivel ${level}`,
+        icon: 'graduation-cap',
+        unlockedAt: completedLevel.completedAt
+      })
+    }
+  })
+  
+  return badges
 }
