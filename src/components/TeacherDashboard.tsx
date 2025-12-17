@@ -55,7 +55,7 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
   }).length
 
   const totalLessonsCompleted = students.reduce(
-    (sum, s) => sum + s.progress.completedLessons.length,
+    (sum, s) => sum + (s.progress.completedLessons || []).length,
     0
   )
 
@@ -176,12 +176,14 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
                       const lastActive = student.progress.lastActivityDate
                         ? new Date(student.progress.lastActivityDate).toLocaleDateString()
                         : 'Nunca'
+                      const completedLessons = student.progress.completedLessons || []
+                      const achievements = student.progress.achievements || []
                       return (
                         <TableRow key={student.user.id}>
                           <TableCell className="font-medium">{student.user.fullName || student.user.username}</TableCell>
                           <TableCell>
                             <Badge variant="secondary">
-                              {student.progress.completedLessons.length}
+                              {completedLessons.length}
                             </Badge>
                           </TableCell>
                           <TableCell>
@@ -192,7 +194,7 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
                           </TableCell>
                           <TableCell>{student.progress.points}</TableCell>
                           <TableCell>
-                            <Badge variant="outline">{student.progress.achievements.length}</Badge>
+                            <Badge variant="outline">{achievements.length}</Badge>
                           </TableCell>
                           <TableCell className="text-muted-foreground text-sm">
                             {lastActive}

@@ -92,7 +92,8 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
   }
 
   const handleToggleAccess = (userId: string, currentLevels: Level[]) => {
-    const allLocked = currentLevels.length === 1 && currentLevels[0] === 'Beginner'
+    const unlockedLevels = currentLevels || ['Beginner']
+    const allLocked = unlockedLevels.length === 1 && unlockedLevels[0] === 'Beginner'
     const newLevels: Level[] = allLocked ? [...LEVELS] : ['Beginner']
 
     setAllUsers((current) => {
@@ -266,7 +267,7 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
                       <TableCell>{u.currentLevel}</TableCell>
                       <TableCell>
                         <span className="text-sm text-muted-foreground">
-                          {u.unlockedLevels.length} de {LEVELS.length}
+                          {(u.unlockedLevels || ['Beginner']).length} de {LEVELS.length}
                         </span>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
@@ -279,7 +280,7 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
                             variant="outline"
                             onClick={() => handleToggleAccess(u.id, u.unlockedLevels)}
                           >
-                            {u.unlockedLevels.length === LEVELS.length ? (
+                            {(u.unlockedLevels || ['Beginner']).length === LEVELS.length ? (
                               <Lock size={16} />
                             ) : (
                               <LockOpen size={16} />

@@ -39,12 +39,16 @@ export function getLevelsThroughCurrent(currentLevel: Level): Level[] {
 }
 
 export function isLevelLocked(userUnlockedLevels: Level[], targetLevel: Level): boolean {
+  if (!userUnlockedLevels || !Array.isArray(userUnlockedLevels)) {
+    return targetLevel !== 'Beginner'
+  }
   return !userUnlockedLevels.includes(targetLevel)
 }
 
 export function calculateLevelProgress(progress: UserProgress, level: Level): number {
   const totalLessons = LEVEL_INFO[level].lessons
-  const completedInLevel = progress.completedLessons.filter((id) =>
+  const completedLessons = progress.completedLessons || []
+  const completedInLevel = completedLessons.filter((id) =>
     id.startsWith(level.toLowerCase().replace(/\s/g, '-'))
   ).length
   return Math.floor((completedInLevel / totalLessons) * 100)
@@ -52,7 +56,8 @@ export function calculateLevelProgress(progress: UserProgress, level: Level): nu
 
 export function getNextLesson(progress: UserProgress, level: Level): string | null {
   const levelLessons = LESSONS[level]
-  const completed = new Set(progress.completedLessons)
+  const completedLessons = progress.completedLessons || []
+  const completed = new Set(completedLessons)
 
   for (const lesson of levelLessons) {
     if (!completed.has(lesson.id)) {
@@ -69,7 +74,8 @@ export function isLessonUnlocked(progress: UserProgress, lessonId: string, level
   if (lessonIndex === 0) return true
 
   const previousLesson = levelLessons[lessonIndex - 1]
-  return progress.completedLessons.includes(previousLesson.id)
+  const completedLessons = progress.completedLessons || []
+  return completedLessons.includes(previousLesson.id)
 }
 
 export function checkAndAwardAchievements(
@@ -77,9 +83,11 @@ export function checkAndAwardAchievements(
   newScore?: LessonScore
 ): Achievement[] {
   const newAchievements: Achievement[] = []
-  const existingIds = new Set(progress.achievements.map((a) => a.id))
+  const achievements = progress.achievements || []
+  const completedLessons = progress.completedLessons || []
+  const existingIds = new Set(achievements.map((a) => a.id))
 
-  if (progress.completedLessons.length === 1 && !existingIds.has('first-lesson')) {
+  if (completedLessons.length === 1 && !existingIds.has('first-lesson')) {
     newAchievements.push({
       ...ACHIEVEMENT_DEFINITIONS.find((a) => a.id === 'first-lesson')!,
       unlockedAt: Date.now(),
@@ -100,14 +108,14 @@ export function checkAndAwardAchievements(
     })
   }
 
-  if (progress.completedLessons.length === 10 && !existingIds.has('ten-lessons')) {
+  if (completedLessons.length === 10 && !existingIds.has('ten-lessons')) {
     newAchievements.push({
       ...ACHIEVEMENT_DEFINITIONS.find((a) => a.id === 'ten-lessons')!,
       unlockedAt: Date.now(),
     })
   }
 
-  if (progress.completedLessons.length === 50 && !existingIds.has('fifty-lessons')) {
+  if (completedLessons.length === 50 && !existingIds.has('fifty-lessons')) {
     newAchievements.push({
       ...ACHIEVEMENT_DEFINITIONS.find((a) => a.id === 'fifty-lessons')!,
       unlockedAt: Date.now(),

@@ -110,10 +110,11 @@ export default function LessonView({
     setUserProgress((prev) => {
       if (!prev) return null
 
-      const isNewCompletion = !prev.completedLessons.includes(lesson.id)
+      const completedLessons = prev.completedLessons || []
+      const isNewCompletion = !completedLessons.includes(lesson.id)
       const newCompletedLessons = isNewCompletion
-        ? [...prev.completedLessons, lesson.id]
-        : prev.completedLessons
+        ? [...completedLessons, lesson.id]
+        : completedLessons
 
       const newStreak = updateStreak(prev)
       const newPoints = prev.points + (isNewCompletion ? points : 0)
@@ -126,14 +127,14 @@ export default function LessonView({
         streak: newStreak,
         lastActivityDate: new Date().toISOString(),
         lessonScores: {
-          ...prev.lessonScores,
+          ...(prev.lessonScores || {}),
           [lesson.id]: lessonScore,
         },
       }
 
       const newAchievements = checkAndAwardAchievements(updated, lessonScore)
       if (newAchievements.length > 0) {
-        updated.achievements = [...updated.achievements, ...newAchievements]
+        updated.achievements = [...(updated.achievements || []), ...newAchievements]
         newAchievements.forEach((achievement) => {
           toast.success(`Achievement Unlocked: ${achievement.title}`, {
             description: achievement.description,

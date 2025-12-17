@@ -39,9 +39,11 @@ export default function Dashboard({
   const [selectedLevel, setSelectedLevel] = useState<Level>(user.currentLevel)
   const [activeTab, setActiveTab] = useState<string>('lessons')
 
+  const unlockedLevels = user.unlockedLevels || ['Beginner']
   const currentLevelProgress = calculateLevelProgress(progress, selectedLevel)
   const levelLessons = LESSONS[selectedLevel]
-  const totalLessons = progress.completedLessons.length
+  const completedLessons = progress.completedLessons || []
+  const totalLessons = completedLessons.length
   const streakAtRisk = isStreakAtRisk(progress.lastActivityDate)
 
   return (
@@ -122,7 +124,7 @@ export default function Dashboard({
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
                   {LEVELS.map((level) => {
                     const levelProgress = calculateLevelProgress(progress, level)
-                    const locked = isLevelLocked(user.unlockedLevels, level)
+                    const locked = isLevelLocked(unlockedLevels, level)
                     return (
                       <Button
                         key={level}
@@ -169,9 +171,11 @@ export default function Dashboard({
               <CardContent>
                 <div className="grid gap-4">
                   {levelLessons.map((lesson) => {
-                    const isCompleted = progress.completedLessons.includes(lesson.id)
+                    const completedLessons = progress.completedLessons || []
+                    const isCompleted = completedLessons.includes(lesson.id)
                     const isUnlocked = isLessonUnlocked(progress, lesson.id, selectedLevel)
-                    const score = progress.lessonScores[lesson.id]
+                    const lessonScores = progress.lessonScores || {}
+                    const score = lessonScores[lesson.id]
 
                     return (
                       <Card
@@ -301,11 +305,11 @@ export default function Dashboard({
                   Tus Logros
                 </CardTitle>
                 <CardDescription>
-                  {progress.achievements.length} desbloqueados
+                  {(progress.achievements || []).length} desbloqueados
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {progress.achievements.length === 0 ? (
+                {(progress.achievements || []).length === 0 ? (
                   <div className="text-center py-12">
                     <Trophy size={48} className="mx-auto text-muted-foreground mb-4" />
                     <p className="text-muted-foreground">
@@ -314,7 +318,7 @@ export default function Dashboard({
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {progress.achievements.map((achievement) => (
+                    {(progress.achievements || []).map((achievement) => (
                       <Card key={achievement.id} className="bg-gradient-to-br from-accent/5 to-primary/5">
                         <CardContent className="p-6 text-center space-y-3">
                           <div className="w-16 h-16 mx-auto rounded-full bg-accent/20 flex items-center justify-center animate-achievement-unlock">
