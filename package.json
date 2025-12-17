@@ -9,7 +9,9 @@
         "build": "tsc -b --noCheck && vite build",
         "lint": "eslint .",
         "optimize": "vite optimize",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "start": "vite preview --host 0.0.0.0 --port 3000",
+        "serve": "vite preview --host 0.0.0.0 --port 3000"
     },
     "dependencies": {
         "@github/spark": ">=0.43.1 <1",

@@ -22,4 +22,27 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src')
     }
   },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
+        }
+      }
+    }
+  },
+  server: {
+    host: '0.0.0.0',
+    port: 5000,
+    strictPort: false
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 3000,
+    strictPort: false
+  }
 });
