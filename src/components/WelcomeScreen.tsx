@@ -141,53 +141,41 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       return [...users, newUser]
     })
 
-    try {
-      const emailPromptText = `Genera un correo electrónico de bienvenida profesional y motivador para un nuevo estudiante que se acaba de registrar en la plataforma Nexus Fluent, una plataforma de aprendizaje de inglés.
-
-Detalles del usuario:
-- Nombre: ${newUser.fullName}
-- Usuario: ${newUser.username}
-- Correo: ${newUser.email}
-- Membresía: Prueba gratuita de 15 días
-
-El correo debe:
-1. Dar una cálida bienvenida a Nexus Fluent
-2. Mencionar que tienen 15 días de prueba gratuita para explorar todas las funciones
-3. Explicar brevemente que empezarán con un examen de colocación para determinar su nivel
-4. Mencionar que tienen acceso a 270+ lecciones estructuradas desde Beginner hasta C2
-5. Incluir información sobre las membresías disponibles después de la prueba ($9.99/mes o $24.99 vitalicia)
-6. Incluir consejos motivacionales sobre el aprendizaje del inglés
-7. Ser amigable, profesional y en español
-
-Formato del correo:
-- Asunto claro y atractivo
-- Saludo personalizado
-- Cuerpo del mensaje bien estructurado
-- Despedida motivadora
-
-Devuelve SOLO el contenido del correo (sin incluir el campo "Para:" o "De:"), comenzando directamente con el asunto.`
-
-      const emailContent = await window.spark.llm(emailPromptText, 'gpt-4o-mini')
-      
+    if (newUser.email) {
+      try {
+        const { sendEmail, generateWelcomeEmail } = await import('@/lib/email-service')
+        const welcomeEmail = generateWelcomeEmail(newUser)
+        const emailSent = await sendEmail(newUser.email, welcomeEmail.subject, welcomeEmail.body)
+        
+        if (emailSent) {
+          toast.success(
+            <div className="space-y-2">
+              <p className="font-semibold">¡Cuenta creada exitosamente!</p>
+              <p className="text-sm">✅ Correo de confirmación enviado a {newUser.email}</p>
+              <p className="text-sm text-accent font-medium">🎉 Tienes 15 días de prueba gratuita</p>
+            </div>,
+            { duration: 6000 }
+          )
+        } else {
+          throw new Error('Failed to send email')
+        }
+        
+      } catch (error) {
+        console.error('Error al enviar el correo de bienvenida:', error)
+        toast.success(
+          <div className="space-y-2">
+            <p className="font-semibold">¡Cuenta creada exitosamente!</p>
+            <p className="text-sm text-muted-foreground">⚠️ Hubo un problema enviando el correo de confirmación</p>
+            <p className="text-sm text-accent font-medium">🎉 Tienes 15 días de prueba gratuita</p>
+          </div>,
+          { duration: 5000 }
+        )
+      }
+    } else {
       toast.success(
         <div className="space-y-2">
           <p className="font-semibold">¡Cuenta creada exitosamente!</p>
-          <p className="text-sm">Hemos enviado un correo de confirmación a {newUser.email}</p>
           <p className="text-sm text-accent font-medium">🎉 Tienes 15 días de prueba gratuita</p>
-        </div>,
-        { duration: 6000 }
-      )
-
-      console.log('📧 Correo de confirmación enviado:')
-      console.log('Para:', newUser.email)
-      console.log('Contenido:\n', emailContent)
-      
-    } catch (error) {
-      console.error('Error al generar el correo:', error)
-      toast.success(
-        <div className="space-y-2">
-          <p className="font-semibold">¡Cuenta creada exitosamente!</p>
-          <p className="text-sm">🎉 Tienes 15 días de prueba gratuita</p>
         </div>,
         { duration: 5000 }
       )

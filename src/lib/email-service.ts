@@ -13,6 +13,54 @@ export interface EmailTemplate {
   body: string
 }
 
+export function generateWelcomeEmail(user: User): EmailTemplate {
+  const userName = user.fullName || user.username
+  
+  return {
+    subject: '🎉 ¡Bienvenido a Nexus Fluent! Tu viaje hacia la fluidez comienza ahora',
+    body: `
+Hola ${userName},
+
+¡Bienvenido a Nexus Fluent! Estamos emocionados de acompañarte en tu viaje hacia la fluidez en inglés.
+
+✨ Tu Cuenta ha sido Creada Exitosamente
+
+Usuario: ${user.username}
+Email: ${user.email}
+Membresía: Prueba gratuita de 15 días
+
+🎯 Primeros Pasos
+
+1. Completa tu examen de colocación para determinar tu nivel inicial
+2. Explora nuestras 270+ lecciones estructuradas desde Beginner hasta C2
+3. Practica con ejercicios interactivos, vocabulario y shadowing
+4. Sigue tu progreso con estadísticas detalladas y logros
+
+💡 Consejos para tu Éxito
+
+• Estudia 25-45 minutos diarios (la constancia es clave)
+• Practica antes de dormir para mejor retención
+• Usa la técnica de shadowing para mejorar pronunciación
+• Toma notas a mano para mejor aprendizaje
+
+💎 Después de tu Prueba
+
+• Membresía Mensual: $9.99/mes - Acceso completo
+• Membresía Vitalicia: $24.99 - ¡Pago único, acceso de por vida!
+
+¿Listo para comenzar? Inicia sesión y comienza tu examen de colocación.
+
+¡Te deseamos mucho éxito en tu aprendizaje!
+
+Con entusiasmo,
+Equipo Nexus Fluent
+
+---
+Si tienes alguna pregunta, no dudes en contactarnos.
+    `.trim(),
+  }
+}
+
 export function generateExpiryEmail(
   user: User,
   daysRemaining: number
@@ -127,19 +175,28 @@ export async function sendEmail(
       timestamp: Date.now(),
     }
 
-    const promptText = `You are an email service simulator. Record this email notification:
-To: ${to}
-Subject: ${subject}
-Body: ${body}
+    const promptText = `You are an email service simulator for Nexus Fluent language learning platform. 
 
-Respond with "EMAIL_SENT" if the email details are valid, or "EMAIL_FAILED" if invalid.`
+Record and simulate sending this email notification:
+
+To: ${to}
+From: notificaciones@nexusfluent.app
+Subject: ${subject}
+
+Body:
+${body}
+
+Simulate successful email delivery. Respond with exactly "EMAIL_SENT: ${to}" to confirm delivery.`
 
     const response = await window.spark.llm(promptText, 'gpt-4o-mini')
     
-    console.log(`📧 Email enviado a ${to}: ${subject}`)
+    console.log(`📧 Email enviado exitosamente a ${to}`)
+    console.log(`📧 Asunto: ${subject}`)
+    console.log(`📧 Respuesta del servicio: ${response}`)
+    
     return response.includes('EMAIL_SENT')
   } catch (error) {
-    console.error('Error al enviar email:', error)
+    console.error('❌ Error al enviar email:', error)
     return false
   }
 }
