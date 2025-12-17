@@ -416,3 +416,24 @@ a[class*="button"]:active {
     overscroll-behavior: contain;
   }
 }
+
+@keyframes mobile-slide-in {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-mobile-slide-in {
+  animation: mobile-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@supports (overscroll-behavior: contain) {
+  .prevent-overscroll {
+    overscroll-behavior: contain;
+  }
+}
