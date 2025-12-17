@@ -18,6 +18,7 @@ import MembershipPricingSettings from './MembershipPricingSettings'
 import PaymentsDashboard from './PaymentsDashboard'
 import EmailNotificationManager from './EmailNotificationManager'
 import EmailTestPanel from './EmailTestPanel'
+import DataIntegrityValidator from './DataIntegrityValidator'
 import { createTrialMembership } from '@/lib/membership'
 
 interface SuperAdminDashboardProps {
@@ -27,7 +28,7 @@ interface SuperAdminDashboardProps {
 
 export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashboardProps) {
   const [allUsers, setAllUsers] = useKV<User[]>('all-users', [])
-  const [allProgress, setAllProgress] = useKV<Record<string, UserProgress>>('all-progress', {})
+  const [allProgress, setAllProgress] = useKV<Record<string, UserProgress>>('all-user-progress', {})
   const [showAddUser, setShowAddUser] = useState(false)
   const [newUsername, setNewUsername] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -181,6 +182,8 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
         <MembershipPricingSettings />
 
         <PaymentsDashboard />
+
+        <DataIntegrityValidator />
 
         <EmailNotificationManager users={allUsers || []} />
 

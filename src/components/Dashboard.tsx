@@ -47,6 +47,7 @@ interface DashboardProps {
   onStartLesson: (lessonId: string) => void
   onLogout: () => void
   setUserProgress: (updater: (prev: UserProgress | null) => UserProgress | null) => void
+  setUser: (updater: (prev: User | null) => User | null) => void
   onVocabularyPractice: () => void
 }
 
@@ -56,13 +57,13 @@ export default function Dashboard({
   onStartLesson,
   onLogout,
   onVocabularyPractice,
+  setUser,
 }: DashboardProps) {
   const [selectedLevel, setSelectedLevel] = useState<Level>(user.currentLevel)
   const [activeTab, setActiveTab] = useState<string>('lessons')
   const [certificateOpen, setCertificateOpen] = useState(false)
   const [selectedCertificateLevel, setSelectedCertificateLevel] = useState<Level | null>(null)
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
-  const [allUsers, setAllUsers] = useKV<User[]>('all-users', [])
 
   const unlockedLevels = user.unlockedLevels || ['Beginner']
   const currentLevelProgress = calculateLevelProgress(progress, selectedLevel)
@@ -111,13 +112,9 @@ export default function Dashboard({
   const handleThemeChange = (newTheme: ThemeType) => {
     applyTheme(newTheme)
     
-    setAllUsers((current) => {
-      const users = current || []
-      return users.map(u => 
-        u.id === user.id 
-          ? { ...u, selectedTheme: newTheme }
-          : u
-      )
+    setUser((prev) => {
+      if (!prev) return null
+      return { ...prev, selectedTheme: newTheme }
     })
     
     toast.success(`Tema "${THEMES[newTheme].name}" aplicado`)

@@ -14,13 +14,15 @@ import { LEVELS } from './lib/curriculum'
 import { applyTheme } from './lib/themes'
 import { useEmailNotifications } from './hooks/use-email-notifications'
 import { useStripePaymentVerification } from './hooks/use-stripe-payment'
+import { useSyncUser } from './hooks/use-sync-user'
+import { useSyncProgress } from './hooks/use-sync-progress'
 import { AnimatePresence, motion } from 'framer-motion'
 
 type AppView = 'landing' | 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary'
 
 function App() {
-  const [currentUser, setCurrentUser] = useKV<User | null>('current-user', null)
-  const [userProgress, setUserProgress] = useKV<UserProgress | null>('user-progress', null)
+  const [currentUser, setCurrentUser] = useSyncUser()
+  const [userProgress, setUserProgress] = useSyncProgress(currentUser?.id || '')
   const [allUsers] = useKV<User[]>('all-users', [])
   const [view, setView] = useState<AppView>('landing')
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null)
@@ -211,6 +213,7 @@ function App() {
                 onStartLesson={handleStartLesson}
                 onLogout={handleLogout}
                 setUserProgress={setUserProgress}
+                setUser={setCurrentUser}
                 onVocabularyPractice={handleVocabularyPractice}
               />
             </motion.div>
