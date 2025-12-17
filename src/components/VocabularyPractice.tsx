@@ -9,6 +9,7 @@ import { Level, VocabularyItem } from '@/lib/types'
 import PronunciationButton from './PronunciationButton'
 import { Input } from './ui/input'
 import { toast } from 'sonner'
+import { haptics } from '@/lib/haptics'
 
 interface VocabularyPracticeProps {
   unlockedLevels: Level[]
@@ -78,7 +79,10 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
     setShowQuizResult(true)
     setTotalAttempts(totalAttempts + 1)
     if (isCorrect) {
+      haptics.success()
       setCorrectCount(correctCount + 1)
+    } else {
+      haptics.error()
     }
   }
 

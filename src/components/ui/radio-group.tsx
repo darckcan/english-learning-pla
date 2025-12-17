@@ -5,15 +5,23 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
 import CircleIcon from "lucide-react/dist/esm/icons/circle"
 
 import { cn } from "@/lib/utils"
+import { haptics } from "@/lib/haptics"
 
 function RadioGroup({
   className,
+  onValueChange,
   ...props
 }: ComponentProps<typeof RadioGroupPrimitive.Root>) {
+  const handleValueChange = (value: string) => {
+    haptics.selection()
+    onValueChange?.(value)
+  }
+
   return (
     <RadioGroupPrimitive.Root
       data-slot="radio-group"
       className={cn("grid gap-3", className)}
+      onValueChange={handleValueChange}
       {...props}
     />
   )

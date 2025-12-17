@@ -13,6 +13,7 @@ import NexusFluentLogo from './NexusFluentLogo'
 import ThemeSelector from './ThemeSelector'
 import { applyTheme } from '@/lib/themes'
 import { createTrialMembership } from '@/lib/membership'
+import { haptics } from '@/lib/haptics'
 
 interface WelcomeScreenProps {
   onLogin: (user: User) => void
@@ -42,11 +43,13 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     if (!username.trim() || !password.trim()) {
+      haptics.error()
       toast.error('Por favor ingresa usuario y contraseña')
       return
     }
 
     if (validateSuperAdmin(username, password)) {
+      haptics.success()
       const superAdmin = createSuperAdmin()
       superAdmin.lastActive = Date.now()
       setAllUsers((current) => {
@@ -66,15 +69,18 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
     const users = allUsers || []
     const user = users.find(u => u.username === username.trim())
     if (!user) {
+      haptics.error()
       toast.error('Usuario no encontrado')
       return
     }
 
     if (user.password !== simpleHash(password)) {
+      haptics.error()
       toast.error('Contraseña incorrecta')
       return
     }
 
+    haptics.success()
     user.lastActive = Date.now()
     setAllUsers((current) => {
       const users = current || []
@@ -92,16 +98,19 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!username.trim() || !password.trim() || !fullName.trim()) {
+      haptics.error()
       toast.error('Por favor completa todos los campos requeridos')
       return
     }
 
     if (!email.trim()) {
+      haptics.error()
       toast.error('Por favor ingresa tu correo electrónico para recibir la confirmación')
       return
     }
 
     if (username.toLowerCase() === 'darckcan') {
+      haptics.error()
       toast.error('Este nombre de usuario no está disponible')
       return
     }
@@ -109,16 +118,19 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
     const users = allUsers || []
     const existingUser = users.find(u => u.username.toLowerCase() === username.trim().toLowerCase())
     if (existingUser) {
+      haptics.error()
       toast.error('Este nombre de usuario ya existe')
       return
     }
 
     const existingEmail = users.find(u => u.email?.toLowerCase() === email.trim().toLowerCase())
     if (existingEmail) {
+      haptics.error()
       toast.error('Este correo electrónico ya está registrado')
       return
     }
 
+    haptics.success()
     const trialMembership = createTrialMembership()
 
     const newUser: User = {

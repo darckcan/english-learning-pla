@@ -14,6 +14,7 @@ import { checkAndAwardAchievements, updateStreak, checkLevelCompletion } from '@
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import PronunciationButton from './PronunciationButton'
+import { haptics } from '@/lib/haptics'
 
 interface LessonViewProps {
   user: User
@@ -90,6 +91,12 @@ export default function LessonView({
             (ans) => exerciseAnswer.trim().toLowerCase() === ans.trim().toLowerCase()
           )
 
+    if (isCorrect) {
+      haptics.success()
+    } else {
+      haptics.error()
+    }
+
     setExerciseResults((prev) => [...prev, isCorrect])
     setShowExerciseFeedback(true)
   }
@@ -135,6 +142,7 @@ export default function LessonView({
 
       const newAchievements = checkAndAwardAchievements(updated, lessonScore)
       if (newAchievements.length > 0) {
+        haptics.achievement()
         updated.achievements = [...(updated.achievements || []), ...newAchievements]
         newAchievements.forEach((achievement) => {
           toast.success(`¡Logro Desbloqueado!: ${achievement.title}`, {
@@ -151,6 +159,7 @@ export default function LessonView({
           const alreadyHasCertificate = completedLevels.some(cl => cl.level === level)
           
           if (!alreadyHasCertificate) {
+            haptics.achievement()
             const newCompletedLevel: CompletedLevel = {
               level,
               completedAt: Date.now(),
@@ -168,6 +177,7 @@ export default function LessonView({
       })
 
       if (isNewCompletion) {
+        haptics.success()
         toast.success('¡Lección Completada!', {
           description: `¡Ganaste ${points} puntos!`,
         })

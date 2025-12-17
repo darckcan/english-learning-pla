@@ -8,6 +8,7 @@ import { PLACEMENT_TEST_QUESTIONS } from '@/lib/curriculum'
 import { determineLevelFromPlacementScore, getLevelsThroughCurrent } from '@/lib/helpers'
 import { Level } from '@/lib/types'
 import { CheckCircle } from '@phosphor-icons/react'
+import { haptics } from '@/lib/haptics'
 
 interface PlacementTestProps {
   onComplete: (assignedLevel: Level, unlockedLevels: Level[]) => void
@@ -27,10 +28,14 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
 
     const isCorrect = selectedAnswer === currentQuestion.correctAnswer
     if (isCorrect) {
+      haptics.success()
       setCorrectAnswers((prev) => prev + 1)
+    } else {
+      haptics.error()
     }
 
     if (currentQuestionIndex === PLACEMENT_TEST_QUESTIONS.length - 1) {
+      haptics.notification()
       setShowResult(true)
     } else {
       setCurrentQuestionIndex((prev) => prev + 1)
@@ -39,6 +44,7 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
   }
 
   const handleComplete = () => {
+    haptics.achievement()
     const assignedLevel = determineLevelFromPlacementScore(
       correctAnswers,
       PLACEMENT_TEST_QUESTIONS.length

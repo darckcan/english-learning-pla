@@ -1,8 +1,14 @@
 import { ComponentProps } from "react"
 
 import { cn } from "@/lib/utils"
+import { haptics } from "@/lib/haptics"
 
-function Input({ className, type, ...props }: ComponentProps<"input">) {
+function Input({ className, type, onFocus, ...props }: ComponentProps<"input">) {
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    haptics.selection()
+    onFocus?.(e)
+  }
+
   return (
     <input
       type={type}
@@ -13,6 +19,7 @@ function Input({ className, type, ...props }: ComponentProps<"input">) {
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}
+      onFocus={handleFocus}
       {...props}
     />
   )
