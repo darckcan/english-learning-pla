@@ -48,8 +48,8 @@ export function useStripePaymentVerification() {
                   amount = membershipType === 'lifetime' ? 24.99 : 9.99
                   
                   const now = Date.now()
-                  const expiresAt = membershipType === 'lifetime' 
-                    ? null 
+                  const endDate = membershipType === 'lifetime' 
+                    ? undefined 
                     : now + (30 * 24 * 60 * 60 * 1000)
                   
                   return {
@@ -57,7 +57,7 @@ export function useStripePaymentVerification() {
                     membership: {
                       type: membershipType,
                       startDate: now,
-                      expiresAt,
+                      endDate,
                       isActive: true,
                     }
                   }

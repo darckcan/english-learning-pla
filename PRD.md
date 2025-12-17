@@ -33,12 +33,22 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
 - **Progression**: Escuchar frase → Repetir en voz alta → Practicar varias veces → Cambiar velocidad si necesario
 - **Success criteria**: Usuario puede escuchar, entender y practicar frases completas en todos los niveles
 
-### Sistema de Membresías
-- **Functionality**: Trial (7 días), Monthly (mensual), Lifetime (de por vida) con integración Stripe
-- **Purpose**: Monetizar la plataforma mientras se ofrece acceso de prueba
-- **Trigger**: Usuario se registra o actualiza su membresía
-- **Progression**: Registro → Trial automático → Puede comprar Monthly/Lifetime → Acceso completo
-- **Success criteria**: Membresías se gestionan correctamente, pagos se procesan con Stripe, acceso se controla
+### Sistema de Membresías con Stripe
+- **Functionality**: Trial (15 días gratuitos), Monthly ($9.99/mes), Lifetime ($24.99 pago único) con integración completa de Stripe Checkout
+- **Purpose**: Monetizar la plataforma mientras se ofrece acceso de prueba generoso
+- **Trigger**: Usuario se registra (trial automático) o hace clic en "Suscribirse"/"Comprar" desde Dashboard
+- **Progression**: Registro → Trial automático (15 días) → Dashboard Config tab → Modal de selección → Stripe Checkout → Pago exitoso → Redirección → Verificación automática → Membresía activada → Toast de confirmación
+- **Success criteria**: 
+  - ✅ Trial se crea automáticamente al registrarse
+  - ✅ Modal de pago muestra ambos planes con precios correctos
+  - ✅ Usuario es redirigido a Stripe Checkout
+  - ✅ Pago se procesa correctamente en Stripe
+  - ✅ Usuario regresa a la app con parámetros de éxito
+  - ✅ Sistema verifica el pago con Stripe API
+  - ✅ Membresía se actualiza en el perfil del usuario
+  - ✅ Transacción se registra en el historial
+  - ✅ Usuario recibe notificación de activación
+  - ✅ Dashboard de admin muestra estadísticas correctas
 
 ### Sistema de Logros y Certificados
 - **Functionality**: Badges por rachas, completar niveles, obtener puntuaciones altas + Certificados PDF para A2, B1, B2
