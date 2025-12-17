@@ -1,5 +1,5 @@
 import { Lesson, Level, PlacementTestQuestion, Achievement } from './types'
-import { C2_LESSONS } from './advanced-lessons'
+import { C2_LESSONS_COMPLETE } from './c2-complete-lessons'
 import { C1_LESSONS_COMPLETE } from './c1-generator'
 import { A1_LESSONS_7_TO_30 } from './a1-lessons'
 import { A2_CURRICULUM, B1_CURRICULUM, B2_CURRICULUM } from './complete-curriculum-data'
@@ -622,7 +622,7 @@ export const LESSONS: Record<Level, Lesson[]> = {
   B1: generateB1Lessons(),
   B2: generateB2Lessons(),
   C1: C1_LESSONS_COMPLETE,
-  C2: C2_LESSONS,
+  C2: C2_LESSONS_COMPLETE,
 }
 
 export const PLACEMENT_TEST_QUESTIONS: PlacementTestQuestion[] = [
