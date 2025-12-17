@@ -1,4 +1,5 @@
 import { Lesson, Level, PlacementTestQuestion, Achievement } from './types'
+import { B1_LESSONS, B2_LESSONS, C1_LESSONS, C2_LESSONS } from './advanced-lessons'
 
 export const LEVELS: Level[] = ['Beginner', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 
@@ -769,66 +770,10 @@ export const LESSONS: Record<Level, Lesson[]> = {
       shadowingText: 'I love reading books in my free time. I also enjoy playing tennis and listening to music. My favorite hobby is photography. What do you like doing?',
     },
   ],
-  B1: [],
-  B2: [],
-  C1: [],
-  C2: [],
-}
-
-for (let i = 1; i <= 6; i++) {
-  LESSONS.B1.push({
-    id: `b1-${i}`,
-    level: 'B1',
-    order: i,
-    title: `B1 Lesson ${i}`,
-    objective: `Intermediate level lesson ${i} objectives`,
-    vocabulary: [],
-    grammar: { title: 'Grammar Topic', explanation: 'Explanation here', examples: [], rules: [] },
-    exercises: [],
-    shadowingText: 'B1 level shadowing practice text.',
-  })
-}
-
-for (let i = 1; i <= 6; i++) {
-  LESSONS.B2.push({
-    id: `b2-${i}`,
-    level: 'B2',
-    order: i,
-    title: `B2 Lesson ${i}`,
-    objective: `Upper-intermediate level lesson ${i} objectives`,
-    vocabulary: [],
-    grammar: { title: 'Grammar Topic', explanation: 'Explanation here', examples: [], rules: [] },
-    exercises: [],
-    shadowingText: 'B2 level shadowing practice text.',
-  })
-}
-
-for (let i = 1; i <= 5; i++) {
-  LESSONS.C1.push({
-    id: `c1-${i}`,
-    level: 'C1',
-    order: i,
-    title: `C1 Lesson ${i}`,
-    objective: `Advanced level lesson ${i} objectives`,
-    vocabulary: [],
-    grammar: { title: 'Grammar Topic', explanation: 'Explanation here', examples: [], rules: [] },
-    exercises: [],
-    shadowingText: 'C1 level shadowing practice text.',
-  })
-}
-
-for (let i = 1; i <= 5; i++) {
-  LESSONS.C2.push({
-    id: `c2-${i}`,
-    level: 'C2',
-    order: i,
-    title: `C2 Lesson ${i}`,
-    objective: `Proficient level lesson ${i} objectives`,
-    vocabulary: [],
-    grammar: { title: 'Grammar Topic', explanation: 'Explanation here', examples: [], rules: [] },
-    exercises: [],
-    shadowingText: 'C2 level shadowing practice text.',
-  })
+  B1: B1_LESSONS,
+  B2: B2_LESSONS,
+  C1: C1_LESSONS,
+  C2: C2_LESSONS,
 }
 
 export const PLACEMENT_TEST_QUESTIONS: PlacementTestQuestion[] = [
