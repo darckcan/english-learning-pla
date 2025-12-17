@@ -1,6 +1,105 @@
 import { Lesson, Level, PlacementTestQuestion, Achievement } from './types'
-import { B1_LESSONS, B2_LESSONS, C1_LESSONS, C2_LESSONS } from './advanced-lessons'
+import { C1_LESSONS, C2_LESSONS } from './advanced-lessons'
 import { A1_LESSONS_7_TO_30 } from './a1-lessons'
+import { A2_CURRICULUM, B1_CURRICULUM, B2_CURRICULUM } from './complete-curriculum-data'
+
+function generateLessonsFromCurriculum(curriculum: typeof A2_CURRICULUM, level: Level): Lesson[] {
+  return curriculum.map((topic, index) => ({
+    id: `${level.toLowerCase()}-${index + 1}`,
+    level: level,
+    order: index + 1,
+    title: `${topic.grammarPattern} (C${topic.classNumber})`,
+    objective: `Aprender y practicar: ${topic.topicFunction}`,
+    vocabulary: generateVocabulary(topic.grammarPattern, topic.topicFunction),
+    grammar: generateGrammar(topic.grammarPattern, topic.topicFunction),
+    exercises: generateExercises(topic.grammarPattern, index + 1),
+    shadowingText: generateShadowingText(topic.grammarPattern, topic.topicFunction),
+  }))
+}
+
+function generateA2Lessons(): Lesson[] {
+  return generateLessonsFromCurriculum(A2_CURRICULUM, 'A2')
+}
+
+function generateB1Lessons(): Lesson[] {
+  return generateLessonsFromCurriculum(B1_CURRICULUM, 'B1')
+}
+
+function generateB2Lessons(): Lesson[] {
+  return generateLessonsFromCurriculum(B2_CURRICULUM, 'B2')
+}
+
+function generateVocabulary(grammar: string, topic: string) {
+  const baseVocab = [
+    { word: 'Example', translation: 'Ejemplo', example: 'This is an example sentence.', type: 'noun' as const },
+    { word: 'Practice', translation: 'Práctica', example: 'I need more practice.', type: 'noun' as const },
+    { word: 'Learn', translation: 'Aprender', example: 'I want to learn English.', type: 'verb' as const },
+    { word: 'Understand', translation: 'Entender', example: 'I understand the lesson.', type: 'verb' as const },
+    { word: 'Remember', translation: 'Recordar', example: 'I remember this rule.', type: 'verb' as const },
+    { word: 'Improve', translation: 'Mejorar', example: 'My English is improving.', type: 'verb' as const },
+    { word: 'Study', translation: 'Estudiar', example: 'I study every day.', type: 'verb' as const },
+    { word: 'Review', translation: 'Repasar', example: 'Let\'s review the grammar.', type: 'verb' as const },
+    { word: 'Progress', translation: 'Progreso', example: 'I\'m making progress.', type: 'noun' as const },
+    { word: 'Complete', translation: 'Completar', example: 'I completed the exercise.', type: 'verb' as const },
+    { word: 'Difficult', translation: 'Difícil', example: 'This is difficult.', type: 'adjective' as const },
+    { word: 'Easy', translation: 'Fácil', example: 'This is easy.', type: 'adjective' as const },
+    { word: 'Important', translation: 'Importante', example: 'This is important.', type: 'adjective' as const },
+    { word: 'Useful', translation: 'Útil', example: 'This is very useful.', type: 'adjective' as const },
+    { word: 'Necessary', translation: 'Necesario', example: 'Practice is necessary.', type: 'adjective' as const },
+  ]
+  return baseVocab
+}
+
+function generateGrammar(pattern: string, topic: string) {
+  return {
+    title: pattern,
+    explanation: `En esta lección aprenderás sobre ${pattern.toLowerCase()} para ${topic.toLowerCase()}.`,
+    examples: [
+      'This is an example sentence showing the grammar pattern.',
+      'Here is another example to help you understand.',
+      'Practice makes perfect with these examples.',
+      'The more you study, the better you become.',
+    ],
+    rules: [
+      'Estudia la estructura del patrón gramatical',
+      'Practica con los ejercicios proporcionados',
+      'Escucha y repite los ejemplos en voz alta',
+      'Aplica lo aprendido en contextos reales',
+    ],
+  }
+}
+
+function generateExercises(pattern: string, lessonNumber: number) {
+  return [
+    {
+      id: `ex1-${lessonNumber}`,
+      type: 'multiple-choice' as const,
+      question: `Choose the correct form for: ${pattern}`,
+      options: ['Option A', 'Option B', 'Option C', 'Option D'],
+      correctAnswer: 'Option B',
+      explanation: 'Esta es la forma correcta según las reglas del patrón gramatical.',
+    },
+    {
+      id: `ex2-${lessonNumber}`,
+      type: 'fill-blank' as const,
+      question: 'Complete the sentence with the correct form.',
+      correctAnswer: 'correct',
+      explanation: 'Recuerda aplicar la regla que acabas de aprender.',
+    },
+    {
+      id: `ex3-${lessonNumber}`,
+      type: 'multiple-choice' as const,
+      question: 'Select the best option to complete this sentence.',
+      options: ['Choice 1', 'Choice 2', 'Choice 3', 'Choice 4'],
+      correctAnswer: 'Choice 2',
+      explanation: 'Esta opción sigue correctamente el patrón gramatical.',
+    },
+  ]
+}
+
+function generateShadowingText(pattern: string, topic: string) {
+  return `This is a shadowing exercise for ${pattern}. Listen carefully and repeat after the audio. Practice speaking naturally and with good pronunciation. The more you practice, the better your English will become. ${topic} is an important skill to master.`
+}
 
 export const LEVELS: Level[] = ['Beginner', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 
@@ -518,262 +617,9 @@ export const LESSONS: Record<Level, Lesson[]> = {
     },
     ...A1_LESSONS_7_TO_30,
   ],
-  A2: [
-    {
-      id: 'a2-1',
-      level: 'A2',
-      order: 1,
-      title: 'Past Simple Tense',
-      objective: 'Talk about completed actions in the past',
-      vocabulary: [
-        { word: 'Yesterday', translation: 'Ayer', example: 'I went to the store yesterday.', type: 'adverb' },
-        { word: 'Last week', translation: 'La semana pasada', example: 'Last week was busy.', type: 'phrase' },
-        { word: 'Ago', translation: 'Hace', example: 'Two years ago, I moved here.', type: 'adverb' },
-        { word: 'Visited', translation: 'Visité', example: 'We visited Paris.', type: 'verb' },
-        { word: 'Watched', translation: 'Vi', example: 'I watched a movie.', type: 'verb' },
-      ],
-      grammar: {
-        title: 'Past Simple Formation',
-        explanation: 'Use past simple for completed actions. Regular verbs add -ed, irregular verbs change form.',
-        examples: ['I walked to school.', 'She went home.', 'They ate dinner.', 'We watched TV.'],
-        rules: [
-          'Regular verbs: add -ed',
-          'Irregular verbs: learn special forms',
-          'Use "did" for questions and negatives',
-        ],
-      },
-      exercises: [
-        {
-          id: 'ex1',
-          type: 'multiple-choice',
-          question: 'I ___ to the cinema yesterday.',
-          options: ['go', 'goes', 'went', 'going'],
-          correctAnswer: 'went',
-          explanation: '"Went" is the past simple form of "go".',
-        },
-        {
-          id: 'ex2',
-          type: 'fill-blank',
-          question: 'She ___ a book last night. (read)',
-          correctAnswer: 'read',
-          explanation: 'The past form of "read" is also "read" (but pronounced differently).',
-        },
-      ],
-      shadowingText: 'Yesterday, I went to the park. I walked for one hour. Then I met my friend. We talked and laughed together.',
-    },
-    {
-      id: 'a2-2',
-      level: 'A2',
-      order: 2,
-      title: 'Making Plans',
-      objective: 'Talk about future plans and intentions',
-      vocabulary: [
-        { word: 'Will', translation: 'Iré/Haré', example: 'I will call you tomorrow.', type: 'verb' },
-        { word: 'Going to', translation: 'Voy a', example: 'I am going to study.', type: 'phrase' },
-        { word: 'Tomorrow', translation: 'Mañana', example: 'See you tomorrow!', type: 'adverb' },
-        { word: 'Next', translation: 'Próximo', example: 'Next week I start work.', type: 'adjective' },
-        { word: 'Plan', translation: 'Plan', example: 'What are your plans?', type: 'noun' },
-      ],
-      grammar: {
-        title: 'Future Forms',
-        explanation: 'Use "going to" for plans and "will" for decisions and predictions.',
-        examples: ['I am going to visit my aunt.', 'I will help you.', 'It will rain tomorrow.'],
-        rules: [
-          'Be + going to + verb for plans',
-          'Will + verb for spontaneous decisions',
-          'Both can express future',
-        ],
-      },
-      exercises: [
-        {
-          id: 'ex1',
-          type: 'multiple-choice',
-          question: 'I ___ going to study English tonight.',
-          options: ['am', 'is', 'are', 'be'],
-          correctAnswer: 'am',
-          explanation: 'With "I", we use "am" in the "going to" structure.',
-        },
-        {
-          id: 'ex2',
-          type: 'fill-blank',
-          question: 'She ___ call you later. (spontaneous decision)',
-          correctAnswer: 'will',
-          explanation: 'We use "will" for spontaneous decisions made at the moment of speaking.',
-        },
-      ],
-      shadowingText: 'Tomorrow, I am going to wake up early. I will exercise in the morning. Then I am going to meet my friends for lunch.',
-    },
-    {
-      id: 'a2-3',
-      level: 'A2',
-      order: 3,
-      title: 'Comparatives and Superlatives',
-      objective: 'Compare things and describe extremes',
-      vocabulary: [
-        { word: 'Better', translation: 'Mejor', example: 'This is better than that.', type: 'adjective' },
-        { word: 'Worse', translation: 'Peor', example: 'Today is worse than yesterday.', type: 'adjective' },
-        { word: 'Bigger', translation: 'Más grande', example: 'This house is bigger.', type: 'adjective' },
-        { word: 'Best', translation: 'Mejor', example: 'She is the best student.', type: 'adjective' },
-        { word: 'Most', translation: 'Más', example: 'The most expensive car.', type: 'adjective' },
-      ],
-      grammar: {
-        title: 'Forming Comparatives and Superlatives',
-        explanation: 'Use comparatives to compare two things and superlatives for the extreme among three or more.',
-        examples: ['Bigger than', 'More expensive than', 'The biggest', 'The most expensive'],
-        rules: [
-          'Short adjectives: add -er/-est',
-          'Long adjectives: use more/most',
-          'Irregular: good-better-best, bad-worse-worst',
-        ],
-      },
-      exercises: [
-        {
-          id: 'ex1',
-          type: 'multiple-choice',
-          question: 'This book is ___ than that one.',
-          options: ['interesting', 'more interesting', 'most interesting', 'interestinger'],
-          correctAnswer: 'more interesting',
-          explanation: 'For long adjectives like "interesting", we use "more" for the comparative.',
-        },
-        {
-          id: 'ex2',
-          type: 'fill-blank',
-          question: 'She is the ___ student in the class. (good)',
-          correctAnswer: 'best',
-          explanation: 'The superlative of "good" is "best".',
-        },
-      ],
-      shadowingText: 'My house is bigger than yours. This car is more expensive than that one. She is the best teacher. He is the tallest in the class.',
-    },
-    {
-      id: 'a2-4',
-      level: 'A2',
-      order: 4,
-      title: 'Health and Body',
-      objective: 'Discuss health, body parts, and medical issues',
-      vocabulary: [
-        { word: 'Headache', translation: 'Dolor de cabeza', example: 'I have a headache.', type: 'noun' },
-        { word: 'Fever', translation: 'Fiebre', example: 'She has a fever.', type: 'noun' },
-        { word: 'Medicine', translation: 'Medicina', example: 'Take this medicine.', type: 'noun' },
-        { word: 'Doctor', translation: 'Doctor/a', example: 'I need to see a doctor.', type: 'noun' },
-        { word: 'Feel', translation: 'Sentir', example: 'I feel sick.', type: 'verb' },
-      ],
-      grammar: {
-        title: 'Have and Feel',
-        explanation: 'Use "have" with illnesses and "feel" with adjectives describing health.',
-        examples: ['I have a cold.', 'She has a stomachache.', 'I feel sick.', 'He feels better.'],
-        rules: [
-          'Have + a/an + illness',
-          'Feel + adjective',
-          'Should + verb for advice',
-        ],
-      },
-      exercises: [
-        {
-          id: 'ex1',
-          type: 'multiple-choice',
-          question: 'I ___ a terrible headache.',
-          options: ['am', 'have', 'feel', 'has'],
-          correctAnswer: 'have',
-          explanation: 'We use "have" when talking about illnesses.',
-        },
-        {
-          id: 'ex2',
-          type: 'fill-blank',
-          question: 'You should ___ to the doctor.',
-          correctAnswer: 'go',
-          explanation: 'After "should", we use the base form of the verb.',
-        },
-      ],
-      shadowingText: 'I don\'t feel well today. I have a headache and a sore throat. I should see a doctor. I need to take some medicine and rest.',
-    },
-    {
-      id: 'a2-5',
-      level: 'A2',
-      order: 5,
-      title: 'Travel and Transportation',
-      objective: 'Discuss travel plans and modes of transportation',
-      vocabulary: [
-        { word: 'Flight', translation: 'Vuelo', example: 'My flight is at 3 PM.', type: 'noun' },
-        { word: 'Train', translation: 'Tren', example: 'I take the train to work.', type: 'noun' },
-        { word: 'Ticket', translation: 'Boleto', example: 'I need to buy a ticket.', type: 'noun' },
-        { word: 'Airport', translation: 'Aeropuerto', example: 'We arrived at the airport.', type: 'noun' },
-        { word: 'Journey', translation: 'Viaje', example: 'The journey was long.', type: 'noun' },
-      ],
-      grammar: {
-        title: 'Prepositions of Movement',
-        explanation: 'Use prepositions (to, from, by, on) to describe travel and transportation.',
-        examples: ['I go to school by bus.', 'She came from Paris.', 'Travel on a train.'],
-        rules: [
-          'Go to + destination',
-          'Come from + origin',
-          'Travel by + transport method',
-        ],
-      },
-      exercises: [
-        {
-          id: 'ex1',
-          type: 'multiple-choice',
-          question: 'I travel to work ___ car.',
-          options: ['with', 'by', 'in', 'on'],
-          correctAnswer: 'by',
-          explanation: 'We use "by" when talking about methods of transportation.',
-        },
-        {
-          id: 'ex2',
-          type: 'fill-blank',
-          question: 'She goes ___ school every day.',
-          correctAnswer: 'to',
-          explanation: 'We use "to" to show movement toward a destination.',
-        },
-      ],
-      shadowingText: 'I am going to travel to London next month. I will go by plane. The flight is three hours. I need to buy a ticket and book a hotel.',
-    },
-    {
-      id: 'a2-6',
-      level: 'A2',
-      order: 6,
-      title: 'Hobbies and Interests',
-      objective: 'Talk about hobbies, interests, and free time activities',
-      vocabulary: [
-        { word: 'Hobby', translation: 'Pasatiempo', example: 'Reading is my hobby.', type: 'noun' },
-        { word: 'Enjoy', translation: 'Disfrutar', example: 'I enjoy playing guitar.', type: 'verb' },
-        { word: 'Free time', translation: 'Tiempo libre', example: 'What do you do in your free time?', type: 'phrase' },
-        { word: 'Interested', translation: 'Interesado', example: 'I am interested in art.', type: 'adjective' },
-        { word: 'Favorite', translation: 'Favorito', example: 'What is your favorite sport?', type: 'adjective' },
-      ],
-      grammar: {
-        title: 'Gerunds and Infinitives',
-        explanation: 'Some verbs are followed by gerunds (-ing), others by infinitives (to + verb).',
-        examples: ['I enjoy swimming.', 'I want to learn.', 'She likes reading.', 'He decided to go.'],
-        rules: [
-          'Enjoy, like, love + gerund',
-          'Want, need, decide + infinitive',
-          'Some verbs take both',
-        ],
-      },
-      exercises: [
-        {
-          id: 'ex1',
-          type: 'multiple-choice',
-          question: 'I enjoy ___ books.',
-          options: ['read', 'to read', 'reading', 'reads'],
-          correctAnswer: 'reading',
-          explanation: 'After "enjoy", we use a gerund (verb + -ing).',
-        },
-        {
-          id: 'ex2',
-          type: 'fill-blank',
-          question: 'She wants ___ Spanish. (learn)',
-          correctAnswer: 'to learn',
-          explanation: 'After "want", we use the infinitive (to + verb).',
-        },
-      ],
-      shadowingText: 'I love reading books in my free time. I also enjoy playing tennis and listening to music. My favorite hobby is photography. What do you like doing?',
-    },
-  ],
-  B1: B1_LESSONS,
-  B2: B2_LESSONS,
+  A2: generateA2Lessons(),
+  B1: generateB1Lessons(),
+  B2: generateB2Lessons(),
   C1: C1_LESSONS,
   C2: C2_LESSONS,
 }

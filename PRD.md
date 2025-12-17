@@ -43,11 +43,18 @@ Esta plataforma requiere gestión sofisticada de estado para el progreso del usu
 - **Success criteria**: Test adapts to user responses, accurately assigns level, results persist
 
 ### Level-Based Curriculum
-- **Functionality**: Seven levels (Beginner, A1, A2, B1, B2, C1, C2) each with sequential lessons
-- **Purpose**: Structures learning journey from basic to advanced proficiency
+- **Functionality**: Seven levels (Beginner, A1, A2, B1, B2, C1, C2) each with sequential lessons. **A2 now has 40 complete lessons, B1 has 50 lessons, and B2 has 60 lessons** following the detailed syllabus.
+- **Purpose**: Structures learning journey from basic to advanced proficiency with comprehensive coverage of grammar patterns and topics
 - **Trigger**: User selects current level from dashboard
 - **Progression**: Dashboard → Level overview → Lesson list → Individual lesson → Completion → Next lesson unlocked
 - **Success criteria**: Lessons unlock sequentially, completion tracked, level advancement requires finishing all lessons
+
+### Expanded Lesson Structure (New)
+- **Functionality**: Each lesson now follows a structured format with 15 vocabulary words, complete grammar explanations, 3-5 exercises, and shadowing text aligned with the official curriculum
+- **Purpose**: Provides comprehensive, consistent learning experience across all levels
+- **Trigger**: User opens any lesson
+- **Progression**: Vocabulary introduction → Grammar explanation → Practice exercises → Shadowing practice → Quiz
+- **Success criteria**: All A2 (40), B1 (50), and B2 (60) lessons are complete and accessible, lessons follow curriculum topics (C31-C180)
 
 ### Interactive Lessons
 - **Functionality**: Lecciones de múltiples secciones cubriendo vocabulario (con audio de pronunciación), gramática, comprensión y producción (instrucciones en español)
