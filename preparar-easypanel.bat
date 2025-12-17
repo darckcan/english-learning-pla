@@ -1,0 +1,64 @@
+@echo off
+echo 🚀 Preparando Nexus Fluent para EasyPanel...
+echo.
+
+REM Verificar que npm esté instalado
+where npm >nul 2>nul
+if %ERRORLEVEL% NEQ 0 (
+    echo ❌ Error: npm no está instalado
+    pause
+    exit /b 1
+)
+
+REM Instalar dependencias
+echo 📦 Instalando dependencias...
+call npm install
+if %ERRORLEVEL% NEQ 0 (
+    echo ❌ Error instalando dependencias
+    pause
+    exit /b 1
+)
+
+REM Compilar la aplicación
+echo 🔨 Compilando aplicación...
+call npm run build
+if %ERRORLEVEL% NEQ 0 (
+    echo ❌ Error compilando la aplicación
+    pause
+    exit /b 1
+)
+
+REM Verificar que dist/ existe
+if not exist "dist\" (
+    echo ❌ Error: La carpeta dist\ no fue creada
+    pause
+    exit /b 1
+)
+
+echo.
+echo ✅ ¡Compilación exitosa!
+echo.
+echo 📂 Archivos listos en la carpeta: dist\
+echo.
+echo 📋 OPCIONES PARA SUBIR A EASYPANEL:
+echo.
+echo Opción 1 - Subir carpeta dist\ completa:
+echo    1. Ve a la carpeta dist\
+echo    2. Selecciona TODOS los archivos dentro (index.html, assets\, etc.)
+echo    3. Súbelos a EasyPanel como archivos estáticos
+echo    4. Configura index.html como página principal
+echo.
+echo Opción 2 - Usar GitHub:
+echo    1. Sube todo el proyecto a GitHub
+echo    2. En EasyPanel conecta tu repo
+echo    3. Build Command: npm install ^&^& npm run build
+echo    4. Start Command: npx serve -s dist -l 3000
+echo.
+echo Opción 3 - Usar Docker:
+echo    1. En EasyPanel selecciona Docker
+echo    2. Dockerfile: Dockerfile.nginx
+echo    3. Port: 80
+echo.
+echo ⚠️  IMPORTANTE: No subas solo index.html, necesitas TODA la carpeta dist\
+echo.
+pause

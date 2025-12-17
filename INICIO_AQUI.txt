@@ -1,0 +1,142 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║   🌟 NEXUS FLUENT - GUÍA RÁPIDA PARA EASYPANEL 🌟            ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+⚠️  IMPORTANTE: Esta app NO puede funcionar en un solo archivo HTML
+    Es una aplicación React moderna que necesita compilación.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 GUÍAS DISPONIBLES:
+
+   1. LEEME_EASYPANEL.md ⭐ EMPIEZA AQUÍ
+      → Guía completa en español
+      → 3 métodos explicados
+      → Preguntas frecuentes
+
+   2. DEPLOY_EASYPANEL_SIMPLE.md
+      → Versión resumida técnica
+
+   3. EASYPANEL_DEPLOYMENT.md
+      → Documentación detallada original
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 MÉTODO 1: GITHUB + EASYPANEL (RECOMENDADO)
+
+   Paso 1: Sube tu código a GitHub
+   ────────────────────────────────
+   git init
+   git add .
+   git commit -m "Nexus Fluent"
+   git remote add origin https://github.com/TU_USUARIO/TU_REPO.git
+   git push -u origin main
+
+   Paso 2: Configura en EasyPanel
+   ───────────────────────────────
+   • Conecta tu repositorio de GitHub
+   • Build Command: npm install && npm run build
+   • Start Command: npx serve -s dist -l 3000
+   • Port: 3000
+   • ¡Deploy!
+
+   ✅ Ventajas:
+   • Más fácil
+   • Actualización automática
+   • Sin compilar localmente
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🐳 MÉTODO 2: DOCKER (ALTERNATIVA)
+
+   En EasyPanel:
+   ─────────────
+   • Servicio: Docker
+   • Dockerfile: Dockerfile.nginx
+   • Port: 80
+   • ¡Deploy!
+
+   ✅ Ventajas:
+   • Rápido
+   • Configuración automática
+   • Producción-ready
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 MÉTODO 3: BUILD LOCAL (ÚLTIMA OPCIÓN)
+
+   Windows:
+   ────────
+   Doble click en: crear-paquete-easypanel.bat
+
+   Mac/Linux:
+   ──────────
+   chmod +x crear-paquete-easypanel.sh
+   ./crear-paquete-easypanel.sh
+
+   O manualmente:
+   ──────────────
+   npm install
+   npm run build
+
+   Luego:
+   ──────
+   • Sube TODO el contenido de dist/ a EasyPanel
+   • NO subas solo index.html
+   • Configura SPA routing
+
+   ⚠️  Más complejo y manual
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🛠️  SCRIPTS ÚTILES:
+
+   preparar-easypanel.bat      (Windows)
+   preparar-easypanel.sh       (Mac/Linux)
+   crear-paquete-easypanel.bat (Windows)
+   crear-paquete-easypanel.sh  (Mac/Linux)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔐 CREDENCIALES DE SUPER ADMIN:
+
+   Usuario:    darckcan
+   Contraseña: M.ario123
+
+   ⚠️  CÁMBIALAS INMEDIATAMENTE EN PRODUCCIÓN
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ LO QUE NO FUNCIONARÁ:
+
+   • Subir solo index.html
+   • Subir código fuente sin compilar
+   • Intentar "combinar todo en un archivo"
+   • Usar CDNs y copiar código directamente
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 RECOMENDACIÓN:
+
+   👉 Usa GitHub + EasyPanel (Método 1)
+   👉 Es el más fácil y eficiente
+   👉 Lee LEEME_EASYPANEL.md para más detalles
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆘 ¿NECESITAS AYUDA?
+
+   1. Lee LEEME_EASYPANEL.md (guía completa)
+   2. Verifica los logs de EasyPanel
+   3. Abre consola del navegador (F12)
+   4. Confirma qué soporta tu EasyPanel:
+      • ¿GitHub?
+      • ¿Docker?
+      • ¿Build commands?
+      • ¿Solo archivos estáticos?
+
+╔═══════════════════════════════════════════════════════════════╗
+║                   ¡BUENA SUERTE! 🚀                           ║
+╚═══════════════════════════════════════════════════════════════╝
