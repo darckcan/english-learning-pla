@@ -14,6 +14,7 @@ import {
   Medal
 } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
+import NexusFluentLogo from './NexusFluentLogo'
 
 interface LandingPageProps {
   onGetStarted: () => void
@@ -72,13 +73,8 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
           <nav className="flex justify-between items-center mb-16">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
-                <GraduationCap size={28} weight="bold" className="text-white" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                Nexus Fluent
-              </span>
+            <div className="flex items-center">
+              <NexusFluentLogo size={220} />
             </div>
             <Button onClick={onGetStarted} variant="outline" size="lg" className="shadow-sm hover:shadow-md transition-all">
               Iniciar Sesión

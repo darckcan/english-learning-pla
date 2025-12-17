@@ -9,6 +9,7 @@ import { User } from '@/lib/types'
 import { GraduationCap, Eye, EyeSlash } from '@phosphor-icons/react'
 import { simpleHash, validateSuperAdmin, createSuperAdmin } from '@/lib/helpers'
 import { toast } from 'sonner'
+import NexusFluentLogo from './NexusFluentLogo'
 
 interface WelcomeScreenProps {
   onLogin: (user: User) => void
@@ -122,13 +123,8 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(120,119,198,0.1),transparent_50%),radial-gradient(circle_at_80%_80%,_rgba(255,122,122,0.1),transparent_50%)]" />
       
       <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-secondary shadow-lg mb-4">
-            <GraduationCap size={40} weight="bold" className="text-white" />
-          </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-2">
-            Nexus Fluent
-          </h1>
+        <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col items-center">
+          <NexusFluentLogo size={260} className="mb-2" />
           <p className="text-muted-foreground text-lg">Tu camino hacia la fluidez comienza aquí</p>
         </div>
 

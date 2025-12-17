@@ -13,6 +13,7 @@ import { Shield, SignOut, UserPlus, Trash, Lock, LockOpen, Users } from '@phosph
 import { toast } from 'sonner'
 import { LEVELS } from '@/lib/curriculum'
 import { formatDate, simpleHash } from '@/lib/helpers'
+import NexusFluentLogo from './NexusFluentLogo'
 
 interface SuperAdminDashboardProps {
   user: User
@@ -109,14 +110,18 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg">
-              <Shield size={24} weight="bold" className="text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">Panel Super Administrador</h1>
-              <p className="text-sm text-muted-foreground">{user.fullName || user.username}</p>
+        <div className="container mx-auto px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <NexusFluentLogo size={180} />
+            <div className="border-l border-border h-10" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg">
+                <Shield size={24} weight="bold" className="text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold">Super Admin</h1>
+                <p className="text-sm text-muted-foreground">{user.fullName || user.username}</p>
+              </div>
             </div>
           </div>
           <Button variant="outline" onClick={onLogout}>

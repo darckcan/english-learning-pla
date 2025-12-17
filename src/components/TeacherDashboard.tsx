@@ -12,6 +12,7 @@ import {
 import { Badge } from './ui/badge'
 import { SignOut, Users, ChartBar, Flame, BookOpen } from '@phosphor-icons/react'
 import { useKV } from '@github/spark/hooks'
+import NexusFluentLogo from './NexusFluentLogo'
 
 interface TeacherDashboardProps {
   user: User
@@ -67,17 +68,21 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <header className="bg-card border-b border-border sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-6 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-lg font-bold text-primary">
-                  {user.username.charAt(0).toUpperCase()}
-                </span>
-              </div>
-              <div>
-                <h2 className="font-semibold text-foreground">{user.username}</h2>
-                <p className="text-sm text-muted-foreground">Teacher Dashboard</p>
+            <div className="flex items-center gap-6">
+              <NexusFluentLogo size={180} />
+              <div className="border-l border-border h-10" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-lg font-bold text-primary">
+                    {user.username.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <h2 className="font-semibold text-foreground">{user.username}</h2>
+                  <p className="text-sm text-muted-foreground">Panel del Profesor</p>
+                </div>
               </div>
             </div>
 
