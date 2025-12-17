@@ -264,7 +264,7 @@ export default function LessonView({
                   </div>
                   <div className="flex flex-col gap-1 shrink-0">
                     <PronunciationButton text={item.word} />
-                    <PronunciationButton text={item.word} slow variant="ghost" size="icon" />
+                    <PronunciationButton text={item.example} variant="ghost" size="icon" />
                   </div>
                 </div>
               </CardContent>
