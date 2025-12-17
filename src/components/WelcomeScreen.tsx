@@ -201,29 +201,29 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-secondary/10">
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 md:p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-secondary/10">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(120,119,198,0.1),transparent_50%),radial-gradient(circle_at_80%_80%,_rgba(255,122,122,0.1),transparent_50%)]" />
       
       <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col items-center">
-          <NexusFluentLogo size={220} className="mb-2 scale-90 sm:scale-100" />
-          <p className="text-muted-foreground text-base sm:text-lg px-4">Tu camino hacia la fluidez comienza aquí</p>
+        <div className="text-center mb-4 sm:mb-6 md:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col items-center">
+          <NexusFluentLogo size={180} className="mb-1 sm:mb-2 scale-75 sm:scale-90 md:scale-100" />
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg px-3">Tu camino hacia la fluidez comienza aquí</p>
         </div>
 
         <Card className="shadow-2xl border-2 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-150">
           <Tabs defaultValue="login" className="w-full">
-            <CardHeader className="px-4 sm:px-6">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login" className="text-sm sm:text-base">Iniciar Sesión</TabsTrigger>
-                <TabsTrigger value="register" className="text-sm sm:text-base">Registrarse</TabsTrigger>
+            <CardHeader className="px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-6">
+              <TabsList className="grid w-full grid-cols-2 h-9 sm:h-10">
+                <TabsTrigger value="login" className="text-xs sm:text-sm md:text-base">Iniciar Sesión</TabsTrigger>
+                <TabsTrigger value="register" className="text-xs sm:text-sm md:text-base">Registrarse</TabsTrigger>
               </TabsList>
             </CardHeader>
 
-            <CardContent className="px-4 sm:px-6">
+            <CardContent className="px-3 pb-3 sm:px-4 sm:pb-4 md:px-6 md:pb-6">
               <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-username">Usuario</Label>
+                <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="login-username" className="text-xs sm:text-sm">Usuario</Label>
                     <Input
                       id="login-username"
                       type="text"
@@ -231,11 +231,12 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
+                      className="text-sm sm:text-base h-9 sm:h-10"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password">Contraseña</Label>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="login-password" className="text-xs sm:text-sm">Contraseña</Label>
                     <div className="relative">
                       <Input
                         id="login-password"
@@ -244,28 +245,29 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="pr-10"
+                        className="pr-9 sm:pr-10 text-sm sm:text-base h-9 sm:h-10"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                       >
-                        {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+                        {showPassword ? <EyeSlash size={18} className="sm:hidden" /> : <Eye size={18} className="sm:hidden" />}
+                        {showPassword ? <EyeSlash size={20} className="hidden sm:inline" /> : <Eye size={20} className="hidden sm:inline" />}
                       </button>
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg">
+                  <Button type="submit" className="w-full text-sm sm:text-base h-9 sm:h-10 md:h-11" size="lg">
                     Entrar
                   </Button>
                 </form>
               </TabsContent>
 
               <TabsContent value="register">
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="register-fullname">Nombre Completo *</Label>
+                <form onSubmit={handleRegister} className="space-y-3 sm:space-y-4">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="register-fullname" className="text-xs sm:text-sm">Nombre Completo *</Label>
                     <Input
                       id="register-fullname"
                       type="text"
@@ -273,11 +275,12 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       required
+                      className="text-sm sm:text-base h-9 sm:h-10"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="register-email">Correo Electrónico *</Label>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="register-email" className="text-xs sm:text-sm">Correo Electrónico *</Label>
                     <Input
                       id="register-email"
                       type="email"
@@ -285,11 +288,12 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      className="text-sm sm:text-base h-9 sm:h-10"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="register-username">Usuario *</Label>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="register-username" className="text-xs sm:text-sm">Usuario *</Label>
                     <Input
                       id="register-username"
                       type="text"
@@ -297,11 +301,12 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
+                      className="text-sm sm:text-base h-9 sm:h-10"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="register-password">Contraseña *</Label>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="register-password" className="text-xs sm:text-sm">Contraseña *</Label>
                     <div className="relative">
                       <Input
                         id="register-password"
@@ -310,14 +315,15 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="pr-10"
+                        className="pr-9 sm:pr-10 text-sm sm:text-base h-9 sm:h-10"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                       >
-                        {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+                        {showPassword ? <EyeSlash size={18} className="sm:hidden" /> : <Eye size={18} className="sm:hidden" />}
+                        {showPassword ? <EyeSlash size={20} className="hidden sm:inline" /> : <Eye size={20} className="hidden sm:inline" />}
                       </button>
                     </div>
                   </div>
@@ -327,8 +333,8 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
                     onThemeChange={setSelectedTheme}
                   />
 
-                  <div className="pt-2">
-                    <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md space-y-1">
+                  <div className="pt-1 sm:pt-2">
+                    <div className="text-[10px] sm:text-xs text-muted-foreground bg-muted/50 p-2 sm:p-2.5 md:p-3 rounded-md space-y-0.5 sm:space-y-1">
                       <p className="font-semibold text-foreground">🎉 Incluye:</p>
                       <p>• 15 días de prueba gratuita</p>
                       <p>• Acceso completo a 270+ lecciones</p>
@@ -336,7 +342,7 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg">
+                  <Button type="submit" className="w-full text-sm sm:text-base h-9 sm:h-10 md:h-11" size="lg">
                     Crear Cuenta Gratis
                   </Button>
                 </form>

@@ -103,101 +103,109 @@ export default function Dashboard({
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <header className="bg-card border-b border-border sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 sm:gap-6 min-w-0 flex-1">
-              <NexusFluentLogo size={140} className="scale-75 sm:scale-100 flex-shrink-0" />
-              <Separator orientation="vertical" className="h-8 hidden sm:block" />
-              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <span className="text-base sm:text-lg font-bold text-primary">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 py-2 sm:py-3">
+          <div className="flex items-center justify-between gap-1.5 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 md:gap-6 min-w-0 flex-1">
+              <NexusFluentLogo size={120} className="scale-[0.6] sm:scale-75 md:scale-100 flex-shrink-0 origin-left" />
+              <Separator orientation="vertical" className="h-6 sm:h-8 hidden md:block" />
+              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 min-w-0">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm sm:text-base md:text-lg font-bold text-primary">
                     {user.username.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="min-w-0 hidden sm:block">
-                  <h2 className="font-semibold text-foreground truncate text-sm sm:text-base">{user.fullName || user.username}</h2>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{user.currentLevel}</p>
+                  <h2 className="font-semibold text-foreground truncate text-xs sm:text-sm md:text-base">{user.fullName || user.username}</h2>
+                  <p className="text-xs text-muted-foreground hidden md:block">{user.currentLevel}</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-6 flex-shrink-0">
-              <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 md:gap-6 flex-shrink-0">
+              <div className="flex items-center gap-0.5 sm:gap-1">
                 <div
                   className={cn(
-                    'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-accent/10',
+                    'flex items-center gap-0.5 sm:gap-1 md:gap-2 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 md:py-1.5 rounded-full bg-accent/10',
                     streakAtRisk && 'animate-streak-pulse'
                   )}
                 >
-                  <Flame size={16} weight="fill" className="text-accent sm:hidden" />
-                  <Flame size={20} weight="fill" className="text-accent hidden sm:inline" />
-                  <span className="font-semibold text-foreground text-sm sm:text-base">{progress.streak}</span>
+                  <Flame size={14} weight="fill" className="text-accent sm:hidden" />
+                  <Flame size={16} weight="fill" className="text-accent hidden sm:inline md:hidden" />
+                  <Flame size={20} weight="fill" className="text-accent hidden md:inline" />
+                  <span className="font-semibold text-foreground text-xs sm:text-sm md:text-base">{progress.streak}</span>
                 </div>
                 {streakAtRisk && (
-                  <span className="text-xs text-destructive font-medium hidden sm:inline">¡En riesgo!</span>
+                  <span className="text-xs text-destructive font-medium hidden lg:inline">¡En riesgo!</span>
                 )}
               </div>
 
-              <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-secondary/20">
-                <Trophy size={16} weight="fill" className="text-secondary sm:hidden" />
-                <Trophy size={20} weight="fill" className="text-secondary hidden sm:inline" />
-                <span className="font-semibold text-foreground text-sm sm:text-base">{progress.points}</span>
+              <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 md:py-1.5 rounded-full bg-secondary/20">
+                <Trophy size={14} weight="fill" className="text-secondary sm:hidden" />
+                <Trophy size={16} weight="fill" className="text-secondary hidden sm:inline md:hidden" />
+                <Trophy size={20} weight="fill" className="text-secondary hidden md:inline" />
+                <span className="font-semibold text-foreground text-xs sm:text-sm md:text-base">{progress.points}</span>
               </div>
 
-              <Button variant="ghost" size="icon" onClick={onLogout} className="h-8 w-8 sm:h-10 sm:w-10">
-                <SignOut size={16} className="sm:hidden" />
-                <SignOut size={20} className="hidden sm:inline" />
+              <Button variant="ghost" size="icon" onClick={onLogout} className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10">
+                <SignOut size={14} className="sm:hidden" />
+                <SignOut size={16} className="hidden sm:inline md:hidden" />
+                <SignOut size={20} className="hidden md:inline" />
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="mb-6">
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+        <div className="mb-4 sm:mb-6">
           <MembershipExpiryAlert user={user} />
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl mb-6 sm:mb-8">
-            <TabsTrigger value="lessons" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              <House size={16} className="sm:hidden" />
-              <House size={18} className="hidden sm:inline" />
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl mb-4 sm:mb-6 md:mb-8 h-9 sm:h-10">
+            <TabsTrigger value="lessons" className="flex items-center gap-0.5 sm:gap-1 md:gap-2 text-[10px] sm:text-xs md:text-sm px-1 sm:px-2">
+              <House size={14} className="sm:hidden" />
+              <House size={16} className="hidden sm:inline md:hidden" />
+              <House size={18} className="hidden md:inline" />
+              <span className="hidden xs:inline sm:hidden">Clases</span>
               <span className="hidden sm:inline">Lecciones</span>
-              <span className="sm:hidden">Clases</span>
             </TabsTrigger>
-            <TabsTrigger value="progress" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              <ChartBar size={16} className="sm:hidden" />
-              <ChartBar size={18} className="hidden sm:inline" />
+            <TabsTrigger value="progress" className="flex items-center gap-0.5 sm:gap-1 md:gap-2 text-[10px] sm:text-xs md:text-sm px-1 sm:px-2">
+              <ChartBar size={14} className="sm:hidden" />
+              <ChartBar size={16} className="hidden sm:inline md:hidden" />
+              <ChartBar size={18} className="hidden md:inline" />
               <span>Progreso</span>
             </TabsTrigger>
-            <TabsTrigger value="achievements" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              <Trophy size={16} className="sm:hidden" />
-              <Trophy size={18} className="hidden sm:inline" />
+            <TabsTrigger value="achievements" className="flex items-center gap-0.5 sm:gap-1 md:gap-2 text-[10px] sm:text-xs md:text-sm px-1 sm:px-2">
+              <Trophy size={14} className="sm:hidden" />
+              <Trophy size={16} className="hidden sm:inline md:hidden" />
+              <Trophy size={18} className="hidden md:inline" />
               <span>Logros</span>
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              <Palette size={16} className="sm:hidden" />
-              <Palette size={18} className="hidden sm:inline" />
+            <TabsTrigger value="settings" className="flex items-center gap-0.5 sm:gap-1 md:gap-2 text-[10px] sm:text-xs md:text-sm px-1 sm:px-2">
+              <Palette size={14} className="sm:hidden" />
+              <Palette size={16} className="hidden sm:inline md:hidden" />
+              <Palette size={18} className="hidden md:inline" />
               <span className="hidden sm:inline">Config</span>
               <span className="sm:hidden">⚙️</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="lessons" className="space-y-6">
-            <div className="grid md:grid-cols-[1fr_auto] gap-6">
+          <TabsContent value="lessons" className="space-y-4 sm:space-y-6">
+            <div className="grid md:grid-cols-[1fr_auto] gap-4 sm:gap-6">
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BookOpen size={24} />
+                <CardHeader className="px-3 py-3 sm:px-6 sm:py-6">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <BookOpen size={20} className="sm:hidden" />
+                    <BookOpen size={24} className="hidden sm:inline" />
                     Selecciona tu Nivel
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
                     Elige un nivel para ver y completar sus lecciones
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                <CardContent className="px-3 pb-3 sm:px-6 sm:pb-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
                     {LEVELS.map((level) => {
                       const levelProgress = calculateLevelProgress(progress, level)
                       const locked = isLevelLocked(unlockedLevels, level)
@@ -213,17 +221,20 @@ export default function Dashboard({
                             }
                           }}
                           className={cn(
-                            'h-auto flex-col gap-2 py-4 relative',
+                            'h-auto flex-col gap-1.5 sm:gap-2 py-2.5 sm:py-4 relative text-xs sm:text-sm',
                             locked && 'opacity-50 cursor-not-allowed'
                           )}
                           disabled={locked}
                         >
                           {locked && (
-                            <Lock size={16} className="absolute top-2 right-2 text-muted-foreground" />
+                            <Lock size={12} className="absolute top-1.5 right-1.5 text-muted-foreground sm:hidden" />
+                          )}
+                          {locked && (
+                            <Lock size={16} className="absolute top-2 right-2 text-muted-foreground hidden sm:inline" />
                           )}
                           <span className="font-semibold">{level}</span>
-                          <Progress value={locked ? 0 : levelProgress} className="h-1.5 w-full" />
-                          <span className="text-xs opacity-80">{locked ? 'Bloqueado' : `${levelProgress}%`}</span>
+                          <Progress value={locked ? 0 : levelProgress} className="h-1 sm:h-1.5 w-full" />
+                          <span className="text-[10px] sm:text-xs opacity-80">{locked ? 'Bloqueado' : `${levelProgress}%`}</span>
                         </Button>
                       )
                     })}
@@ -232,36 +243,36 @@ export default function Dashboard({
               </Card>
 
               <Card className="md:w-64">
-                <CardHeader>
-                  <CardTitle className="text-lg">Accesos</CardTitle>
-                  <CardDescription className="text-xs">
+                <CardHeader className="px-3 py-3 sm:px-6 sm:py-6">
+                  <CardTitle className="text-sm sm:text-base md:text-lg">Accesos</CardTitle>
+                  <CardDescription className="text-[10px] sm:text-xs">
                     Práctica y membresías
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-2 sm:space-y-3 px-3 pb-3 sm:px-6 sm:pb-6">
                   <Button 
                     onClick={handleUpgradeMembership} 
                     variant="default" 
-                    className="w-full justify-start bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
-                    size="lg"
+                    className="w-full justify-start bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 h-auto py-2.5 sm:py-3"
                   >
-                    <Trophy size={20} className="mr-3" />
-                    <div className="text-left">
-                      <div className="font-semibold">Membresías</div>
-                      <div className="text-xs opacity-90">Ver planes</div>
+                    <Trophy size={18} className="mr-2 sm:hidden flex-shrink-0" />
+                    <Trophy size={20} className="mr-3 hidden sm:inline flex-shrink-0" />
+                    <div className="text-left min-w-0">
+                      <div className="font-semibold text-xs sm:text-sm">Membresías</div>
+                      <div className="text-[10px] sm:text-xs opacity-90">Ver planes</div>
                     </div>
                   </Button>
                   
                   <Button 
                     onClick={onVocabularyPractice} 
                     variant="secondary" 
-                    className="w-full justify-start"
-                    size="lg"
+                    className="w-full justify-start h-auto py-2.5 sm:py-3"
                   >
-                    <BookOpen size={20} className="mr-3" />
-                    <div className="text-left">
-                      <div className="font-semibold">Vocabulario</div>
-                      <div className="text-xs opacity-80">Repasa palabras</div>
+                    <BookOpen size={18} className="mr-2 sm:hidden flex-shrink-0" />
+                    <BookOpen size={20} className="mr-3 hidden sm:inline flex-shrink-0" />
+                    <div className="text-left min-w-0">
+                      <div className="font-semibold text-xs sm:text-sm">Vocabulario</div>
+                      <div className="text-[10px] sm:text-xs opacity-80">Repasa palabras</div>
                     </div>
                   </Button>
                 </CardContent>
@@ -269,20 +280,20 @@ export default function Dashboard({
             </div>
 
             <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>{LEVEL_INFO[selectedLevel].title}</CardTitle>
-                    <CardDescription>{LEVEL_INFO[selectedLevel].description}</CardDescription>
+              <CardHeader className="px-3 py-3 sm:px-6 sm:py-6">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <CardTitle className="text-base sm:text-lg md:text-xl">{LEVEL_INFO[selectedLevel].title}</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">{LEVEL_INFO[selectedLevel].description}</CardDescription>
                   </div>
-                  <Badge variant="secondary" className="text-base px-4 py-2">
-                    {currentLevelProgress}% Completado
+                  <Badge variant="secondary" className="text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 flex-shrink-0">
+                    {currentLevelProgress}%
                   </Badge>
                 </div>
-                <Progress value={currentLevelProgress} className="mt-4" />
+                <Progress value={currentLevelProgress} className="mt-3 sm:mt-4" />
               </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
+              <CardContent className="px-3 pb-3 sm:px-6 sm:pb-6">
+                <div className="grid gap-3 sm:gap-4">
                   {levelLessons.map((lesson) => {
                     const completedLessons = progress.completedLessons || []
                     const isCompleted = completedLessons.includes(lesson.id)
@@ -298,11 +309,11 @@ export default function Dashboard({
                           !isUnlocked && 'opacity-50'
                         )}
                       >
-                        <CardContent className="flex items-center justify-between p-4">
-                          <div className="flex items-center gap-4 flex-1">
+                        <CardContent className="flex items-center justify-between p-2.5 sm:p-3 md:p-4 gap-2">
+                          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
                             <div
                               className={cn(
-                                'w-12 h-12 rounded-full flex items-center justify-center',
+                                'w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0',
                                 isCompleted
                                   ? 'bg-success/20'
                                   : isUnlocked
@@ -311,19 +322,33 @@ export default function Dashboard({
                               )}
                             >
                               {isCompleted ? (
-                                <CheckCircle size={24} weight="fill" className="text-success" />
+                                <CheckCircle size={18} weight="fill" className="text-success sm:hidden" />
+                              ) : null}
+                              {isCompleted ? (
+                                <CheckCircle size={20} weight="fill" className="text-success hidden sm:inline md:hidden" />
+                              ) : null}
+                              {isCompleted ? (
+                                <CheckCircle size={24} weight="fill" className="text-success hidden md:inline" />
                               ) : isUnlocked ? (
-                                <BookOpen size={24} className="text-primary" />
+                                <>
+                                  <BookOpen size={18} className="text-primary sm:hidden" />
+                                  <BookOpen size={20} className="text-primary hidden sm:inline md:hidden" />
+                                  <BookOpen size={24} className="text-primary hidden md:inline" />
+                                </>
                               ) : (
-                                <Lock size={24} className="text-muted-foreground" />
+                                <>
+                                  <Lock size={18} className="text-muted-foreground sm:hidden" />
+                                  <Lock size={20} className="text-muted-foreground hidden sm:inline md:hidden" />
+                                  <Lock size={24} className="text-muted-foreground hidden md:inline" />
+                                </>
                               )}
                             </div>
 
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-foreground">{lesson.title}</h3>
-                              <p className="text-sm text-muted-foreground">{lesson.objective}</p>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-foreground text-xs sm:text-sm md:text-base truncate">{lesson.title}</h3>
+                              <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">{lesson.objective}</p>
                               {score && (
-                                <p className="text-xs text-success font-medium mt-1">
+                                <p className="text-[10px] sm:text-xs text-success font-medium mt-0.5 sm:mt-1">
                                   Score: {score.score}/{score.maxScore} (
                                   {Math.round((score.score / score.maxScore) * 100)}%)
                                 </p>
@@ -335,6 +360,8 @@ export default function Dashboard({
                             onClick={() => onStartLesson(lesson.id)}
                             disabled={!isUnlocked}
                             variant={isCompleted ? 'outline' : 'default'}
+                            size="sm"
+                            className="text-xs sm:text-sm flex-shrink-0"
                           >
                             {isCompleted ? 'Repasar' : 'Comenzar'}
                           </Button>

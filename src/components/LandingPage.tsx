@@ -68,80 +68,83 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
       <div className="relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(120,119,198,0.15),transparent_50%),radial-gradient(circle_at_70%_60%,_rgba(255,122,122,0.12),transparent_60%),radial-gradient(circle_at_50%_80%,_rgba(255,185,94,0.1),transparent_50%)]" />
         
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 left-0 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float hidden md:block" />
+        <div className="absolute bottom-20 left-0 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-float hidden md:block" style={{ animationDelay: '1s' }} />
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-          <nav className="flex justify-between items-center mb-12 sm:mb-16">
-            <div className="flex items-center">
-              <NexusFluentLogo size={180} className="scale-75 sm:scale-100" />
+        <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 md:py-12">
+          <nav className="flex justify-between items-center mb-8 sm:mb-12 md:mb-16">
+            <div className="flex items-center min-w-0">
+              <NexusFluentLogo size={140} className="scale-[0.65] sm:scale-75 md:scale-100 origin-left" />
             </div>
-            <Button onClick={onGetStarted} variant="outline" size="default" className="shadow-sm hover:shadow-md transition-all text-sm sm:text-base">
+            <Button onClick={onGetStarted} variant="outline" size="sm" className="shadow-sm hover:shadow-md transition-all text-xs sm:text-sm flex-shrink-0 px-3 sm:px-4">
               Iniciar Sesión
             </Button>
           </nav>
 
-          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center mb-16 sm:mb-24">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center mb-12 sm:mb-16 md:mb-24">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="space-y-4 sm:space-y-6"
+              className="space-y-3 sm:space-y-4 md:space-y-6"
             >
-              <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 text-sm sm:text-base px-3 sm:px-4 py-1 sm:py-1.5">
-                <Fire size={16} weight="fill" className="mr-1 sm:hidden" />
-                <Fire size={18} weight="fill" className="mr-1 hidden sm:inline" />
+              <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 text-xs sm:text-sm px-2.5 sm:px-3 md:px-4 py-1">
+                <Fire size={14} weight="fill" className="mr-1 sm:hidden" />
+                <Fire size={16} weight="fill" className="mr-1 hidden sm:inline" />
                 Plataforma de Aprendizaje de Inglés
               </Badge>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                 Domina el inglés
-                <span className="block bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mt-2">
+                <span className="block bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mt-1 sm:mt-2">
                   a tu propio ritmo
                 </span>
               </h1>
               
-              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-xl">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-xl">
                 Una plataforma integral que te guía desde los fundamentos hasta la maestría completa del idioma inglés, 
                 con lecciones estructuradas, ejercicios interactivos y seguimiento personalizado.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 md:gap-4 pt-3 sm:pt-4">
                 <Button 
                   onClick={onGetStarted}
                   size="lg" 
-                  className="text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                  className="text-sm sm:text-base md:text-lg h-11 sm:h-12 md:h-14 px-5 sm:px-6 md:px-8 shadow-lg hover:shadow-xl transition-all hover:scale-105"
                 >
-                  <Lightning size={20} weight="fill" className="mr-2 sm:hidden" />
-                  <Lightning size={24} weight="fill" className="mr-2 hidden sm:inline" />
+                  <Lightning size={18} weight="fill" className="mr-2 sm:hidden" />
+                  <Lightning size={20} weight="fill" className="mr-2 hidden sm:inline md:hidden" />
+                  <Lightning size={24} weight="fill" className="mr-2 hidden md:inline" />
                   Comenzar Gratis
                 </Button>
                 <Button 
                   variant="outline" 
                   size="lg"
-                  className="text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 shadow-sm hover:shadow-md transition-all"
+                  className="text-sm sm:text-base md:text-lg h-11 sm:h-12 md:h-14 px-5 sm:px-6 md:px-8 shadow-sm hover:shadow-md transition-all"
                   onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                 >
-                  <BookOpen size={20} className="mr-2 sm:hidden" />
-                  <BookOpen size={24} className="mr-2 hidden sm:inline" />
+                  <BookOpen size={18} className="mr-2 sm:hidden" />
+                  <BookOpen size={20} className="mr-2 hidden sm:inline md:hidden" />
+                  <BookOpen size={24} className="mr-2 hidden md:inline" />
                   Explorar Niveles
                 </Button>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 pt-4 sm:pt-6 text-xs sm:text-sm">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 md:gap-8 pt-3 sm:pt-4 md:pt-6 text-xs sm:text-sm">
                 <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-background" />
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-secondary to-accent border-2 border-background" />
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-accent to-primary border-2 border-background" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-background" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-secondary to-accent border-2 border-background" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-accent to-primary border-2 border-background" />
                   </div>
                   <span className="text-muted-foreground">
                     <strong className="text-foreground">1000+</strong> estudiantes activos
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Medal size={18} weight="fill" className="text-accent sm:hidden" />
-                  <Medal size={20} weight="fill" className="text-accent hidden sm:inline" />
+                  <Medal size={16} weight="fill" className="text-accent sm:hidden" />
+                  <Medal size={18} weight="fill" className="text-accent hidden sm:inline md:hidden" />
+                  <Medal size={20} weight="fill" className="text-accent hidden md:inline" />
                   <span><strong className="text-foreground">270+</strong> lecciones</span>
                 </div>
               </div>
@@ -213,30 +216,29 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             </motion.div>
           </div>
 
-          <div id="features" className="mb-16 sm:mb-24">
+          <div id="features" className="mb-12 sm:mb-16 md:mb-24">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="text-center mb-8 sm:mb-12"
+              className="text-center mb-6 sm:mb-8 md:mb-12"
             >
-              <Badge className="bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/20 mb-3 sm:mb-4 text-xs sm:text-sm">
+              <Badge className="bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/20 mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm">
                 Características
               </Badge>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 px-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 px-3">
                 Todo lo que necesitas para
                 <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   aprender inglés
                 </span>
               </h2>
-              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-3">
                 Una plataforma completa con herramientas diseñadas científicamente para acelerar tu aprendizaje
               </p>
             </motion.div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {features.map((feature, index) => (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">{features.map((feature, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
@@ -245,13 +247,14 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
                   viewport={{ once: true }}
                 >
                   <Card className="h-full hover:shadow-xl transition-all hover:-translate-y-1 border-2 hover:border-primary/20">
-                    <CardContent className="p-4 sm:p-6 space-y-2 sm:space-y-3">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                        <feature.icon size={20} weight="bold" className="text-primary sm:hidden" />
-                        <feature.icon size={24} weight="bold" className="text-primary hidden sm:inline" />
+                    <CardContent className="p-3.5 sm:p-4 md:p-6 space-y-2 sm:space-y-2.5 md:space-y-3">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                        <feature.icon size={18} weight="bold" className="text-primary sm:hidden" />
+                        <feature.icon size={20} weight="bold" className="text-primary hidden sm:inline md:hidden" />
+                        <feature.icon size={24} weight="bold" className="text-primary hidden md:inline" />
                       </div>
-                      <h3 className="text-lg sm:text-xl font-bold">{feature.title}</h3>
-                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{feature.description}</p>
+                      <h3 className="text-base sm:text-lg md:text-xl font-bold">{feature.title}</h3>
+                      <p className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed">{feature.description}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -264,19 +267,19 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="mb-16 sm:mb-24"
+            className="mb-12 sm:mb-16 md:mb-24"
           >
-            <div className="text-center mb-8 sm:mb-12">
-              <Badge className="bg-accent/10 text-accent border-accent/20 hover:bg-accent/20 mb-3 sm:mb-4 text-xs sm:text-sm">
+            <div className="text-center mb-6 sm:mb-8 md:mb-12">
+              <Badge className="bg-accent/10 text-accent border-accent/20 hover:bg-accent/20 mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm">
                 7 Niveles de Dominio
               </Badge>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 px-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 px-3">
                 Desde cero hasta la
                 <span className="block bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
                   maestría completa
                 </span>
               </h2>
-              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-3">
                 Progresa a través de niveles estructurados basados en el Marco Común Europeo de Referencia
               </p>
             </div>
@@ -284,7 +287,7 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             <div className="relative max-w-4xl mx-auto">
               <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-blue-500 to-pink-500 rounded-full -translate-y-1/2 hidden lg:block" />
               
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 md:gap-4">
                 {levels.map((level, index) => (
                   <motion.div
                     key={index}
@@ -295,12 +298,12 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
                     className="relative"
                   >
                     <Card className="hover:shadow-xl transition-all hover:-translate-y-2 border-2 hover:border-primary/30 bg-card/80 backdrop-blur">
-                      <CardContent className="p-3 sm:p-4 text-center space-y-1 sm:space-y-2">
-                        <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full ${level.color} mx-auto flex items-center justify-center shadow-lg`}>
-                          <span className="text-white font-bold text-base sm:text-lg">{level.name.charAt(0)}</span>
+                      <CardContent className="p-2.5 sm:p-3 md:p-4 text-center space-y-1 sm:space-y-1.5 md:space-y-2">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full ${level.color} mx-auto flex items-center justify-center shadow-lg`}>
+                          <span className="text-white font-bold text-sm sm:text-base md:text-lg">{level.name.charAt(0)}</span>
                         </div>
-                        <h3 className="font-bold text-sm sm:text-base">{level.name}</h3>
-                        <p className="text-xs text-muted-foreground">{level.description}</p>
+                        <h3 className="font-bold text-xs sm:text-sm md:text-base">{level.name}</h3>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">{level.description}</p>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -314,24 +317,24 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="mb-16 sm:mb-24"
+            className="mb-12 sm:mb-16 md:mb-24"
           >
             <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-2 border-primary/20 shadow-2xl overflow-hidden">
-              <CardContent className="p-6 sm:p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-                  <div className="space-y-4 sm:space-y-6">
+              <CardContent className="p-4 sm:p-6 md:p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
+                  <div className="space-y-3 sm:space-y-4 md:space-y-6">
                     <Badge className="bg-success/10 text-success border-success/20 text-xs sm:text-sm">
                       Todo Incluido
                     </Badge>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
                       ¿Qué incluye la plataforma?
                     </h2>
-                    <p className="text-base sm:text-lg text-muted-foreground">
+                    <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
                       Acceso completo a todas las herramientas y recursos que necesitas para alcanzar la fluidez en inglés.
                     </p>
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 md:gap-3">
                     {benefits.map((benefit, index) => (
                       <motion.div
                         key={index}
@@ -339,13 +342,14 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.05 }}
                         viewport={{ once: true }}
-                        className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-card rounded-lg shadow-sm"
+                        className="flex items-center gap-1.5 sm:gap-2 md:gap-3 p-2 sm:p-2.5 md:p-3 bg-card rounded-lg shadow-sm"
                       >
-                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0">
-                          <Check size={12} weight="bold" className="text-success sm:hidden" />
-                          <Check size={14} weight="bold" className="text-success hidden sm:inline" />
+                        <div className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0">
+                          <Check size={10} weight="bold" className="text-success sm:hidden" />
+                          <Check size={12} weight="bold" className="text-success hidden sm:inline md:hidden" />
+                          <Check size={14} weight="bold" className="text-success hidden md:inline" />
                         </div>
-                        <span className="font-medium text-sm sm:text-base">{benefit}</span>
+                        <span className="font-medium text-xs sm:text-sm md:text-base">{benefit}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -359,25 +363,26 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-center space-y-4 sm:space-y-6 py-8 sm:py-12"
+            className="text-center space-y-3 sm:space-y-4 md:space-y-6 py-6 sm:py-8 md:py-12"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-3">
               ¿Listo para empezar tu
-              <span className="block bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mt-2">
+              <span className="block bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mt-1 sm:mt-2">
                 viaje hacia la fluidez?
               </span>
             </h2>
-            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-3">
               Únete a miles de estudiantes que están transformando su futuro dominando el inglés.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-2 sm:pt-4 px-4">
+            <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 md:gap-4 justify-center pt-1 sm:pt-2 md:pt-4 px-3">
               <Button 
                 onClick={onGetStarted}
                 size="lg" 
-                className="text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                className="text-sm sm:text-base md:text-lg h-11 sm:h-12 md:h-14 px-5 sm:px-6 md:px-8 shadow-lg hover:shadow-xl transition-all hover:scale-105"
               >
-                <Users size={20} weight="bold" className="mr-2 sm:hidden" />
-                <Users size={24} weight="bold" className="mr-2 hidden sm:inline" />
+                <Users size={18} weight="bold" className="mr-2 sm:hidden" />
+                <Users size={20} weight="bold" className="mr-2 hidden sm:inline md:hidden" />
+                <Users size={24} weight="bold" className="mr-2 hidden md:inline" />
                 Crear Cuenta Gratis
               </Button>
             </div>
@@ -385,17 +390,18 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
         </div>
       </div>
 
-      <footer className="relative z-10 border-t bg-card/50 backdrop-blur-sm mt-16 sm:mt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <GraduationCap size={16} weight="bold" className="text-white sm:hidden" />
-                <GraduationCap size={20} weight="bold" className="text-white hidden sm:inline" />
+      <footer className="relative z-10 border-t bg-card/50 backdrop-blur-sm mt-12 sm:mt-16 md:mt-24">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2 sm:gap-3 md:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <GraduationCap size={14} weight="bold" className="text-white sm:hidden" />
+                <GraduationCap size={16} weight="bold" className="text-white hidden sm:inline md:hidden" />
+                <GraduationCap size={20} weight="bold" className="text-white hidden md:inline" />
               </div>
-              <span className="font-bold text-base sm:text-lg">Nexus Fluent</span>
+              <span className="font-bold text-sm sm:text-base md:text-lg">Nexus Fluent</span>
             </div>
-            <p className="text-muted-foreground text-xs sm:text-sm text-center">
+            <p className="text-muted-foreground text-[10px] sm:text-xs md:text-sm text-center">
               © 2024 Nexus Fluent. Plataforma de aprendizaje de inglés.
             </p>
           </div>
