@@ -14,6 +14,7 @@ import { LEVELS } from './lib/curriculum'
 import { applyTheme } from './lib/themes'
 import { useEmailNotifications } from './hooks/use-email-notifications'
 import { useStripePaymentVerification } from './hooks/use-stripe-payment'
+import { AnimatePresence, motion } from 'framer-motion'
 
 type AppView = 'landing' | 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary'
 
@@ -104,46 +105,171 @@ function App() {
     setView('welcome')
   }
 
+  const pageVariants = {
+    initial: { 
+      opacity: 0, 
+      x: 20,
+      scale: 0.98
+    },
+    animate: { 
+      opacity: 1, 
+      x: 0,
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: [0.22, 1, 0.36, 1] as [number, number, number, number]
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      x: -20,
+      scale: 0.98,
+      transition: {
+        duration: 0.25,
+        ease: [0.22, 1, 0.36, 1] as [number, number, number, number]
+      }
+    }
+  }
+
+  const mobilePageVariants = {
+    initial: { 
+      opacity: 0, 
+      y: 15,
+      scale: 0.97
+    },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.35,
+        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -15,
+      scale: 0.97,
+      transition: {
+        duration: 0.3,
+        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
+      }
+    }
+  }
+
+  const isMobile = window.innerWidth < 768
+  const variants = isMobile ? mobilePageVariants : pageVariants
+
   return (
     <>
-      <div className="min-h-screen bg-background">
-        {view === 'landing' && <LandingPage onGetStarted={handleGetStarted} />}
-        {view === 'welcome' && <WelcomeScreen onLogin={handleLogin} />}
-        {view === 'placement' && currentUser && (
-          <PlacementTest onComplete={handlePlacementComplete} />
-        )}
-        {view === 'dashboard' && currentUser && userProgress && (
-          <Dashboard
-            user={currentUser}
-            progress={userProgress}
-            onStartLesson={handleStartLesson}
-            onLogout={handleLogout}
-            setUserProgress={setUserProgress}
-            onVocabularyPractice={handleVocabularyPractice}
-          />
-        )}
-        {view === 'vocabulary' && currentUser && userProgress && (
-          <VocabularyPractice
-            unlockedLevels={currentUser.unlockedLevels}
-            onBack={handleBackToDashboard}
-          />
-        )}
-        {view === 'lesson' && currentUser && userProgress && selectedLessonId && (
-          <LessonView
-            user={currentUser}
-            progress={userProgress}
-            lessonId={selectedLessonId}
-            onComplete={handleLessonComplete}
-            onBack={handleBackToDashboard}
-            setUserProgress={setUserProgress}
-          />
-        )}
-        {view === 'teacher' && currentUser && (
-          <TeacherDashboard user={currentUser} onLogout={handleLogout} />
-        )}
-        {view === 'superadmin' && currentUser && (
-          <SuperAdminDashboard user={currentUser} onLogout={handleLogout} />
-        )}
+      <div className="min-h-screen bg-background overflow-hidden">
+        <AnimatePresence mode="wait">
+          {view === 'landing' && (
+            <motion.div
+              key="landing"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <LandingPage onGetStarted={handleGetStarted} />
+            </motion.div>
+          )}
+          {view === 'welcome' && (
+            <motion.div
+              key="welcome"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <WelcomeScreen onLogin={handleLogin} />
+            </motion.div>
+          )}
+          {view === 'placement' && currentUser && (
+            <motion.div
+              key="placement"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <PlacementTest onComplete={handlePlacementComplete} />
+            </motion.div>
+          )}
+          {view === 'dashboard' && currentUser && userProgress && (
+            <motion.div
+              key="dashboard"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <Dashboard
+                user={currentUser}
+                progress={userProgress}
+                onStartLesson={handleStartLesson}
+                onLogout={handleLogout}
+                setUserProgress={setUserProgress}
+                onVocabularyPractice={handleVocabularyPractice}
+              />
+            </motion.div>
+          )}
+          {view === 'vocabulary' && currentUser && userProgress && (
+            <motion.div
+              key="vocabulary"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <VocabularyPractice
+                unlockedLevels={currentUser.unlockedLevels}
+                onBack={handleBackToDashboard}
+              />
+            </motion.div>
+          )}
+          {view === 'lesson' && currentUser && userProgress && selectedLessonId && (
+            <motion.div
+              key="lesson"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <LessonView
+                user={currentUser}
+                progress={userProgress}
+                lessonId={selectedLessonId}
+                onComplete={handleLessonComplete}
+                onBack={handleBackToDashboard}
+                setUserProgress={setUserProgress}
+              />
+            </motion.div>
+          )}
+          {view === 'teacher' && currentUser && (
+            <motion.div
+              key="teacher"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <TeacherDashboard user={currentUser} onLogout={handleLogout} />
+            </motion.div>
+          )}
+          {view === 'superadmin' && currentUser && (
+            <motion.div
+              key="superadmin"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <SuperAdminDashboard user={currentUser} onLogout={handleLogout} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <Toaster />
     </>

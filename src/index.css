@@ -314,3 +314,105 @@ a[class*="button"]:active {
 .animate-pulse-scale {
   animation: pulse-scale 0.3s ease-in-out;
 }
+
+@keyframes slide-in-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-up {
+  animation: slide-in-up 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes slide-out-down {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+.animate-slide-out-down {
+  animation: slide-out-down 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes fade-scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-fade-scale-in {
+  animation: fade-scale-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes smooth-appear {
+  from {
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-smooth-appear {
+  animation: smooth-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 767px) {
+  .mobile-slide-up {
+    animation: slide-in-up 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  
+  .mobile-fade-in {
+    animation: fade-scale-in 0.3s ease-out;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+  
+  .no-tap-highlight {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+@keyframes mobile-slide-in {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-mobile-slide-in {
+  animation: mobile-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@supports (overscroll-behavior: contain) {
+  .prevent-overscroll {
+    overscroll-behavior: contain;
+  }
+}

@@ -39,6 +39,7 @@ import MembershipExpiryAlert from './MembershipExpiryAlert'
 import StripePaymentModal from './StripePaymentModal'
 import { applyTheme, THEMES } from '@/lib/themes'
 import { useKV } from '@github/spark/hooks'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface DashboardProps {
   user: User
@@ -72,6 +73,32 @@ export default function Dashboard({
   
   const completedLevelsData = progress.completedLevels || []
   const levelCompletionBadges = getLevelCompletionBadges(progress)
+
+  const tabContentVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 10,
+      scale: 0.98
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -10,
+      scale: 0.98,
+      transition: {
+        duration: 0.25,
+        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
+      }
+    }
+  }
 
   const handleViewCertificate = (level: Level) => {
     const completed = completedLevelsData.find(cl => cl.level === level)
@@ -191,8 +218,17 @@ export default function Dashboard({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="lessons" className="space-y-4 sm:space-y-6">
-            <div className="grid md:grid-cols-[1fr_auto] gap-4 sm:gap-6">
+          <AnimatePresence mode="wait">
+            {activeTab === 'lessons' && (
+              <TabsContent value="lessons" className="space-y-4 sm:space-y-6" forceMount>
+                <motion.div
+                  key="lessons-content"
+                  variants={tabContentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <div className="grid md:grid-cols-[1fr_auto] gap-4 sm:gap-6">
               <Card>
                 <CardHeader className="px-3 py-3 sm:px-6 sm:py-6">
                   <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
@@ -372,10 +408,20 @@ export default function Dashboard({
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+                </motion.div>
+              </TabsContent>
+            )}
 
-          <TabsContent value="progress" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {activeTab === 'progress' && (
+              <TabsContent value="progress" className="space-y-6" forceMount>
+                <motion.div
+                  key="progress-content"
+                  variants={tabContentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base">Total de Lecciones</CardTitle>
@@ -435,10 +481,20 @@ export default function Dashboard({
                 })}
               </CardContent>
             </Card>
-          </TabsContent>
+                </motion.div>
+              </TabsContent>
+            )}
 
-          <TabsContent value="achievements" className="space-y-6">
-            <Card>
+            {activeTab === 'achievements' && (
+              <TabsContent value="achievements" className="space-y-6" forceMount>
+                <motion.div
+                  key="achievements-content"
+                  variants={tabContentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Certificate size={24} weight="fill" />
@@ -582,10 +638,20 @@ export default function Dashboard({
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+                </motion.div>
+              </TabsContent>
+            )}
 
-          <TabsContent value="settings" className="space-y-6">
-            <MembershipStatus user={user} onUpgrade={handleUpgradeMembership} />
+            {activeTab === 'settings' && (
+              <TabsContent value="settings" className="space-y-6" forceMount>
+                <motion.div
+                  key="settings-content"
+                  variants={tabContentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <MembershipStatus user={user} onUpgrade={handleUpgradeMembership} />
 
             <Card>
               <CardHeader>
@@ -646,7 +712,10 @@ export default function Dashboard({
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+                </motion.div>
+              </TabsContent>
+            )}
+          </AnimatePresence>
         </Tabs>
       </main>
 

@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import PronunciationButton from './PronunciationButton'
 import { haptics } from '@/lib/haptics'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface LessonViewProps {
   user: User
@@ -61,6 +62,32 @@ export default function LessonView({
   const sectionProgress = (sectionIndex / totalSections) * 100
 
   const currentExercise = lesson.exercises[currentExerciseIndex]
+
+  const sectionVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 15,
+      scale: 0.97
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.35,
+        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -15,
+      scale: 0.97,
+      transition: {
+        duration: 0.3,
+        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
+      }
+    }
+  }
 
   const handleNext = () => {
     if (section === 'intro') setSection('vocabulary')
@@ -191,22 +218,22 @@ export default function LessonView({
 
   const renderIntro = () => (
     <Card>
-      <CardHeader>
-        <Badge className="w-fit mb-2">{lesson.level}</Badge>
-        <CardTitle className="text-3xl">{lesson.title}</CardTitle>
-        <CardDescription className="text-lg">{lesson.objective}</CardDescription>
+      <CardHeader className="px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-6">
+        <Badge className="w-fit mb-2 text-xs sm:text-sm">{lesson.level}</Badge>
+        <CardTitle className="text-xl sm:text-2xl md:text-3xl">{lesson.title}</CardTitle>
+        <CardDescription className="text-sm sm:text-base md:text-lg">{lesson.objective}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="bg-primary/5 rounded-lg p-6">
-          <h3 className="font-semibold text-lg mb-2">What you'll learn:</h3>
-          <ul className="space-y-2 text-muted-foreground">
+      <CardContent className="space-y-3 sm:space-y-4 px-3 pb-3 sm:px-4 sm:pb-4 md:px-6 md:pb-6">
+        <div className="bg-primary/5 rounded-lg p-3 sm:p-4 md:p-6">
+          <h3 className="font-semibold text-sm sm:text-base md:text-lg mb-2">What you'll learn:</h3>
+          <ul className="space-y-1.5 sm:space-y-2 text-muted-foreground text-xs sm:text-sm md:text-base">
             <li>• {lesson.vocabulary.length} vocabulary words</li>
             <li>• {lesson.grammar.title}</li>
             <li>• {lesson.exercises.length} practice exercises</li>
             <li>• Pronunciation practice with shadowing</li>
           </ul>
         </div>
-        <Button onClick={handleNext} className="w-full" size="lg">
+        <Button onClick={handleNext} className="w-full h-10 sm:h-11 md:h-12 text-sm sm:text-base" size="lg">
           Start Lesson
         </Button>
       </CardContent>
@@ -537,28 +564,92 @@ export default function LessonView({
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <header className="bg-card border-b border-border sticky top-0 z-10 shadow-sm">
-        <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" size="icon" onClick={onBack}>
-              <ArrowLeft size={20} />
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10">
+              <ArrowLeft size={16} className="sm:hidden" />
+              <ArrowLeft size={18} className="hidden sm:inline md:hidden" />
+              <ArrowLeft size={20} className="hidden md:inline" />
             </Button>
-            <div className="flex-1 mx-6">
-              <Progress value={sectionProgress} className="h-2" />
+            <div className="flex-1 mx-2 sm:mx-4 md:mx-6">
+              <Progress value={sectionProgress} className="h-1.5 sm:h-2" />
             </div>
-            <span className="text-sm font-medium text-muted-foreground">
+            <span className="text-xs sm:text-sm font-medium text-muted-foreground">
               {sectionIndex}/{totalSections}
             </span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-8">
-        {section === 'intro' && renderIntro()}
-        {section === 'vocabulary' && renderVocabulary()}
-        {section === 'grammar' && renderGrammar()}
-        {section === 'exercises' && renderExercises()}
-        {section === 'shadowing' && renderShadowing()}
-        {section === 'complete' && renderComplete()}
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+        <AnimatePresence mode="wait">
+          {section === 'intro' && (
+            <motion.div
+              key="intro"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {renderIntro()}
+            </motion.div>
+          )}
+          {section === 'vocabulary' && (
+            <motion.div
+              key="vocabulary"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {renderVocabulary()}
+            </motion.div>
+          )}
+          {section === 'grammar' && (
+            <motion.div
+              key="grammar"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {renderGrammar()}
+            </motion.div>
+          )}
+          {section === 'exercises' && (
+            <motion.div
+              key="exercises"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {renderExercises()}
+            </motion.div>
+          )}
+          {section === 'shadowing' && (
+            <motion.div
+              key="shadowing"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {renderShadowing()}
+            </motion.div>
+          )}
+          {section === 'complete' && (
+            <motion.div
+              key="complete"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {renderComplete()}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </div>
   )

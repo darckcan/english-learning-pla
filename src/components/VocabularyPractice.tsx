@@ -10,6 +10,7 @@ import PronunciationButton from './PronunciationButton'
 import { Input } from './ui/input'
 import { toast } from 'sonner'
 import { haptics } from '@/lib/haptics'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface VocabularyPracticeProps {
   unlockedLevels: Level[]
@@ -47,7 +48,36 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
 
   const currentWord = allVocabulary[currentIndex]
 
+  const cardVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 20 : -20,
+      opacity: 0,
+      scale: 0.98
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
+      }
+    },
+    exit: (direction: number) => ({
+      x: direction > 0 ? -20 : 20,
+      opacity: 0,
+      scale: 0.98,
+      transition: {
+        duration: 0.25,
+        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
+      }
+    })
+  }
+
+  const [direction, setDirection] = useState(0)
+
   const handleNext = () => {
+    setDirection(1)
     if (currentIndex < allVocabulary.length - 1) {
       setCurrentIndex(currentIndex + 1)
       setShowTranslation(false)
@@ -66,6 +96,7 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
   }
 
   const handlePrevious = () => {
+    setDirection(-1)
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1)
       setShowTranslation(false)
@@ -98,14 +129,15 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
 
   if (allVocabulary.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Button variant="ghost" onClick={onBack} className="mb-4">
-          <ArrowLeft size={20} className="mr-2" />
-          Back to Dashboard
+      <div className="max-w-4xl mx-auto p-3 sm:p-4 md:p-6">
+        <Button variant="ghost" onClick={onBack} className="mb-3 sm:mb-4 h-9 sm:h-10">
+          <ArrowLeft size={16} className="mr-1.5 sm:mr-2 sm:hidden" />
+          <ArrowLeft size={20} className="mr-2 hidden sm:inline" />
+          <span className="text-xs sm:text-sm md:text-base">Back to Dashboard</span>
         </Button>
         <Card>
-          <CardContent className="p-12 text-center">
-            <p className="text-muted-foreground">No vocabulary available yet. Complete some lessons first!</p>
+          <CardContent className="p-6 sm:p-8 md:p-12 text-center">
+            <p className="text-muted-foreground text-sm sm:text-base">No vocabulary available yet. Complete some lessons first!</p>
           </CardContent>
         </Card>
       </div>
@@ -113,47 +145,68 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" onClick={onBack}>
-          <ArrowLeft size={20} className="mr-2" />
-          Back to Dashboard
+    <div className="max-w-4xl mx-auto p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-6">
+      <div className="flex items-center justify-between gap-2 sm:gap-3">
+        <Button variant="ghost" onClick={onBack} className="h-8 sm:h-9 md:h-10 text-xs sm:text-sm">
+          <ArrowLeft size={16} className="mr-1 sm:mr-1.5 sm:hidden" />
+          <ArrowLeft size={18} className="mr-1.5 hidden sm:inline md:hidden" />
+          <ArrowLeft size={20} className="mr-2 hidden md:inline" />
+          <span className="hidden xs:inline">Back</span>
         </Button>
-        <Button variant="outline" onClick={toggleMode}>
-          {practiceMode === 'review' ? 'Switch to Quiz' : 'Switch to Review'}
+        <Button variant="outline" onClick={toggleMode} className="h-8 sm:h-9 md:h-10 text-xs sm:text-sm px-2 sm:px-3 md:px-4">
+          {practiceMode === 'review' ? (
+            <>
+              <span className="hidden sm:inline">Switch to Quiz</span>
+              <span className="sm:hidden">Quiz</span>
+            </>
+          ) : (
+            <>
+              <span className="hidden sm:inline">Switch to Review</span>
+              <span className="sm:hidden">Review</span>
+            </>
+          )}
         </Button>
       </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>
+        <CardHeader className="px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-6">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            <div className="min-w-0 flex-1">
+              <CardTitle className="text-base sm:text-lg md:text-xl">
                 {practiceMode === 'review' ? 'Vocabulary Review' : 'Vocabulary Quiz'}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 {practiceMode === 'review'
                   ? 'Review words from all your unlocked lessons'
                   : 'Test your vocabulary knowledge'}
               </CardDescription>
             </div>
-            <div className="text-right">
-              <div className="text-sm text-muted-foreground">
+            <div className="text-right flex-shrink-0">
+              <div className="text-xs sm:text-sm text-muted-foreground">
                 {currentIndex + 1} / {allVocabulary.length}
               </div>
               {practiceMode === 'quiz' && totalAttempts > 0 && (
-                <div className="text-sm font-semibold text-primary">
+                <div className="text-xs sm:text-sm font-semibold text-primary">
                   Score: {Math.round((correctCount / totalAttempts) * 100)}%
                 </div>
               )}
             </div>
           </div>
-          <Progress value={((currentIndex + 1) / allVocabulary.length) * 100} className="mt-4" />
+          <Progress value={((currentIndex + 1) / allVocabulary.length) * 100} className="mt-3 sm:mt-4" />
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <div className="bg-muted/30 rounded-lg p-8">
-            <div className="flex items-center justify-between mb-4">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentIndex}
+              custom={direction}
+              variants={cardVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="bg-muted/30 rounded-lg p-4 sm:p-6 md:p-8"
+            >
+              <div className="flex items-center justify-between mb-4">
               <Badge variant="secondary">{currentWord.level}</Badge>
               <Badge variant="outline">{currentWord.type}</Badge>
             </div>
@@ -260,7 +313,8 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
                 )}
               </>
             )}
-          </div>
+            </motion.div>
+          </AnimatePresence>
 
           <div className="flex gap-3">
             <Button variant="outline" onClick={handlePrevious} disabled={currentIndex === 0} className="flex-1">
