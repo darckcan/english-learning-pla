@@ -50,11 +50,25 @@ Esta plataforma requiere gestión sofisticada de estado para el progreso del usu
 - **Success criteria**: Lessons unlock sequentially, completion tracked, level advancement requires finishing all lessons
 
 ### Interactive Lessons
-- **Functionality**: Lecciones de múltiples secciones cubriendo vocabulario, gramática, comprensión y producción (instrucciones en español)
-- **Purpose**: Enseña habilidades del idioma a través de contenido variado y tipos de ejercicios
+- **Functionality**: Lecciones de múltiples secciones cubriendo vocabulario (con audio de pronunciación), gramática, comprensión y producción (instrucciones en español)
+- **Purpose**: Enseña habilidades del idioma a través de contenido variado y tipos de ejercicios con apoyo de audio
 - **Trigger**: Usuario hace clic en una lección disponible (desbloqueada)
-- **Progression**: Intro de lección (objetivo en español) → Sección de vocabulario → Explicación gramatical (en español) → Ejercicios de práctica → Ejercicio de shadowing → Quiz → Resultados y actualización de progreso
-- **Success criteria**: Contenido se muestra correctamente, ejercicios aceptan entrada, puntuación funciona, progreso se guarda, explicaciones en español son claras
+- **Progression**: Intro de lección (objetivo en español) → Sección de vocabulario con botones de audio → Explicación gramatical (en español) con ejemplos hablados → Ejercicios de práctica → Ejercicio de shadowing con reproducción de audio normal y lenta → Quiz → Resultados y actualización de progreso
+- **Success criteria**: Contenido se muestra correctamente, ejercicios aceptan entrada, puntuación funciona, progreso se guarda, explicaciones en español son claras, audio funciona en todos los navegadores compatibles
+
+### Audio Pronunciation System
+- **Functionality**: Text-to-speech audio playback for vocabulary words, grammar examples, and shadowing exercises with normal and slow speed options
+- **Purpose**: Helps students learn correct pronunciation and improve listening comprehension
+- **Trigger**: User clicks audio/speaker buttons throughout lessons or in vocabulary practice
+- **Progression**: Click audio button → Audio plays with visual feedback (pulsing icon) → Option to replay or use slow speed → Audio stops automatically
+- **Success criteria**: Audio pronounces English text correctly with natural accent, slow speed is noticeably slower but still natural, buttons show playing state, works across modern browsers
+
+### Vocabulary Practice Mode
+- **Functionality**: Standalone vocabulary review and quiz mode using all words from unlocked lessons with audio support
+- **Purpose**: Provides targeted vocabulary reinforcement outside of full lessons
+- **Trigger**: User clicks "Vocabulario" button from dashboard
+- **Progression**: Dashboard → Vocabulary Practice → Choose Review or Quiz mode → Navigate through vocabulary cards → Listen to pronunciations → Test recall (quiz mode) → Track progress → Return to dashboard
+- **Success criteria**: Shows all vocabulary from unlocked levels, audio works for each word, quiz validates answers, progress bar updates, can switch between review and quiz modes
 
 ### Exercise Types
 - **Functionality**: Multiple choice, fill-in-the-blank, matching, sentence construction, pronunciation practice

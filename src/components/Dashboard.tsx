@@ -28,6 +28,7 @@ interface DashboardProps {
   onStartLesson: (lessonId: string) => void
   onLogout: () => void
   setUserProgress: (updater: (prev: UserProgress | null) => UserProgress | null) => void
+  onVocabularyPractice: () => void
 }
 
 export default function Dashboard({
@@ -35,6 +36,7 @@ export default function Dashboard({
   progress,
   onStartLesson,
   onLogout,
+  onVocabularyPractice,
 }: DashboardProps) {
   const [selectedLevel, setSelectedLevel] = useState<Level>(user.currentLevel)
   const [activeTab, setActiveTab] = useState<string>('lessons')
@@ -110,50 +112,75 @@ export default function Dashboard({
           </TabsList>
 
           <TabsContent value="lessons" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen size={24} />
-                  Selecciona tu Nivel
-                </CardTitle>
-                <CardDescription>
-                  Elige un nivel para ver y completar sus lecciones
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-                  {LEVELS.map((level) => {
-                    const levelProgress = calculateLevelProgress(progress, level)
-                    const locked = isLevelLocked(unlockedLevels, level)
-                    return (
-                      <Button
-                        key={level}
-                        variant={selectedLevel === level ? 'default' : 'outline'}
-                        onClick={() => {
-                          if (locked) {
-                            toast.error(`El nivel ${level} está bloqueado. Completa los niveles anteriores para desbloquearlo.`)
-                          } else {
-                            setSelectedLevel(level)
-                          }
-                        }}
-                        className={cn(
-                          'h-auto flex-col gap-2 py-4 relative',
-                          locked && 'opacity-50 cursor-not-allowed'
-                        )}
-                        disabled={locked}
-                      >
-                        {locked && (
-                          <Lock size={16} className="absolute top-2 right-2 text-muted-foreground" />
-                        )}
-                        <span className="font-semibold">{level}</span>
-                        <Progress value={locked ? 0 : levelProgress} className="h-1.5 w-full" />
-                        <span className="text-xs opacity-80">{locked ? 'Bloqueado' : `${levelProgress}%`}</span>
-                      </Button>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
+            <div className="grid md:grid-cols-[1fr_auto] gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen size={24} />
+                    Selecciona tu Nivel
+                  </CardTitle>
+                  <CardDescription>
+                    Elige un nivel para ver y completar sus lecciones
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                    {LEVELS.map((level) => {
+                      const levelProgress = calculateLevelProgress(progress, level)
+                      const locked = isLevelLocked(unlockedLevels, level)
+                      return (
+                        <Button
+                          key={level}
+                          variant={selectedLevel === level ? 'default' : 'outline'}
+                          onClick={() => {
+                            if (locked) {
+                              toast.error(`El nivel ${level} está bloqueado. Completa los niveles anteriores para desbloquearlo.`)
+                            } else {
+                              setSelectedLevel(level)
+                            }
+                          }}
+                          className={cn(
+                            'h-auto flex-col gap-2 py-4 relative',
+                            locked && 'opacity-50 cursor-not-allowed'
+                          )}
+                          disabled={locked}
+                        >
+                          {locked && (
+                            <Lock size={16} className="absolute top-2 right-2 text-muted-foreground" />
+                          )}
+                          <span className="font-semibold">{level}</span>
+                          <Progress value={locked ? 0 : levelProgress} className="h-1.5 w-full" />
+                          <span className="text-xs opacity-80">{locked ? 'Bloqueado' : `${levelProgress}%`}</span>
+                        </Button>
+                      )
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="md:w-64">
+                <CardHeader>
+                  <CardTitle className="text-lg">Práctica</CardTitle>
+                  <CardDescription className="text-xs">
+                    Herramientas adicionales
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button 
+                    onClick={onVocabularyPractice} 
+                    variant="secondary" 
+                    className="w-full justify-start"
+                    size="lg"
+                  >
+                    <BookOpen size={20} className="mr-3" />
+                    <div className="text-left">
+                      <div className="font-semibold">Vocabulario</div>
+                      <div className="text-xs opacity-80">Repasa palabras</div>
+                    </div>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
 
             <Card>
               <CardHeader>

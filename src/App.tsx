@@ -8,9 +8,10 @@ import Dashboard from './components/Dashboard'
 import LessonView from './components/LessonView'
 import TeacherDashboard from './components/TeacherDashboard'
 import SuperAdminDashboard from './components/SuperAdminDashboard'
+import VocabularyPractice from './components/VocabularyPractice'
 import { LEVELS } from './lib/curriculum'
 
-type AppView = 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin'
+type AppView = 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary'
 
 function App() {
   const [currentUser, setCurrentUser] = useKV<User | null>('current-user', null)
@@ -77,6 +78,10 @@ function App() {
     setView('dashboard')
   }
 
+  const handleVocabularyPractice = () => {
+    setView('vocabulary')
+  }
+
   const handleLogout = () => {
     setCurrentUser(() => null)
     setUserProgress(() => null)
@@ -97,6 +102,13 @@ function App() {
             onStartLesson={handleStartLesson}
             onLogout={handleLogout}
             setUserProgress={setUserProgress}
+            onVocabularyPractice={handleVocabularyPractice}
+          />
+        )}
+        {view === 'vocabulary' && currentUser && userProgress && (
+          <VocabularyPractice
+            unlockedLevels={currentUser.unlockedLevels}
+            onBack={handleBackToDashboard}
           />
         )}
         {view === 'lesson' && currentUser && userProgress && selectedLessonId && (

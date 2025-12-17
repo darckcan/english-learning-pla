@@ -13,6 +13,7 @@ import { LESSONS } from '@/lib/curriculum'
 import { checkAndAwardAchievements, updateStreak } from '@/lib/helpers'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import PronunciationButton from './PronunciationButton'
 
 interface LessonViewProps {
   user: User
@@ -189,7 +190,7 @@ export default function LessonView({
           {lesson.vocabulary.map((item, index) => (
             <Card key={index} className="bg-muted/30">
               <CardContent className="p-4">
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-bold text-lg">{item.word}</h4>
@@ -200,9 +201,10 @@ export default function LessonView({
                     <p className="text-sm text-muted-foreground mb-2">{item.translation}</p>
                     <p className="text-sm italic">"{item.example}"</p>
                   </div>
-                  <Button variant="ghost" size="icon" className="shrink-0">
-                    <SpeakerHigh size={20} />
-                  </Button>
+                  <div className="flex flex-col gap-1 shrink-0">
+                    <PronunciationButton text={item.word} />
+                    <PronunciationButton text={item.word} slow variant="ghost" size="icon" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -246,8 +248,9 @@ export default function LessonView({
               <h3 className="font-semibold mb-2">Examples</h3>
               <div className="space-y-2">
                 {lesson.grammar.examples.map((example, index) => (
-                  <div key={index} className="bg-card p-3 rounded border border-border">
-                    <p className="italic">"{example}"</p>
+                  <div key={index} className="bg-card p-3 rounded border border-border flex items-start justify-between gap-3">
+                    <p className="italic flex-1">"{example}"</p>
+                    <PronunciationButton text={example} variant="ghost" size="icon" />
                   </div>
                 ))}
               </div>
@@ -424,17 +427,32 @@ export default function LessonView({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="bg-primary/5 rounded-lg p-8 text-center space-y-4">
-          <SpeakerHigh size={48} weight="fill" className="mx-auto text-primary" />
+        <div className="bg-primary/5 rounded-lg p-8 text-center space-y-6">
           <p className="text-lg leading-relaxed">{lesson.shadowingText}</p>
+          <div className="flex gap-3 justify-center">
+            <PronunciationButton 
+              text={lesson.shadowingText} 
+              variant="default" 
+              size="default"
+              showLabel
+            />
+            <PronunciationButton 
+              text={lesson.shadowingText} 
+              slow 
+              variant="outline" 
+              size="default"
+              showLabel
+            />
+          </div>
         </div>
 
         <div className="bg-secondary/10 rounded-lg p-6">
-          <h3 className="font-semibold mb-3">How to shadow:</h3>
+          <h3 className="font-semibold mb-3">Cómo practicar "shadowing":</h3>
           <ol className="space-y-2 text-sm text-muted-foreground">
-            <li>1. Listen to the text carefully</li>
-            <li>2. Repeat it out loud, trying to match the rhythm and intonation</li>
-            <li>3. Practice multiple times until it feels natural</li>
+            <li>1. Escucha el texto con atención</li>
+            <li>2. Repítelo en voz alta, intentando imitar el ritmo y la entonación</li>
+            <li>3. Practica varias veces hasta que se sienta natural</li>
+            <li>4. Usa el botón "Despacio" si necesitas más tiempo</li>
           </ol>
         </div>
 
