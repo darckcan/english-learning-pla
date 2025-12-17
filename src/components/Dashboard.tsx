@@ -233,12 +233,25 @@ export default function Dashboard({
 
               <Card className="md:w-64">
                 <CardHeader>
-                  <CardTitle className="text-lg">Práctica</CardTitle>
+                  <CardTitle className="text-lg">Accesos</CardTitle>
                   <CardDescription className="text-xs">
-                    Herramientas adicionales
+                    Práctica y membresías
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
+                  <Button 
+                    onClick={handleUpgradeMembership} 
+                    variant="default" 
+                    className="w-full justify-start bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                    size="lg"
+                  >
+                    <Trophy size={20} className="mr-3" />
+                    <div className="text-left">
+                      <div className="font-semibold">Membresías</div>
+                      <div className="text-xs opacity-90">Ver planes</div>
+                    </div>
+                  </Button>
+                  
                   <Button 
                     onClick={onVocabularyPractice} 
                     variant="secondary" 
