@@ -127,7 +127,7 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
             <GraduationCap size={40} weight="bold" className="text-white" />
           </div>
           <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-2">
-            LearnEnglish
+            Nexus Fluent
           </h1>
           <p className="text-muted-foreground text-lg">Tu camino hacia la fluidez comienza aquí</p>
         </div>
@@ -251,10 +251,6 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
             </CardContent>
           </Tabs>
         </Card>
-
-        <p className="text-center text-sm text-muted-foreground mt-4">
-          Super Administrador: usuario <span className="font-mono font-semibold">darckcan</span>
-        </p>
       </div>
     </div>
   )
