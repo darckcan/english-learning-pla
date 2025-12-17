@@ -1,6 +1,6 @@
 # 🔍 AUDITORÍA COMPLETA - SISTEMA DE GUARDADO DE DATOS
 
-## ⚠️ PROBLEMAS CRÍTICOS DETECTADOS
+### 1. **PROBLEMA CRÍTICO: Falta si
 
 ### 1. **PROBLEMA CRÍTICO: Falta sincronización entre `current-user` y `all-users`**
 
@@ -14,122 +14,122 @@
 **Ejemplo del problema:**
 ```typescript
 // En App.tsx línea 76 - Solo actualiza current-user
-setCurrentUser((prev) => (prev ? { ...prev, currentLevel: assignedLevel, unlockedLevels } : null))
-// ❌ PERO NO actualiza all-users donde está almacenado permanentemente
-```
-
 **Impacto:** ALTO - Los usuarios pierden progreso de niveles desbloqueados
-
 ---
-
-### 2. **PROBLEMA CRÍTICO: `user-progress` vs `all-progress` desincronizado**
-
-**Ubicación:** `TeacherDashboard.tsx`, `SuperAdminDashboard.tsx`
+###
 
 **Problema:**
-- Existe `user-progress` (individual) y `all-progress` (colectivo)
-- `LessonView.tsx` actualiza `user-progress` pero **NO actualiza `all-progress`**
-- Los profesores y super admins leen de `all-progress` que está desactualizado
 
-**Código problemático:**
-```typescript
-// TeacherDashboard.tsx línea 24
-const [allProgress] = useKV<Record<string, UserProgress>>('all-user-progress', {})
-// ❌ Esta key es diferente a la que se usa en SuperAdmin
 
-// SuperAdminDashboard.tsx línea 30
-const [allProgress, setAllProgress] = useKV<Record<string, UserProgress>>('all-progress', {})
-// ❌ Key diferente! 'all-user-progress' vs 'all-progress'
-```
 
-**Impacto:** ALTO - Profesores y admins ven datos incorrectos
+const [allProgress] = useKV<Record<string, UserProgress>>('all-user-progress'
 
+const [allProgress, setAllProgress] = useKV<Record<string, UserP
+
+**Impacto:** 
 ---
-
 ### 3. **PROBLEMA MEDIO: Inconsistencia en keys de KV**
-
 **Problema detectado:**
-- `TeacherDashboard.tsx` usa: `'all-user-progress'`
-- `SuperAdminDashboard.tsx` usa: `'all-progress'`
-- **Son diferentes keys para el mismo propósito**
 
-**Impacto:** MEDIO - Datos duplicados y confusión
 
+
+
+
+
+
+- Al hacer logout/login puede perde
 ---
-
-### 4. **PROBLEMA BAJO: Falta propagación de cambios de tema**
-
-**Ubicación:** Componentes con `ThemeSelector`
-
-**Problema:**
-- Cuando un usuario cambia de tema, se actualiza `current-user` localmente
-- No se propaga a `all-users` inmediatamente
-- Al hacer logout/login puede perderse
-
----
-
 ## ✅ ASPECTOS QUE FUNCIONAN CORRECTAMENTE
+###
 
-### 1. **Registro de usuarios** ✓
-- `WelcomeScreen.tsx` líneas 98-154
-- Se guarda correctamente en `all-users` con todos los campos
-- Membresía de prueba se crea correctamente
 - Email se envía (con manejo de errores)
 
-### 2. **Login de usuarios** ✓
-- `WelcomeScreen.tsx` líneas 43-96
-- Valida correctamente contra `all-users`
-- Actualiza `lastActive` en el array
+- V
 
-### 3. **Actualización de progreso en lecciones** ✓ (parcial)
 - `LessonView.tsx` líneas 145-214
-- Actualiza correctamente:
-  - `completedLessons`
-  - `points`
+
   - `streak`
-  - `lessonScores`
   - `achievements`
-  - `completedLevels`
-- **PERO:** Solo actualiza `user-progress`, no `all-progress`
-
+- **PERO:** Solo actualiza `user-progress`, no `a
 ### 4. **Test de ubicación** ✓
-- `PlacementTest.tsx`
-- Determina nivel correctamente
-- **PERO:** Solo actualiza `current-user`, no `all-users`
 
+
+
+
+
+- `App.tsx` - Al actualizar información del usuario
+
+```typescript
+
+  const [allU
+  const updateUser = (updater: (prev: User | null) => User | null) => {
+      const updated = updater(prev)
+        // Sincronizar con all-users
+
+   
+
+  
+
+
+
+1. Usar una sola key: `all-user-progress` (mantener la de Tea
+3. Crear hook `useSyncProgress`
+**Código propuesto:**
+
+  const [allProgress, setAllPr
+  const updateProgress = (updater:
+      const updated = updater(prev)
+        // Sincronizar con all-progr
+
+        }))
+      return updated
+  }
+  return [userProgress
+```
+### Solución
+**Cambio simple:**
+// Línea 30 - Camb
+```
 ---
 
-## 🛠️ SOLUCIONES REQUERIDAS
+- [ ] `current-user` se sincro
+- [ ] SuperAdmin y Te
+- [ ] Cambios de tema se reflej
+- [ ] Logros se persisten correctamente
 
-### Solución 1: Sincronizar `current-user` con `all-users`
 
-**Dónde aplicar:**
-- `App.tsx` - Al actualizar información del usuario
-- Crear un hook personalizado `useSyncUser`
 
-**Código propuesto:**
+
+
+3. ✅ Unificar key en SuperAdminDashboard
+
+5. ⚠️ Propagación 
+### MEJORA (Nice to have):
+7. 💡 Sistema de backup automático
+
+
+
 ```typescript
-// Hook personalizado
-const useSyncUser = () => {
-  const [currentUser, setCurrentUser] = useKV<User | null>('current-user', null)
-  const [allUsers, setAllUsers] = useKV<User[]>('all-users', [])
-  
-  const updateUser = (updater: (prev: User | null) => User | null) => {
-    setCurrentUser((prev) => {
-      const updated = updater(prev)
-      if (updated) {
-        // Sincronizar con all-users
-        setAllUsers((users) => 
-          (users || []).map(u => u.id === updated.id ? updated : u)
-        )
-      }
-      return updated
-    })
-  }
-  
-  return [currentUser, updateUser] as const
-}
+'current-user'          → U
+'all-users'             → User[] (todos los usuarios del sistema)
+'all-progress'          → Record<string, UserProgress> (SuperAdm
+
 ```
+    ↓
+    ↓
+    ↓
+    ↓
+```
+---
+**Fecha d
+
+
+
+
+
+
+
+
 
 ### Solución 2: Unificar sistema de progreso
 
