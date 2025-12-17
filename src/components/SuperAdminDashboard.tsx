@@ -15,6 +15,7 @@ import { LEVELS } from '@/lib/curriculum'
 import { formatDate, simpleHash } from '@/lib/helpers'
 import NexusFluentLogo from './NexusFluentLogo'
 import MembershipPricingSettings from './MembershipPricingSettings'
+import PaymentsDashboard from './PaymentsDashboard'
 import EmailNotificationManager from './EmailNotificationManager'
 import EmailTestPanel from './EmailTestPanel'
 import { createTrialMembership } from '@/lib/membership'
@@ -171,6 +172,8 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
         </div>
 
         <MembershipPricingSettings />
+
+        <PaymentsDashboard />
 
         <EmailNotificationManager users={allUsers || []} />
 

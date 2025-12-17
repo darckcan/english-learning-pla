@@ -36,6 +36,7 @@ import AchievementBadge from './AchievementBadge'
 import NexusFluentLogo from './NexusFluentLogo'
 import MembershipStatus from './MembershipStatus'
 import MembershipExpiryAlert from './MembershipExpiryAlert'
+import StripePaymentModal from './StripePaymentModal'
 import { applyTheme, THEMES } from '@/lib/themes'
 import { useKV } from '@github/spark/hooks'
 
@@ -59,6 +60,7 @@ export default function Dashboard({
   const [activeTab, setActiveTab] = useState<string>('lessons')
   const [certificateOpen, setCertificateOpen] = useState(false)
   const [selectedCertificateLevel, setSelectedCertificateLevel] = useState<Level | null>(null)
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false)
   const [allUsers, setAllUsers] = useKV<User[]>('all-users', [])
 
   const unlockedLevels = user.unlockedLevels || ['Beginner']
@@ -92,6 +94,10 @@ export default function Dashboard({
     })
     
     toast.success(`Tema "${THEMES[newTheme].name}" aplicado`)
+  }
+
+  const handleUpgradeMembership = () => {
+    setPaymentModalOpen(true)
   }
 
   return (
@@ -539,7 +545,7 @@ export default function Dashboard({
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">
-            <MembershipStatus user={user} />
+            <MembershipStatus user={user} onUpgrade={handleUpgradeMembership} />
 
             <Card>
               <CardHeader>
@@ -620,6 +626,12 @@ export default function Dashboard({
           }}
         />
       )}
+
+      <StripePaymentModal
+        open={paymentModalOpen}
+        onClose={() => setPaymentModalOpen(false)}
+        user={user}
+      />
     </div>
   )
 }

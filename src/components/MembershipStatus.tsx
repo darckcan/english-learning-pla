@@ -1,10 +1,11 @@
 import { User } from '@/lib/types'
-import { isMembershipActive, getDaysRemaining, getMembershipLabel } from '@/lib/membership'
+import { isMembershipActive, getDaysRemaining, getMembershipLabel, DEFAULT_PRICING, MembershipPricing } from '@/lib/membership'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
 import { Calendar, CreditCard, Sparkle, Crown, Clock } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
+import { useKV } from '@github/spark/hooks'
 
 interface MembershipStatusProps {
   user: User
@@ -12,10 +13,14 @@ interface MembershipStatusProps {
 }
 
 export default function MembershipStatus({ user, onUpgrade }: MembershipStatusProps) {
+  const [pricing] = useKV<MembershipPricing>('membership-pricing', DEFAULT_PRICING)
   const isActive = isMembershipActive(user.membership)
   const daysRemaining = getDaysRemaining(user.membership)
   const membershipType = user.membership?.type || 'trial'
   const membershipLabel = getMembershipLabel(membershipType)
+
+  const monthlyPrice = pricing?.monthlyPrice || DEFAULT_PRICING.monthlyPrice
+  const lifetimePrice = pricing?.lifetimePrice || DEFAULT_PRICING.lifetimePrice
 
   const getStatusColor = (): 'default' | 'destructive' | 'outline' | 'secondary' => {
     if (!isActive) return 'destructive'
@@ -81,7 +86,7 @@ export default function MembershipStatus({ user, onUpgrade }: MembershipStatusPr
             <div className="grid sm:grid-cols-2 gap-3">
               <div className="bg-muted/50 rounded-lg p-3 space-y-1">
                 <p className="text-xs text-muted-foreground">Mensual</p>
-                <p className="text-2xl font-bold">$9.99</p>
+                <p className="text-2xl font-bold">${monthlyPrice}</p>
                 <p className="text-xs text-muted-foreground">por mes</p>
                 <Button 
                   size="sm" 
@@ -97,7 +102,7 @@ export default function MembershipStatus({ user, onUpgrade }: MembershipStatusPr
                   Mejor Valor
                 </Badge>
                 <p className="text-xs text-muted-foreground">Vitalicia</p>
-                <p className="text-2xl font-bold">$24.99</p>
+                <p className="text-2xl font-bold">${lifetimePrice}</p>
                 <p className="text-xs text-muted-foreground">pago único</p>
                 <Button 
                   size="sm" 

@@ -13,6 +13,7 @@ import VocabularyPractice from './components/VocabularyPractice'
 import { LEVELS } from './lib/curriculum'
 import { applyTheme } from './lib/themes'
 import { useEmailNotifications } from './hooks/use-email-notifications'
+import { useStripePaymentVerification } from './hooks/use-stripe-payment'
 
 type AppView = 'landing' | 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary'
 
@@ -24,6 +25,7 @@ function App() {
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null)
 
   useEmailNotifications(allUsers || [], true)
+  useStripePaymentVerification()
 
   useEffect(() => {
     if (currentUser) {
