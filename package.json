@@ -10,8 +10,8 @@
         "lint": "eslint .",
         "optimize": "vite optimize",
         "preview": "vite preview",
-        "start": "vite preview --host 0.0.0.0 --port 3000",
-        "serve": "vite preview --host 0.0.0.0 --port 3000"
+        "start": "vite preview --host 0.0.0.0 --port 80",
+        "serve": "vite preview --host 0.0.0.0 --port 80"
     },
     "dependencies": {
         "@github/spark": ">=0.43.1 <1",
