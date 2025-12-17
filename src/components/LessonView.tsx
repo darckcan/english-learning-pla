@@ -263,8 +263,8 @@ export default function LessonView({
                     <p className="text-sm italic">"{item.example}"</p>
                   </div>
                   <div className="flex flex-col gap-1 shrink-0">
-                    <PronunciationButton text={item.word} variant="ghost" size="icon" />
-                    <PronunciationButton text={item.example} variant="outline" size="icon" />
+                    <PronunciationButton text={item.word} variant="ghost" size="icon" type="word" />
+                    <PronunciationButton text={item.example} variant="outline" size="icon" type="example" />
                   </div>
                 </div>
               </CardContent>
@@ -311,7 +311,7 @@ export default function LessonView({
                 {lesson.grammar.examples.map((example, index) => (
                   <div key={index} className="bg-card p-3 rounded border border-border flex items-start justify-between gap-3">
                     <p className="italic flex-1">"{example}"</p>
-                    <PronunciationButton text={example} variant="ghost" size="icon" />
+                    <PronunciationButton text={example} variant="ghost" size="icon" type="sentence" />
                   </div>
                 ))}
               </div>
@@ -507,6 +507,7 @@ export default function LessonView({
                       variant="default" 
                       size="sm"
                       showLabel
+                      type="sentence"
                     />
                     <PronunciationButton 
                       text={phrase.text} 
@@ -514,6 +515,7 @@ export default function LessonView({
                       variant="outline" 
                       size="sm"
                       showLabel
+                      type="sentence"
                     />
                   </div>
                 </div>

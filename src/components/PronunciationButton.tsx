@@ -12,6 +12,7 @@ interface PronunciationButtonProps {
   slow?: boolean
   className?: string
   showLabel?: boolean
+  type?: 'word' | 'sentence' | 'example'
 }
 
 export default function PronunciationButton({
@@ -21,6 +22,7 @@ export default function PronunciationButton({
   slow = false,
   className,
   showLabel = false,
+  type = 'word',
 }: PronunciationButtonProps) {
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -42,8 +44,12 @@ export default function PronunciationButton({
       setIsPlaying(true)
       if (slow) {
         await audioService.pronounceSlowly(text)
+      } else if (type === 'word') {
+        await audioService.pronounceWord(text)
+      } else if (type === 'example') {
+        await audioService.pronounceExample(text)
       } else {
-        await audioService.pronounce(text)
+        await audioService.pronounceSentence(text)
       }
     } catch (error) {
       console.error('Pronunciation error:', error)

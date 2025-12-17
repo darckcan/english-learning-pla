@@ -77,7 +77,11 @@ export class AudioPronunciationService {
   }
 
   async pronounceSentence(sentence: string): Promise<void> {
-    return this.pronounce(sentence, 0.9, 1.0)
+    return this.pronounce(sentence, 0.85, 1.0)
+  }
+  
+  async pronounceExample(example: string): Promise<void> {
+    return this.pronounce(example, 0.88, 1.0)
   }
 
   async pronounceSlowly(text: string): Promise<void> {
