@@ -32,7 +32,7 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       }
       return users
     })
-  }, [])
+  }, [setAllUsers])
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
