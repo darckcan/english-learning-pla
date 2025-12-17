@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Button } from './ui/button'
 import { Card, CardContent } from './ui/card'
 import { Badge } from './ui/badge'
@@ -11,16 +12,20 @@ import {
   BookOpen,
   ChartLineUp,
   Fire,
-  Medal
+  Medal,
+  Crown
 } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import NexusFluentLogo from './NexusFluentLogo'
+import PublicMembershipModal from './PublicMembershipModal'
 
 interface LandingPageProps {
   onGetStarted: () => void
 }
 
 export default function LandingPage({ onGetStarted }: LandingPageProps) {
+  const [showMembershipModal, setShowMembershipModal] = useState(false)
+
   const features = [
     {
       icon: GraduationCap,
@@ -76,9 +81,21 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             <div className="flex items-center min-w-0">
               <NexusFluentLogo size={140} className="scale-[0.65] sm:scale-75 md:scale-100 origin-left" />
             </div>
-            <Button onClick={onGetStarted} variant="outline" size="sm" className="shadow-sm hover:shadow-md transition-all text-xs sm:text-sm flex-shrink-0 px-3 sm:px-4">
-              Iniciar Sesión
-            </Button>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Button 
+                onClick={() => setShowMembershipModal(true)} 
+                variant="ghost" 
+                size="sm" 
+                className="shadow-sm hover:shadow-md transition-all text-xs sm:text-sm flex-shrink-0 px-2 sm:px-3 gap-1 sm:gap-2"
+              >
+                <Crown size={16} weight="fill" className="text-accent" />
+                <span className="hidden sm:inline">Membresías</span>
+                <span className="sm:hidden">Planes</span>
+              </Button>
+              <Button onClick={onGetStarted} variant="outline" size="sm" className="shadow-sm hover:shadow-md transition-all text-xs sm:text-sm flex-shrink-0 px-3 sm:px-4">
+                Iniciar Sesión
+              </Button>
+            </div>
           </nav>
 
           <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center mb-12 sm:mb-16 md:mb-24">
@@ -407,6 +424,12 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
           </div>
         </div>
       </footer>
+
+      <PublicMembershipModal 
+        open={showMembershipModal} 
+        onClose={() => setShowMembershipModal(false)}
+        onGetStarted={onGetStarted}
+      />
     </div>
   )
 }
