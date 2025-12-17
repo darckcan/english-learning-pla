@@ -12,6 +12,13 @@ Esta plataforma requiere gestión sofisticada de estado para el progreso del usu
 
 ## Essential Features
 
+### Landing Page Principal
+- **Functionality**: Página de inicio atractiva y profesional que presenta la plataforma antes del login/registro
+- **Purpose**: Causar una primera impresión impactante, motivar el registro y mostrar el valor de la plataforma
+- **Trigger**: Inicio de la aplicación cuando no hay usuario logueado
+- **Progression**: Landing page → Explorar características → Ver niveles disponibles → Click en "Comenzar Gratis" o "Iniciar Sesión" → Pantalla de login/registro
+- **Success criteria**: Diseño moderno y atractivo, animaciones suaves, información clara de características y niveles, call-to-action destacado, responsive en todos los dispositivos
+
 ### Super Administrador
 - **Functionality**: Usuario maestro con control total sobre el sistema, gestión de usuarios, y configuración
 - **Purpose**: Permite administración centralizada y control completo de la plataforma

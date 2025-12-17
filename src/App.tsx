@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { User, UserProgress, Level } from './lib/types'
 import { Toaster } from './components/ui/sonner'
+import LandingPage from './components/LandingPage'
 import WelcomeScreen from './components/WelcomeScreen'
 import PlacementTest from './components/PlacementTest'
 import Dashboard from './components/Dashboard'
@@ -11,12 +12,12 @@ import SuperAdminDashboard from './components/SuperAdminDashboard'
 import VocabularyPractice from './components/VocabularyPractice'
 import { LEVELS } from './lib/curriculum'
 
-type AppView = 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary'
+type AppView = 'landing' | 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary'
 
 function App() {
   const [currentUser, setCurrentUser] = useKV<User | null>('current-user', null)
   const [userProgress, setUserProgress] = useKV<UserProgress | null>('user-progress', null)
-  const [view, setView] = useState<AppView>('welcome')
+  const [view, setView] = useState<AppView>('landing')
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -31,7 +32,6 @@ function App() {
         setView('dashboard')
       }
     } else {
-      setView('welcome')
     }
   }, [currentUser, userProgress])
 
@@ -86,12 +86,17 @@ function App() {
   const handleLogout = () => {
     setCurrentUser(() => null)
     setUserProgress(() => null)
+    setView('landing')
+  }
+
+  const handleGetStarted = () => {
     setView('welcome')
   }
 
   return (
     <>
       <div className="min-h-screen bg-background">
+        {view === 'landing' && <LandingPage onGetStarted={handleGetStarted} />}
         {view === 'welcome' && <WelcomeScreen onLogin={handleLogin} />}
         {view === 'placement' && currentUser && (
           <PlacementTest onComplete={handlePlacementComplete} />
