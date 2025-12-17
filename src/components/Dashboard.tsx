@@ -21,6 +21,7 @@ import { LEVELS, LEVEL_INFO, LESSONS } from '@/lib/curriculum'
 import { calculateLevelProgress, isLessonUnlocked, isStreakAtRisk, isLevelLocked } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import LearningStrategyModal from './LearningStrategyModal'
 
 interface DashboardProps {
   user: User
@@ -371,6 +372,8 @@ export default function Dashboard({
           </TabsContent>
         </Tabs>
       </main>
+
+      <LearningStrategyModal />
     </div>
   )
 }
