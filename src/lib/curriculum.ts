@@ -1,5 +1,6 @@
 import { Lesson, Level, PlacementTestQuestion, Achievement } from './types'
 import { B1_LESSONS, B2_LESSONS, C1_LESSONS, C2_LESSONS } from './advanced-lessons'
+import { A1_LESSONS_7_TO_30 } from './a1-lessons'
 
 export const LEVELS: Level[] = ['Beginner', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 
@@ -515,6 +516,7 @@ export const LESSONS: Record<Level, Lesson[]> = {
       ],
       shadowingText: 'There is a bank on Main Street. The hospital is next to the park. The restaurant is near my house. I go to the store every day.',
     },
+    ...A1_LESSONS_7_TO_30,
   ],
   A2: [
     {
