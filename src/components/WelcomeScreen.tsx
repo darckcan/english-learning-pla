@@ -97,6 +97,7 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
+    
     if (!username.trim() || !password.trim() || !fullName.trim()) {
       haptics.error()
       toast.error('Por favor completa todos los campos requeridos')
@@ -109,24 +110,52 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       return
     }
 
-    if (username.toLowerCase() === 'darckcan') {
+    const cleanUsername = username.trim().toLowerCase()
+    const cleanEmail = email.trim().toLowerCase()
+
+    if (cleanUsername === 'darckcan' || cleanUsername === 'admin' || cleanUsername === 'superadmin') {
       haptics.error()
-      toast.error('Este nombre de usuario no está disponible')
+      toast.error('Este nombre de usuario está reservado y no está disponible')
+      return
+    }
+
+    if (cleanUsername.length < 3) {
+      haptics.error()
+      toast.error('El nombre de usuario debe tener al menos 3 caracteres')
+      return
+    }
+
+    if (password.length < 6) {
+      haptics.error()
+      toast.error('La contraseña debe tener al menos 6 caracteres')
       return
     }
 
     const users = allUsers || []
-    const existingUser = users.find(u => u.username.toLowerCase() === username.trim().toLowerCase())
+    
+    const existingUser = users.find(u => u.username.toLowerCase() === cleanUsername)
     if (existingUser) {
       haptics.error()
-      toast.error('Este nombre de usuario ya existe')
+      toast.error(
+        <div className="space-y-1">
+          <p className="font-semibold">❌ Usuario ya registrado</p>
+          <p className="text-sm">El nombre de usuario "{username}" ya está en uso. Por favor elige otro.</p>
+        </div>,
+        { duration: 5000 }
+      )
       return
     }
 
-    const existingEmail = users.find(u => u.email?.toLowerCase() === email.trim().toLowerCase())
+    const existingEmail = users.find(u => u.email?.toLowerCase() === cleanEmail)
     if (existingEmail) {
       haptics.error()
-      toast.error('Este correo electrónico ya está registrado')
+      toast.error(
+        <div className="space-y-1">
+          <p className="font-semibold">❌ Correo ya registrado</p>
+          <p className="text-sm">El correo "{email}" ya tiene una cuenta. ¿Olvidaste tu contraseña?</p>
+        </div>,
+        { duration: 5000 }
+      )
       return
     }
 
@@ -135,7 +164,7 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
 
     const newUser: User = {
       id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      username: username.trim(),
+      username: cleanUsername,
       password: simpleHash(password),
       role: 'student',
       currentLevel: 'Beginner',
@@ -143,13 +172,24 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       createdAt: Date.now(),
       lastActive: Date.now(),
       fullName: fullName.trim(),
-      email: email.trim(),
+      email: cleanEmail,
       membership: trialMembership,
       selectedTheme: selectedTheme,
     }
 
     setAllUsers((current) => {
       const users = current || []
+      const finalCheck = users.find(u => 
+        u.username.toLowerCase() === cleanUsername || 
+        u.email?.toLowerCase() === cleanEmail
+      )
+      
+      if (finalCheck) {
+        haptics.error()
+        toast.error('Error: El usuario o correo ya existe. Por favor recarga la página.')
+        return users
+      }
+      
       return [...users, newUser]
     })
 
