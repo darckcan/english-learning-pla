@@ -1,118 +1,157 @@
-# ⚠️ ADVERTENCIA CRÍTICA DE SEGURIDAD - STRIPE
+# ✅ ACTUALIZACIÓN DE SEGURIDAD - STRIPE
 
-## 🚨 PROBLEMA DE SEGURIDAD IDENTIFICADO
+## ✅ PROBLEMA RESUELTO
 
-Las claves de API de Stripe están **hardcodeadas** en el código fuente en el archivo `/src/lib/stripe-config.ts`. Esto representa un **RIESGO DE SEGURIDAD CRÍTICO** en producción.
+Las claves de API de Stripe han sido **movidas a variables de entorno** en el archivo `.env`. El código ya no tiene claves hardcodeadas.
 
-### Claves Actualmente Expuestas:
+### Estado Actual:
 ```
-Clave Pública: pk_live_51NLv8cBSxEn7IlGkOJ3sfzOBWdlVkNkpVN7XrJ7v0z8LWxcSf3If43DJpxTWKdLSUF6aNa3cYKlY1IAeFw91fZY0008GleX7lm
-Clave Secreta: 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
-```
-
-## ⚠️ RIESGOS
-
-1. **Cualquier persona con acceso al código puede:**
-   - Ver tus claves secretas de Stripe
-   - Hacer cargos fraudulentos
-   - Acceder a información de pagos
-   - Crear sesiones de checkout falsas
-   - Comprometer la seguridad financiera de tu aplicación
-
-2. **Si el código está en un repositorio público:**
-   - Las claves están completamente expuestas a internet
-   - Los bots automáticamente escanean y recolectan estas claves
-   - Podrías recibir cargos no autorizados
-
-## ✅ SOLUCIÓN RECOMENDADA
-
-### Opción 1: Variables de Entorno (Recomendado)
-
-1. **Crear archivo `.env` en la raíz del proyecto:**
-```env
-VITE_STRIPE_PUBLIC_KEY=pk_live_51NLv8cBSxEn7IlGkOJ3sfzOBWdlVkNkpVN7XrJ7v0z8LWxcSf3If43DJpxTWKdLSUF6aNa3cYKlY1IAeFw91fZY0008GleX7lm
-STRIPE_SECRET_KEY=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
+✅ Claves movidas a .env
+✅ .env agregado a .gitignore
+✅ Código actualizado para usar import.meta.env
+✅ Creado .env.example para otros desarrolladores
 ```
 
-2. **Agregar `.env` a `.gitignore`:**
-```
-.env
-.env.local
-.env.production
-```
+## ⚠️ ADVERTENCIAS RESTANTES
 
-3. **Modificar `/src/lib/stripe-config.ts`:**
-```typescript
-export const STRIPE_CONFIG = {
-  publicKey: import.meta.env.VITE_STRIPE_PUBLIC_KEY || '',
-  secretKey: import.meta.env.STRIPE_SECRET_KEY || ''
-}
-```
+### 1. Clave Secreta en el Frontend
 
-4. **Configurar las variables en tu plataforma de despliegue:**
-   - EasyPanel: Panel de control → Variables de entorno
-   - Vercel: Project Settings → Environment Variables
-   - Railway: Variables tab
-   - Netlify: Site settings → Environment variables
+⚠️ **IMPORTANTE:** Aunque las claves ahora están en variables de entorno, la clave secreta **todavía se usa en el frontend** (archivo `stripe-service.ts`). Esto significa que aunque no esté hardcodeada, sigue siendo accesible desde el navegador.
 
-### Opción 2: Backend Seguro (MÁS SEGURO)
+**Por qué es un problema:**
+- La clave secreta se incluye en el bundle de JavaScript
+- Cualquiera puede verla inspeccionando el código del navegador
+- Las variables `VITE_*` se exponen en el frontend durante el build
 
-La clave secreta **NUNCA** debería estar en el frontend. Implementa un backend:
+### 2. Arquitectura Actual
 
 ```
-Frontend (React) → Backend (Node.js/Express) → Stripe API
-                     ↑
-                   Clave secreta aquí
+Frontend (React) → Stripe API directamente
+                   ↑
+              Clave secreta aquí (visible en el navegador)
 ```
 
-**Ventajas:**
-- Clave secreta nunca se expone al cliente
-- Mayor control sobre transacciones
-- Webhooks para eventos de Stripe
-- Validación adicional de seguridad
+### 3. Solución Recomendada para Producción
 
-## 🔄 ACCIONES INMEDIATAS REQUERIDAS
+```
+Frontend (React) → Backend API → Stripe API
+                                  ↑
+                            Clave secreta aquí (segura)
+```
 
-### Si estas claves ya están en producción:
+## ✅ CAMBIOS IMPLEMENTADOS
 
-1. **INMEDIATAMENTE:**
-   - Ve al Dashboard de Stripe (https://dashboard.stripe.com)
-   - Navega a: Developers → API keys
-   - **Revoca las claves actuales** haciendo clic en los "..." → "Roll key"
-   - Genera nuevas claves
+### Archivos Modificados:
 
-2. **Verifica transacciones:**
-   - Revisa el historial de pagos en Stripe
-   - Busca actividad sospechosa
-   - Contacta a Stripe Support si encuentras algo
-
-3. **Implementa una solución segura:**
-   - Usa variables de entorno
-   - Considera implementar un backend
-   - Nunca comitees las nuevas claves al repositorio
-
-### Si estas claves están en un repositorio público:
-
-1. **Las claves están COMPROMETIDAS** - deben ser revocadas INMEDIATAMENTE
-2. **Limpia el historial de Git** (las claves siguen en commits antiguos):
-   ```bash
-   # CUIDADO: Esto reescribe el historial
-   git filter-branch --force --index-filter \
-     "git rm --cached --ignore-unmatch src/lib/stripe-config.ts" \
-     --prune-empty --tag-name-filter cat -- --all
+1. **`/src/lib/stripe-config.ts`**
+   ```typescript
+   // ANTES (inseguro):
+   publicKey: 'pk_live_...',
+   secretKey: 'sk_live_...'
+   
+   // AHORA (mejor):
+   publicKey: import.meta.env.VITE_STRIPE_PUBLIC_KEY || '',
+   secretKey: import.meta.env.VITE_STRIPE_SECRET_KEY || ''
    ```
 
-## 📋 CHECKLIST DE SEGURIDAD
+2. **`.env` (nuevo archivo)**
+   ```env
+   VITE_STRIPE_PUBLIC_KEY=pk_live_...
+   VITE_STRIPE_SECRET_KEY=sk_live_...
+   ```
 
-- [ ] Revocar claves expuestas en Stripe Dashboard
-- [ ] Generar nuevas claves de API
-- [ ] Implementar variables de entorno
-- [ ] Agregar `.env` a `.gitignore`
-- [ ] Configurar variables en plataforma de despliegue
-- [ ] Verificar que las claves no están en el código
-- [ ] (Opcional) Implementar backend para mayor seguridad
-- [ ] Configurar webhooks de Stripe
-- [ ] Revisar transacciones recientes
+3. **`.env.example` (nuevo archivo)**
+   - Plantilla para otros desarrolladores
+   - No contiene claves reales
+
+### Mejoras de Seguridad:
+
+✅ Claves no están en el código fuente  
+✅ `.env` está en `.gitignore` (no se sube a Git)  
+✅ Fácil configuración por entorno (dev, staging, prod)  
+✅ Advertencias en consola si faltan variables  
+⚠️ Clave secreta aún accesible desde el navegador (ver solución abajo)
+
+## 🚀 CONFIGURACIÓN REQUERIDA
+
+### Para Desarrollo Local:
+
+El archivo `.env` ya está creado. Si trabajas en equipo:
+
+```bash
+# Copia el ejemplo
+cp .env.example .env
+
+# Edita .env con tus claves
+nano .env
+```
+
+### Para Producción:
+
+**⚠️ IMPORTANTE:** Debes configurar las variables de entorno en tu plataforma de hosting:
+
+#### EasyPanel:
+1. Panel de control → Tu aplicación
+2. Pestaña **Environment**
+3. Agregar:
+   - `VITE_STRIPE_PUBLIC_KEY` = `pk_live_...`
+   - `VITE_STRIPE_SECRET_KEY` = `sk_live_...`
+
+#### Vercel:
+```bash
+vercel env add VITE_STRIPE_PUBLIC_KEY
+vercel env add VITE_STRIPE_SECRET_KEY
+```
+
+#### Railway:
+1. Proyecto → Variables
+2. Agregar las variables de entorno
+
+#### Netlify:
+1. Site settings → Environment variables
+2. Agregar las variables
+
+Ver guía completa en: `STRIPE_ENV_SETUP.md`
+
+## 🔐 PRÓXIMA MEJORA: BACKEND SEGURO
+
+Para máxima seguridad, implementa un backend que maneje las claves secretas:
+
+### Arquitectura Recomendada:
+
+```typescript
+// Frontend (stripe-service.ts)
+export async function createCheckoutSession(data: PaymentIntentData) {
+  const response = await fetch('/api/stripe/create-checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  return await response.json()
+}
+
+// Backend (server.js - Node.js/Express)
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+
+app.post('/api/stripe/create-checkout', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    // ... configuración
+  })
+  res.json({ sessionId: session.id, url: session.url })
+})
+```
+
+### Ventajas:
+✅ Clave secreta nunca se expone al cliente  
+✅ Mayor control sobre transacciones  
+✅ Webhooks para eventos de Stripe  
+✅ Validación adicional de seguridad  
+✅ Mejor auditoría y logging  
+
+### Recursos:
+- [Stripe: Server-side Integration](https://stripe.com/docs/payments/checkout/how-checkout-works#server)
+- [Express.js](https://expressjs.com/)
+- [Stripe Webhooks](https://stripe.com/docs/webhooks)
 
 ## 🔗 RECURSOS ÚTILES
 

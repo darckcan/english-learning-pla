@@ -1,8 +1,16 @@
 import { loadStripe, Stripe } from '@stripe/stripe-js'
 
 export const STRIPE_CONFIG = {
-  publicKey: 'pk_live_51NLv8cBSxEn7IlGkOJ3sfzOBWdlVkNkpVN7XrJ7v0z8LWxcSf3If43DJpxTWKdLSUF6aNa3cYKlY1IAeFw91fZY0008GleX7lm',
-  secretKey: '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'
+  publicKey: import.meta.env.VITE_STRIPE_PUBLIC_KEY || '',
+  secretKey: import.meta.env.VITE_STRIPE_SECRET_KEY || ''
+}
+
+if (!STRIPE_CONFIG.publicKey) {
+  console.warn('⚠️ VITE_STRIPE_PUBLIC_KEY no está configurada. Configura las variables de entorno.')
+}
+
+if (!STRIPE_CONFIG.secretKey) {
+  console.warn('⚠️ VITE_STRIPE_SECRET_KEY no está configurada. ADVERTENCIA: La clave secreta debería estar en un backend.')
 }
 
 let stripePromise: Promise<Stripe | null> | null = null
