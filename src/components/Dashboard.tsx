@@ -18,8 +18,9 @@ import {
   TrendUp,
 } from '@phosphor-icons/react'
 import { LEVELS, LEVEL_INFO, LESSONS } from '@/lib/curriculum'
-import { calculateLevelProgress, isLessonUnlocked, isStreakAtRisk } from '@/lib/helpers'
+import { calculateLevelProgress, isLessonUnlocked, isStreakAtRisk, isLevelLocked } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface DashboardProps {
   user: User
@@ -55,7 +56,7 @@ export default function Dashboard({
                 </span>
               </div>
               <div>
-                <h2 className="font-semibold text-foreground">{user.username}</h2>
+                <h2 className="font-semibold text-foreground">{user.fullName || user.username}</h2>
                 <p className="text-sm text-muted-foreground">{user.currentLevel}</p>
               </div>
             </div>
@@ -72,7 +73,7 @@ export default function Dashboard({
                   <span className="font-semibold text-foreground">{progress.streak}</span>
                 </div>
                 {streakAtRisk && (
-                  <span className="text-xs text-destructive font-medium">At risk!</span>
+                  <span className="text-xs text-destructive font-medium">¡En riesgo!</span>
                 )}
               </div>
 
@@ -94,15 +95,15 @@ export default function Dashboard({
           <TabsList className="grid w-full grid-cols-3 max-w-md mb-8">
             <TabsTrigger value="lessons" className="flex items-center gap-2">
               <House size={18} />
-              <span>Lessons</span>
+              <span>Lecciones</span>
             </TabsTrigger>
             <TabsTrigger value="progress" className="flex items-center gap-2">
               <ChartBar size={18} />
-              <span>Progress</span>
+              <span>Progreso</span>
             </TabsTrigger>
             <TabsTrigger value="achievements" className="flex items-center gap-2">
               <Trophy size={18} />
-              <span>Achievements</span>
+              <span>Logros</span>
             </TabsTrigger>
           </TabsList>
 
@@ -111,26 +112,40 @@ export default function Dashboard({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BookOpen size={24} />
-                  Select Your Level
+                  Selecciona tu Nivel
                 </CardTitle>
                 <CardDescription>
-                  Choose a level to view and complete its lessons
+                  Elige un nivel para ver y completar sus lecciones
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
                   {LEVELS.map((level) => {
                     const levelProgress = calculateLevelProgress(progress, level)
+                    const locked = isLevelLocked(user.unlockedLevels, level)
                     return (
                       <Button
                         key={level}
                         variant={selectedLevel === level ? 'default' : 'outline'}
-                        onClick={() => setSelectedLevel(level)}
-                        className="h-auto flex-col gap-2 py-4"
+                        onClick={() => {
+                          if (locked) {
+                            toast.error(`El nivel ${level} está bloqueado. Completa los niveles anteriores para desbloquearlo.`)
+                          } else {
+                            setSelectedLevel(level)
+                          }
+                        }}
+                        className={cn(
+                          'h-auto flex-col gap-2 py-4 relative',
+                          locked && 'opacity-50 cursor-not-allowed'
+                        )}
+                        disabled={locked}
                       >
+                        {locked && (
+                          <Lock size={16} className="absolute top-2 right-2 text-muted-foreground" />
+                        )}
                         <span className="font-semibold">{level}</span>
-                        <Progress value={levelProgress} className="h-1.5 w-full" />
-                        <span className="text-xs opacity-80">{levelProgress}%</span>
+                        <Progress value={locked ? 0 : levelProgress} className="h-1.5 w-full" />
+                        <span className="text-xs opacity-80">{locked ? 'Bloqueado' : `${levelProgress}%`}</span>
                       </Button>
                     )
                   })}
@@ -146,7 +161,7 @@ export default function Dashboard({
                     <CardDescription>{LEVEL_INFO[selectedLevel].description}</CardDescription>
                   </div>
                   <Badge variant="secondary" className="text-base px-4 py-2">
-                    {currentLevelProgress}% Complete
+                    {currentLevelProgress}% Completado
                   </Badge>
                 </div>
                 <Progress value={currentLevelProgress} className="mt-4" />
@@ -204,7 +219,7 @@ export default function Dashboard({
                             disabled={!isUnlocked}
                             variant={isCompleted ? 'outline' : 'default'}
                           >
-                            {isCompleted ? 'Review' : 'Start'}
+                            {isCompleted ? 'Repasar' : 'Comenzar'}
                           </Button>
                         </CardContent>
                       </Card>
@@ -219,7 +234,7 @@ export default function Dashboard({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Total Lessons</CardTitle>
+                  <CardTitle className="text-base">Total de Lecciones</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-3">
@@ -231,7 +246,7 @@ export default function Dashboard({
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Current Streak</CardTitle>
+                  <CardTitle className="text-base">Racha Actual</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-3">
@@ -243,7 +258,7 @@ export default function Dashboard({
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Total Points</CardTitle>
+                  <CardTitle className="text-base">Puntos Totales</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-3">
@@ -258,7 +273,7 @@ export default function Dashboard({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendUp size={24} />
-                  Level Progress
+                  Progreso por Nivel
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -283,10 +298,10 @@ export default function Dashboard({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Trophy size={24} />
-                  Your Achievements
+                  Tus Logros
                 </CardTitle>
                 <CardDescription>
-                  {progress.achievements.length} unlocked
+                  {progress.achievements.length} desbloqueados
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -294,7 +309,7 @@ export default function Dashboard({
                   <div className="text-center py-12">
                     <Trophy size={48} className="mx-auto text-muted-foreground mb-4" />
                     <p className="text-muted-foreground">
-                      Complete lessons to unlock achievements!
+                      ¡Completa lecciones para desbloquear logros!
                     </p>
                   </div>
                 ) : (
@@ -313,7 +328,7 @@ export default function Dashboard({
                           </div>
                           <Separator />
                           <p className="text-xs text-muted-foreground">
-                            Unlocked {new Date(achievement.unlockedAt).toLocaleDateString()}
+                            Desbloqueado el {new Date(achievement.unlockedAt).toLocaleDateString('es-ES')}
                           </p>
                         </CardContent>
                       </Card>

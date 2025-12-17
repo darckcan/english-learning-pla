@@ -4,38 +4,38 @@ export const LEVELS: Level[] = ['Beginner', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 
 export const LEVEL_INFO: Record<Level, { title: string; description: string; lessons: number }> = {
   Beginner: {
-    title: 'Beginner',
-    description: 'Start your English journey with basic greetings and everyday phrases',
+    title: 'Principiante',
+    description: 'Comienza tu viaje con saludos básicos y frases cotidianas',
     lessons: 5,
   },
   A1: {
-    title: 'A1 - Elementary',
-    description: 'Build foundation with simple sentences and common situations',
+    title: 'A1 - Elemental',
+    description: 'Construye tu base con oraciones simples y situaciones comunes',
     lessons: 6,
   },
   A2: {
-    title: 'A2 - Pre-Intermediate',
-    description: 'Express yourself in routine tasks and familiar matters',
+    title: 'A2 - Pre-Intermedio',
+    description: 'Exprésate en tareas rutinarias y temas familiares',
     lessons: 6,
   },
   B1: {
-    title: 'B1 - Intermediate',
-    description: 'Handle most travel situations and discuss familiar topics',
+    title: 'B1 - Intermedio',
+    description: 'Maneja la mayoría de situaciones de viaje y discute temas familiares',
     lessons: 6,
   },
   B2: {
-    title: 'B2 - Upper-Intermediate',
-    description: 'Interact fluently and understand complex texts',
+    title: 'B2 - Intermedio Alto',
+    description: 'Interactúa con fluidez y comprende textos complejos',
     lessons: 6,
   },
   C1: {
-    title: 'C1 - Advanced',
-    description: 'Express ideas fluently and use language flexibly',
+    title: 'C1 - Avanzado',
+    description: 'Expresa ideas con fluidez y usa el lenguaje con flexibilidad',
     lessons: 5,
   },
   C2: {
-    title: 'C2 - Proficient',
-    description: 'Master the language with precision and subtlety',
+    title: 'C2 - Dominio',
+    description: 'Domina el idioma con precisión y sutileza',
     lessons: 5,
   },
 }
@@ -47,7 +47,7 @@ export const LESSONS: Record<Level, Lesson[]> = {
       level: 'Beginner',
       order: 1,
       title: 'Greetings and Introductions',
-      objective: 'Learn how to greet people and introduce yourself',
+      objective: 'Aprende cómo saludar a las personas y presentarte',
       vocabulary: [
         { word: 'Hello', translation: 'Hola', example: 'Hello, my name is John.', type: 'phrase' },
         { word: 'Goodbye', translation: 'Adiós', example: 'Goodbye, see you later!', type: 'phrase' },
@@ -56,13 +56,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         { word: 'Name', translation: 'Nombre', example: 'My name is Maria.', type: 'noun' },
       ],
       grammar: {
-        title: 'Personal Pronouns and "To Be"',
-        explanation: 'Personal pronouns (I, you, he, she, it, we, they) are used with the verb "to be" (am, is, are) to introduce yourself and others.',
+        title: 'Pronombres Personales y "To Be"',
+        explanation: 'Los pronombres personales (I, you, he, she, it, we, they) se usan con el verbo "to be" (am, is, are) para presentarte a ti mismo y a otros.',
         examples: ['I am a student.', 'You are nice.', 'She is my friend.', 'We are learning English.'],
         rules: [
-          'Use "am" with I',
-          'Use "is" with he, she, it',
-          'Use "are" with you, we, they',
+          'Usa "am" con I',
+          'Usa "is" con he, she, it',
+          'Usa "are" con you, we, they',
         ],
       },
       exercises: [

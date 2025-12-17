@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { User, UserProgress } from './lib/types'
+import { User, UserProgress, Level } from './lib/types'
 import { Toaster } from './components/ui/sonner'
 import WelcomeScreen from './components/WelcomeScreen'
 import PlacementTest from './components/PlacementTest'
 import Dashboard from './components/Dashboard'
 import LessonView from './components/LessonView'
 import TeacherDashboard from './components/TeacherDashboard'
+import SuperAdminDashboard from './components/SuperAdminDashboard'
 import { LEVELS } from './lib/curriculum'
 
-type AppView = 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher'
+type AppView = 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin'
 
 function App() {
   const [currentUser, setCurrentUser] = useKV<User | null>('current-user', null)
@@ -19,7 +20,9 @@ function App() {
 
   useEffect(() => {
     if (currentUser) {
-      if (currentUser.role === 'teacher') {
+      if (currentUser.role === 'superadmin') {
+        setView('superadmin')
+      } else if (currentUser.role === 'teacher') {
         setView('teacher')
       } else if (!userProgress) {
         setView('placement')
@@ -35,7 +38,7 @@ function App() {
     setCurrentUser(() => user)
   }
 
-  const handlePlacementComplete = (assignedLevel: typeof LEVELS[number]) => {
+  const handlePlacementComplete = (assignedLevel: Level, unlockedLevels: Level[]) => {
     const newProgress: UserProgress = {
       userId: currentUser!.id,
       completedLessons: [],
@@ -56,7 +59,7 @@ function App() {
       lessonScores: {},
     }
     setUserProgress(() => newProgress)
-    setCurrentUser((prev) => (prev ? { ...prev, currentLevel: assignedLevel } : null))
+    setCurrentUser((prev) => (prev ? { ...prev, currentLevel: assignedLevel, unlockedLevels } : null))
     setView('dashboard')
   }
 
@@ -108,6 +111,9 @@ function App() {
         )}
         {view === 'teacher' && currentUser && (
           <TeacherDashboard user={currentUser} onLogout={handleLogout} />
+        )}
+        {view === 'superadmin' && currentUser && (
+          <SuperAdminDashboard user={currentUser} onLogout={handleLogout} />
         )}
       </div>
       <Toaster />

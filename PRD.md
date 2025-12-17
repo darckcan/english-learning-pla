@@ -1,23 +1,39 @@
-# English Learning Platform
+# Plataforma de Aprendizaje de Inglés
 
-A progressive English learning platform that guides students from Beginner through C2 levels with structured lessons, interactive exercises, and achievement tracking.
+Una plataforma progresiva de aprendizaje de inglés que guía a los estudiantes desde nivel Principiante hasta C2 con lecciones estructuradas, ejercicios interactivos y seguimiento de logros. Todas las instrucciones y explicaciones están en español para facilitar el aprendizaje del inglés.
 
 **Experience Qualities**:
-1. **Encouraging** - Creates a supportive environment that celebrates small wins and maintains motivation through streaks and achievements
-2. **Structured** - Provides clear learning paths with sequential lessons that build upon each other logically
-3. **Interactive** - Engages learners with varied exercise types and immediate feedback to reinforce understanding
+1. **Alentadora** - Crea un ambiente de apoyo que celebra pequeñas victorias y mantiene la motivación a través de rachas y logros
+2. **Estructurada** - Proporciona rutas de aprendizaje claras con lecciones secuenciales que se construyen lógicamente
+3. **Interactiva** - Involucra a los estudiantes con diversos tipos de ejercicios y retroalimentación inmediata para reforzar la comprensión
 
-**Complexity Level**: Complex Application (advanced functionality, likely with multiple views)
-This platform requires sophisticated state management for user progress, multi-step lesson flows, adaptive testing, achievement systems, and role-based access. It orchestrates multiple interconnected features including lesson progression, exercise evaluation, streak tracking, and level advancement.
+**Complexity Level**: Complex Application (funcionalidad avanzada, probablemente con múltiples vistas)
+Esta plataforma requiere gestión sofisticada de estado para el progreso del usuario, flujos de lecciones de múltiples pasos, pruebas adaptativas, sistemas de logros y acceso basado en roles. Orquesta múltiples características interconectadas incluyendo progresión de lecciones, evaluación de ejercicios, seguimiento de rachas y avance de nivel. Incluye un super administrador que controla todos los registros y usuarios.
+
+## Essential Features
+
+### Super Administrador
+- **Functionality**: Usuario maestro con control total sobre el sistema, gestión de usuarios, y configuración
+- **Purpose**: Permite administración centralizada y control completo de la plataforma
+- **Trigger**: Login con credenciales de super admin (usuario: darckcan, contraseña: M.ario123)
+- **Progression**: Login → Panel de super admin → Gestión de usuarios → Crear/Editar/Eliminar usuarios → Desbloquear niveles → Ver estadísticas globales
+- **Success criteria**: Super admin puede ver todos los usuarios, crear nuevas cuentas, eliminar usuarios, desbloquear/bloquear niveles para cualquier usuario
 
 ## Essential Features
 
 ### User Authentication & Onboarding
-- **Functionality**: User login/registration with role assignment (student/teacher)
-- **Purpose**: Personalizes the learning experience and tracks individual progress
-- **Trigger**: App launch or logout
-- **Progression**: Landing page → Login/Register form → Placement test (new users) → Dashboard
-- **Success criteria**: User can create account, login persists, placement test assigns appropriate starting level
+- **Functionality**: Registro e inicio de sesión con contraseñas, asignación de roles (estudiante/profesor/superadmin), perfil único por usuario
+- **Purpose**: Personaliza la experiencia de aprendizaje y rastrea el progreso individual con seguridad
+- **Trigger**: Lanzamiento de la app o cierre de sesión
+- **Progression**: Página de inicio → Registro (nombre completo, email, usuario, contraseña) o Login → Prueba de ubicación (usuarios nuevos) → Dashboard
+- **Success criteria**: Usuario puede crear cuenta con contraseña, login persiste, información de perfil se guarda, progreso individual se mantiene por usuario
+
+### Sistema de Niveles Bloqueados
+- **Functionality**: Los niveles superiores al asignado permanecen bloqueados hasta completar niveles previos
+- **Purpose**: Asegura progresión ordenada y evita que estudiantes salten contenido esencial
+- **Trigger**: Después de completar el examen de ubicación o al terminar un nivel
+- **Progression**: Examen → Nivel asignado (ej: A2) → Beginner y A1 desbloqueados completamente → A2 desbloqueado → B1, B2, C1, C2 bloqueados → Completar A2 → Desbloquear B1
+- **Success criteria**: Solo niveles hasta el nivel actual son accesibles, niveles bloqueados muestran icono de candado, niveles se desbloquean progresivamente al completar el anterior
 
 ### Placement Test
 - **Functionality**: Adaptive assessment that determines starting level based on vocabulary and grammar knowledge
@@ -34,11 +50,11 @@ This platform requires sophisticated state management for user progress, multi-s
 - **Success criteria**: Lessons unlock sequentially, completion tracked, level advancement requires finishing all lessons
 
 ### Interactive Lessons
-- **Functionality**: Multi-section lessons covering vocabulary, grammar, comprehension, and production
-- **Purpose**: Teaches language skills through varied content and exercise types
-- **Trigger**: User clicks on available lesson
-- **Progression**: Lesson intro (objective) → Vocabulary section → Grammar explanation → Practice exercises → Shadowing exercise → Quiz → Results & progress update
-- **Success criteria**: Content displays correctly, exercises accept input, scoring works, progress saves
+- **Functionality**: Lecciones de múltiples secciones cubriendo vocabulario, gramática, comprensión y producción (instrucciones en español)
+- **Purpose**: Enseña habilidades del idioma a través de contenido variado y tipos de ejercicios
+- **Trigger**: Usuario hace clic en una lección disponible (desbloqueada)
+- **Progression**: Intro de lección (objetivo en español) → Sección de vocabulario → Explicación gramatical (en español) → Ejercicios de práctica → Ejercicio de shadowing → Quiz → Resultados y actualización de progreso
+- **Success criteria**: Contenido se muestra correctamente, ejercicios aceptan entrada, puntuación funciona, progreso se guarda, explicaciones en español son claras
 
 ### Exercise Types
 - **Functionality**: Multiple choice, fill-in-the-blank, matching, sentence construction, pronunciation practice
@@ -92,18 +108,18 @@ The design should feel like a personal language tutor - encouraging, organized, 
 
 ## Color Selection
 
-A calm, education-focused palette that uses green to represent growth and progress, blue for trust and structure, with warm accents for celebration.
+Una paleta moderna y vibrante que usa morado/violeta para representar el aprendizaje y creatividad, con acentos cálidos para celebración.
 
-- **Primary Color**: Deep Teal `oklch(0.55 0.12 200)` - Communicates learning, growth, and forward progress; used for primary CTAs and progress indicators
+- **Primary Color**: Morado Vibrante `oklch(0.58 0.22 270)` - Comunica creatividad, aprendizaje y progreso; usado para CTAs principales e indicadores de progreso
 - **Secondary Colors**: 
-  - Soft Blue `oklch(0.70 0.10 230)` - Supportive background for lesson cards and secondary information
-  - Sage Green `oklch(0.75 0.08 150)` - Success states, completed lessons, streak indicators
-- **Accent Color**: Warm Coral `oklch(0.70 0.15 35)` - Achievement celebrations, milestone notifications, and important CTAs
+  - Rosa Suave `oklch(0.72 0.15 310)` - Fondo de apoyo para tarjetas de lecciones e información secundaria
+  - Verde Éxito `oklch(0.70 0.15 150)` - Estados de éxito, lecciones completadas, indicadores de racha
+- **Accent Color**: Naranja Coral `oklch(0.68 0.20 35)` - Celebraciones de logros, notificaciones de hitos y CTAs importantes
 - **Foreground/Background Pairings**: 
-  - Primary Teal `oklch(0.55 0.12 200)`: White text `oklch(1 0 0)` - Ratio 5.2:1 ✓
-  - Accent Coral `oklch(0.70 0.15 35)`: White text `oklch(1 0 0)` - Ratio 4.9:1 ✓
-  - Background `oklch(0.98 0.01 200)`: Dark text `oklch(0.25 0.02 220)` - Ratio 12.4:1 ✓
-  - Card `oklch(1 0 0)`: Dark text `oklch(0.25 0.02 220)` - Ratio 14.1:1 ✓
+  - Primary Purple `oklch(0.58 0.22 270)`: White text `oklch(1 0 0)` - Ratio 5.8:1 ✓
+  - Accent Orange `oklch(0.68 0.20 35)`: White text `oklch(1 0 0)` - Ratio 5.2:1 ✓
+  - Background `oklch(0.99 0.005 270)`: Dark text `oklch(0.20 0.015 270)` - Ratio 15.1:1 ✓
+  - Card `oklch(1 0 0)`: Dark text `oklch(0.20 0.015 270)` - Ratio 16.2:1 ✓
 
 ## Font Selection
 

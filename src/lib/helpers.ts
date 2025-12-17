@@ -1,5 +1,46 @@
-import { UserProgress, Level, Achievement, LessonScore } from './types'
+import { UserProgress, Level, Achievement, LessonScore, User } from './types'
 import { LEVELS, LEVEL_INFO, LESSONS, ACHIEVEMENT_DEFINITIONS } from './curriculum'
+
+const SUPER_ADMIN_USERNAME = 'darckcan'
+const SUPER_ADMIN_PASSWORD = 'M.ario123'
+
+export function simpleHash(text: string): string {
+  let hash = 0
+  for (let i = 0; i < text.length; i++) {
+    const char = text.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash
+  }
+  return hash.toString(36)
+}
+
+export function createSuperAdmin(): User {
+  return {
+    id: 'superadmin-001',
+    username: SUPER_ADMIN_USERNAME,
+    password: simpleHash(SUPER_ADMIN_PASSWORD),
+    role: 'superadmin',
+    currentLevel: 'C2',
+    unlockedLevels: ['Beginner', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
+    createdAt: Date.now(),
+    lastActive: Date.now(),
+    fullName: 'Super Administrador',
+    email: 'admin@learnenglish.com',
+  }
+}
+
+export function validateSuperAdmin(username: string, password: string): boolean {
+  return username === SUPER_ADMIN_USERNAME && password === SUPER_ADMIN_PASSWORD
+}
+
+export function getLevelsThroughCurrent(currentLevel: Level): Level[] {
+  const currentIndex = LEVELS.indexOf(currentLevel)
+  return LEVELS.slice(0, currentIndex + 1)
+}
+
+export function isLevelLocked(userUnlockedLevels: Level[], targetLevel: Level): boolean {
+  return !userUnlockedLevels.includes(targetLevel)
+}
 
 export function calculateLevelProgress(progress: UserProgress, level: Level): number {
   const totalLessons = LEVEL_INFO[level].lessons

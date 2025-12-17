@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-import { useKV } from '@github/spark/hooks'
 import { User, UserProgress, Level } from '@/lib/types'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
@@ -13,6 +11,7 @@ import {
 } from './ui/table'
 import { Badge } from './ui/badge'
 import { SignOut, Users, ChartBar, Flame, BookOpen } from '@phosphor-icons/react'
+import { useKV } from '@github/spark/hooks'
 
 interface TeacherDashboardProps {
   user: User
@@ -20,25 +19,32 @@ interface TeacherDashboardProps {
 }
 
 export default function TeacherDashboard({ user, onLogout }: TeacherDashboardProps) {
+  const [allUsers] = useKV<User[]>('all-users', [])
   const [allProgress] = useKV<Record<string, UserProgress>>('all-user-progress', {})
-  const [students, setStudents] = useState<Array<{ user: User; progress: UserProgress }>>([])
 
-  useEffect(() => {
-    if (allProgress) {
-      const studentData = Object.entries(allProgress).map(([userId, progress]) => ({
-        user: {
-          id: userId,
-          username: `Student ${userId.slice(-4)}`,
-          role: 'student' as const,
-          currentLevel: 'Beginner' as Level,
-          createdAt: Date.now(),
-          lastActive: Date.now(),
-        },
-        progress,
-      }))
-      setStudents(studentData)
-    }
-  }, [allProgress])
+  const studentUsers = (allUsers || []).filter((u) => u.role === 'student')
+  const students = studentUsers.map((u) => ({
+    user: u,
+    progress: (allProgress || {})[u.id] || {
+      userId: u.id,
+      completedLessons: [],
+      levelProgress: {
+        Beginner: 0,
+        A1: 0,
+        A2: 0,
+        B1: 0,
+        B2: 0,
+        C1: 0,
+        C2: 0,
+      },
+      currentLesson: null,
+      points: 0,
+      streak: 0,
+      lastActivityDate: '',
+      achievements: [],
+      lessonScores: {},
+    },
+  }))
 
   const totalStudents = students.length
   const activeToday = students.filter((s) => {
@@ -84,14 +90,14 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
 
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-6">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Teacher Dashboard</h1>
-          <p className="text-muted-foreground">Monitor student progress and activity</p>
+          <h1 className="text-3xl font-bold mb-2">Panel del Profesor</h1>
+          <p className="text-muted-foreground">Monitorea el progreso y actividad de los estudiantes</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-medium">Total Students</CardTitle>
+              <CardTitle className="text-base font-medium">Total Estudiantes</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
@@ -103,7 +109,7 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-medium">Active Today</CardTitle>
+              <CardTitle className="text-base font-medium">Activos Hoy</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
@@ -115,7 +121,7 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-medium">Lessons Completed</CardTitle>
+              <CardTitle className="text-base font-medium">Lecciones Completadas</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
@@ -127,7 +133,7 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-medium">Average Streak</CardTitle>
+              <CardTitle className="text-base font-medium">Racha Promedio</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
@@ -140,16 +146,16 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
 
         <Card>
           <CardHeader>
-            <CardTitle>Student Progress</CardTitle>
-            <CardDescription>Overview of all student activity and performance</CardDescription>
+            <CardTitle>Progreso de Estudiantes</CardTitle>
+            <CardDescription>Vista general de la actividad y desempeño de todos los estudiantes</CardDescription>
           </CardHeader>
           <CardContent>
             {students.length === 0 ? (
               <div className="text-center py-12">
                 <Users size={48} className="mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">No student data available yet</p>
+                <p className="text-muted-foreground">No hay datos de estudiantes disponibles todavía</p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Students will appear here once they start learning
+                  Los estudiantes aparecerán aquí una vez que comiencen a aprender
                 </p>
               </div>
             ) : (
@@ -157,22 +163,22 @@ export default function TeacherDashboard({ user, onLogout }: TeacherDashboardPro
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Student</TableHead>
-                      <TableHead>Lessons</TableHead>
-                      <TableHead>Streak</TableHead>
-                      <TableHead>Points</TableHead>
-                      <TableHead>Achievements</TableHead>
-                      <TableHead>Last Active</TableHead>
+                      <TableHead>Estudiante</TableHead>
+                      <TableHead>Lecciones</TableHead>
+                      <TableHead>Racha</TableHead>
+                      <TableHead>Puntos</TableHead>
+                      <TableHead>Logros</TableHead>
+                      <TableHead>Última Actividad</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {students.map((student) => {
                       const lastActive = student.progress.lastActivityDate
                         ? new Date(student.progress.lastActivityDate).toLocaleDateString()
-                        : 'Never'
+                        : 'Nunca'
                       return (
                         <TableRow key={student.user.id}>
-                          <TableCell className="font-medium">{student.user.username}</TableCell>
+                          <TableCell className="font-medium">{student.user.fullName || student.user.username}</TableCell>
                           <TableCell>
                             <Badge variant="secondary">
                               {student.progress.completedLessons.length}

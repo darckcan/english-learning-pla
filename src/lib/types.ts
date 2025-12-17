@@ -1,14 +1,18 @@
 export type Level = 'Beginner' | 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
 
-export type UserRole = 'student' | 'teacher'
+export type UserRole = 'student' | 'teacher' | 'superadmin'
 
 export interface User {
   id: string
   username: string
+  password: string
   role: UserRole
   currentLevel: Level
+  unlockedLevels: Level[]
   createdAt: number
   lastActive: number
+  email?: string
+  fullName?: string
 }
 
 export interface Lesson {

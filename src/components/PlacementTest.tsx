@@ -5,12 +5,12 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Label } from './ui/label'
 import { Progress } from './ui/progress'
 import { PLACEMENT_TEST_QUESTIONS } from '@/lib/curriculum'
-import { determineLevelFromPlacementScore } from '@/lib/helpers'
+import { determineLevelFromPlacementScore, getLevelsThroughCurrent } from '@/lib/helpers'
 import { Level } from '@/lib/types'
-import { CheckCircle, XCircle } from '@phosphor-icons/react'
+import { CheckCircle } from '@phosphor-icons/react'
 
 interface PlacementTestProps {
-  onComplete: (assignedLevel: Level) => void
+  onComplete: (assignedLevel: Level, unlockedLevels: Level[]) => void
 }
 
 export default function PlacementTest({ onComplete }: PlacementTestProps) {
@@ -43,7 +43,8 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
       correctAnswers,
       PLACEMENT_TEST_QUESTIONS.length
     )
-    onComplete(assignedLevel)
+    const unlockedLevels = getLevelsThroughCurrent(assignedLevel)
+    onComplete(assignedLevel, unlockedLevels)
   }
 
   if (showResult) {
@@ -54,40 +55,41 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
     const percentage = Math.round((correctAnswers / PLACEMENT_TEST_QUESTIONS.length) * 100)
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-primary/5 via-background to-success/5">
-        <Card className="w-full max-w-2xl shadow-lg">
+      <div className="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-success/20 via-background to-primary/10">
+        <Card className="w-full max-w-2xl shadow-2xl border-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <CardHeader className="text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-success/10 mx-auto mb-4">
-              <CheckCircle size={48} weight="fill" className="text-success" />
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-success to-primary shadow-lg mx-auto mb-4">
+              <CheckCircle size={48} weight="fill" className="text-white" />
             </div>
-            <CardTitle className="text-3xl">Placement Test Complete!</CardTitle>
+            <CardTitle className="text-3xl">¡Examen Completado!</CardTitle>
             <CardDescription className="text-lg">
-              Here are your results
+              Estos son tus resultados
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="bg-muted/50 rounded-lg p-6 space-y-4">
+            <div className="bg-gradient-to-br from-muted/80 to-muted/40 rounded-xl p-6 space-y-4 border-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-muted-foreground">Score</span>
+                <span className="text-sm font-medium text-muted-foreground">Puntuación</span>
                 <span className="text-2xl font-bold text-foreground">
                   {correctAnswers}/{PLACEMENT_TEST_QUESTIONS.length} ({percentage}%)
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-muted-foreground">Assigned Level</span>
-                <span className="text-2xl font-bold text-primary">{assignedLevel}</span>
+                <span className="text-sm font-medium text-muted-foreground">Nivel Asignado</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{assignedLevel}</span>
               </div>
             </div>
 
-            <div className="text-center text-muted-foreground">
+            <div className="text-center text-muted-foreground bg-accent/5 p-4 rounded-lg">
               <p>
-                Based on your performance, we've placed you at the <strong>{assignedLevel}</strong> level.
-                You can always adjust this later or retake the test.
+                Basado en tu desempeño, te hemos ubicado en el nivel <strong className="text-primary">{assignedLevel}</strong>.
+                <br />
+                Los niveles hasta <strong>{assignedLevel}</strong> están desbloqueados. Completa las lecciones para avanzar.
               </p>
             </div>
 
-            <Button onClick={handleComplete} className="w-full" size="lg">
-              Start Learning
+            <Button onClick={handleComplete} className="w-full shadow-lg" size="lg">
+              Comenzar a Aprender
             </Button>
           </CardContent>
         </Card>
@@ -96,22 +98,22 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-      <Card className="w-full max-w-2xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-secondary/10">
+      <Card className="w-full max-w-2xl shadow-2xl border-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <CardHeader>
           <div className="flex items-center justify-between mb-2">
-            <CardTitle>Placement Test</CardTitle>
+            <CardTitle>Examen de Ubicación</CardTitle>
             <span className="text-sm font-medium text-muted-foreground">
-              Question {currentQuestionIndex + 1} of {PLACEMENT_TEST_QUESTIONS.length}
+              Pregunta {currentQuestionIndex + 1} de {PLACEMENT_TEST_QUESTIONS.length}
             </span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-2.5" />
           <CardDescription className="mt-4">
-            Answer the following questions to help us determine your level
+            Responde las siguientes preguntas para ayudarnos a determinar tu nivel
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="bg-muted/30 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-muted/50 to-muted/20 rounded-xl p-6 border">
             <h3 className="text-xl font-semibold text-foreground mb-4">
               {currentQuestion.question}
             </h3>
@@ -121,7 +123,11 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
                 {currentQuestion.options.map((option, index) => (
                   <div
                     key={index}
-                    className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors"
+                    className={`flex items-center space-x-3 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer ${
+                      selectedAnswer === option
+                        ? 'border-primary bg-primary/5 shadow-sm'
+                        : 'border-border hover:bg-muted/50 hover:border-primary/30'
+                    }`}
                   >
                     <RadioGroupItem value={option} id={`option-${index}`} />
                     <Label
@@ -139,12 +145,12 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
           <Button
             onClick={handleNext}
             disabled={!selectedAnswer}
-            className="w-full"
+            className="w-full shadow-lg"
             size="lg"
           >
             {currentQuestionIndex === PLACEMENT_TEST_QUESTIONS.length - 1
-              ? 'Finish Test'
-              : 'Next Question'}
+              ? 'Finalizar Examen'
+              : 'Siguiente Pregunta'}
           </Button>
         </CardContent>
       </Card>
