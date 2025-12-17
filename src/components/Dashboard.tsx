@@ -35,6 +35,7 @@ import LevelCertificate from './LevelCertificate'
 import AchievementBadge from './AchievementBadge'
 import NexusFluentLogo from './NexusFluentLogo'
 import MembershipStatus from './MembershipStatus'
+import MembershipExpiryAlert from './MembershipExpiryAlert'
 import { applyTheme, THEMES } from '@/lib/themes'
 import { useKV } from '@github/spark/hooks'
 
@@ -147,6 +148,10 @@ export default function Dashboard({
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="mb-6">
+          <MembershipExpiryAlert user={user} />
+        </div>
+
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-4 max-w-2xl mb-6 sm:mb-8">
             <TabsTrigger value="lessons" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">

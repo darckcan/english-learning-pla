@@ -12,14 +12,18 @@ import SuperAdminDashboard from './components/SuperAdminDashboard'
 import VocabularyPractice from './components/VocabularyPractice'
 import { LEVELS } from './lib/curriculum'
 import { applyTheme } from './lib/themes'
+import { useEmailNotifications } from './hooks/use-email-notifications'
 
 type AppView = 'landing' | 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary'
 
 function App() {
   const [currentUser, setCurrentUser] = useKV<User | null>('current-user', null)
   const [userProgress, setUserProgress] = useKV<UserProgress | null>('user-progress', null)
+  const [allUsers] = useKV<User[]>('all-users', [])
   const [view, setView] = useState<AppView>('landing')
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null)
+
+  useEmailNotifications(allUsers || [], true)
 
   useEffect(() => {
     if (currentUser) {

@@ -36,18 +36,25 @@ Esta plataforma requiere gestión sofisticada de estado para el progreso del usu
 - **Success criteria**: Usuario puede crear cuenta con contraseña, seleccionar tema visual, recibir correo de confirmación, login persiste, información de perfil se guarda, progreso individual se mantiene por usuario, tema se aplica correctamente
 
 ### Sistema de Membresías (Nuevo)
-- **Functionality**: Sistema completo de membresías con prueba gratuita de 15 días, suscripción mensual ($9.99/mes) y membresía vitalicia ($24.99 pago único). Super admin puede modificar precios
-- **Purpose**: Monetizar la plataforma mientras se ofrece un período de prueba generoso para que los usuarios exploren antes de comprometerse
-- **Trigger**: Registro de nuevo usuario (membresía de prueba automática), vencimiento de membresía, actualización manual
-- **Progression**: Registro → 15 días de prueba gratuita → Notificación de vencimiento cercano (7 días antes) → Dashboard muestra opciones de actualización → Usuario selecciona plan → Membresía actualizada
-- **Success criteria**: Nuevos usuarios reciben 15 días de prueba, contador de días restantes visible, notificaciones cuando faltan 7, 3 y 0 días, acceso bloqueado después de expiración, opciones de compra claramente mostradas ($9.99/mes o $24.99 vitalicio)
+- **Functionality**: Sistema completo de membresías con prueba gratuita de 15 días, suscripción mensual ($9.99/mes) y membresía vitalicia ($24.99 pago único). Super admin puede modificar precios. **Incluye sistema automático de notificaciones por email para recordatorios de vencimiento**
+- **Purpose**: Monetizar la plataforma mientras se ofrece un período de prueba generoso para que los usuarios exploren antes de comprometerse. Las notificaciones automáticas aseguran que los usuarios no pierdan acceso inesperadamente
+- **Trigger**: Registro de nuevo usuario (membresía de prueba automática), vencimiento de membresía, actualización manual, **procesamiento automático de notificaciones cada hora**
+- **Progression**: Registro → 15 días de prueba gratuita → **Email enviado automáticamente cuando faltan 7 días** → **Email cuando faltan 3 días** → **Email cuando falta 1 día** → Dashboard muestra opciones de actualización → **Email al expirar la membresía** → Usuario selecciona plan → Membresía actualizada
+- **Success criteria**: Nuevos usuarios reciben 15 días de prueba, contador de días restantes visible, **emails automáticos enviados en 7, 3, 1 días y al expirar**, notificaciones cuando faltan 7, 3 y 0 días en el dashboard, acceso bloqueado después de expiración, opciones de compra claramente mostradas ($9.99/mes o $24.99 vitalicio), **sistema de notificaciones puede activarse/desactivarse desde super admin**, **historial completo de emails enviados**
+
+### Sistema de Notificaciones por Email (Nuevo)
+- **Functionality**: Sistema automático que envía emails de recordatorio a usuarios cuando su membresía está próxima a vencer o ha expirado. Procesa notificaciones cada hora y envía emails en momentos clave: 7, 3, 1 días antes del vencimiento y al expirar
+- **Purpose**: Mantener informados a los usuarios sobre el estado de su membresía, reducir cancelaciones involuntarias y motivar renovaciones oportunas
+- **Trigger**: Proceso automático cada hora cuando está activado, o ejecución manual desde el dashboard de super admin
+- **Progression**: Sistema verifica membresías → Identifica usuarios que necesitan notificación → Genera email personalizado según días restantes → Envía email → Registra en historial → Evita duplicados en mismo día → Super admin puede ver métricas y historial
+- **Success criteria**: Emails se envían automáticamente sin intervención, cada usuario recibe máximo un email por tipo por día, contenido del email es claro y personalizado, incluye información de renovación, super admin puede ver usuarios pendientes de notificación, historial muestra todos los emails enviados con fechas y tipos, sistema puede activarse/desactivarse globalmente, proceso no afecta rendimiento de la aplicación
 
 ### Configuración de Precios de Membresías (Super Admin)
-- **Functionality**: Panel de super administrador para modificar días de prueba gratuita, precio mensual y precio vitalicio en cualquier momento
-- **Purpose**: Permite flexibilidad en la estrategia de precios sin necesidad de modificar código
+- **Functionality**: Panel de super administrador para modificar días de prueba gratuita, precio mensual y precio vitalicio en cualquier momento. **Incluye gestión completa del sistema de notificaciones por email**
+- **Purpose**: Permite flexibilidad en la estrategia de precios sin necesidad de modificar código y control total sobre las notificaciones automáticas
 - **Trigger**: Super admin accede al panel de administración
-- **Progression**: Dashboard super admin → Configuración de membresías → Modificar valores → Vista previa de cambios → Guardar → Nuevos precios aplicados a futuros registros
-- **Success criteria**: Super admin puede modificar los 3 valores (días prueba, precio mensual, precio vitalicio), cambios se guardan correctamente, valores se validan (rangos razonables), vista previa muestra configuración actual
+- **Progression**: Dashboard super admin → Configuración de membresías → Modificar valores → Vista previa de cambios → Guardar → **Sistema de Notificaciones por Email** → Activar/Desactivar notificaciones automáticas → Ver usuarios pendientes de notificación → Procesar notificaciones manualmente → Ver historial de emails enviados → Nuevos precios aplicados a futuros registros
+- **Success criteria**: Super admin puede modificar los 3 valores (días prueba, precio mensual, precio vitalicio), cambios se guardan correctamente, valores se validan (rangos razonables), vista previa muestra configuración actual, **puede activar/desactivar notificaciones automáticas**, **puede ver lista de usuarios que necesitan notificación**, **puede ejecutar proceso de notificaciones manualmente**, **puede ver historial completo de emails enviados con fechas y tipos**, **sistema procesa automáticamente cada hora cuando está activado**
 
 ### Sistema de Temas Personalizables (Nuevo)
 - **Functionality**: 5 temas visuales disponibles (Morado Vibrante, Colorido Arcoíris, Alegre y Optimista, Tonos Cálidos, Modo Oscuro). Selección durante registro y cambio desde configuración
