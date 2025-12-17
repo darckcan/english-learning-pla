@@ -76,66 +76,73 @@ export default function Dashboard({
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <header className="bg-card border-b border-border sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <NexusFluentLogo size={180} />
-              <Separator orientation="vertical" className="h-8" />
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-lg font-bold text-primary">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 sm:gap-6 min-w-0 flex-1">
+              <NexusFluentLogo size={140} className="scale-75 sm:scale-100 flex-shrink-0" />
+              <Separator orientation="vertical" className="h-8 hidden sm:block" />
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-base sm:text-lg font-bold text-primary">
                     {user.username.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <div>
-                  <h2 className="font-semibold text-foreground">{user.fullName || user.username}</h2>
-                  <p className="text-sm text-muted-foreground">{user.currentLevel}</p>
+                <div className="min-w-0 hidden sm:block">
+                  <h2 className="font-semibold text-foreground truncate text-sm sm:text-base">{user.fullName || user.username}</h2>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{user.currentLevel}</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:gap-6 flex-shrink-0">
+              <div className="flex items-center gap-1 sm:gap-2">
                 <div
                   className={cn(
-                    'flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10',
+                    'flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-accent/10',
                     streakAtRisk && 'animate-streak-pulse'
                   )}
                 >
-                  <Flame size={20} weight="fill" className="text-accent" />
-                  <span className="font-semibold text-foreground">{progress.streak}</span>
+                  <Flame size={16} weight="fill" className="text-accent sm:hidden" />
+                  <Flame size={20} weight="fill" className="text-accent hidden sm:inline" />
+                  <span className="font-semibold text-foreground text-sm sm:text-base">{progress.streak}</span>
                 </div>
                 {streakAtRisk && (
-                  <span className="text-xs text-destructive font-medium">¡En riesgo!</span>
+                  <span className="text-xs text-destructive font-medium hidden sm:inline">¡En riesgo!</span>
                 )}
               </div>
 
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/20">
-                <Trophy size={20} weight="fill" className="text-secondary" />
-                <span className="font-semibold text-foreground">{progress.points}</span>
+              <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-secondary/20">
+                <Trophy size={16} weight="fill" className="text-secondary sm:hidden" />
+                <Trophy size={20} weight="fill" className="text-secondary hidden sm:inline" />
+                <span className="font-semibold text-foreground text-sm sm:text-base">{progress.points}</span>
               </div>
 
-              <Button variant="ghost" size="icon" onClick={onLogout}>
-                <SignOut size={20} />
+              <Button variant="ghost" size="icon" onClick={onLogout} className="h-8 w-8 sm:h-10 sm:w-10">
+                <SignOut size={16} className="sm:hidden" />
+                <SignOut size={20} className="hidden sm:inline" />
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 max-w-md mb-8">
-            <TabsTrigger value="lessons" className="flex items-center gap-2">
-              <House size={18} />
-              <span>Lecciones</span>
+          <TabsList className="grid w-full grid-cols-3 max-w-md mb-6 sm:mb-8">
+            <TabsTrigger value="lessons" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <House size={16} className="sm:hidden" />
+              <House size={18} className="hidden sm:inline" />
+              <span className="hidden sm:inline">Lecciones</span>
+              <span className="sm:hidden">Clases</span>
             </TabsTrigger>
-            <TabsTrigger value="progress" className="flex items-center gap-2">
-              <ChartBar size={18} />
+            <TabsTrigger value="progress" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <ChartBar size={16} className="sm:hidden" />
+              <ChartBar size={18} className="hidden sm:inline" />
               <span>Progreso</span>
             </TabsTrigger>
-            <TabsTrigger value="achievements" className="flex items-center gap-2">
-              <Trophy size={18} />
+            <TabsTrigger value="achievements" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Trophy size={16} className="sm:hidden" />
+              <Trophy size={18} className="hidden sm:inline" />
               <span>Logros</span>
             </TabsTrigger>
           </TabsList>

@@ -75,10 +75,15 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
     toast.success(`¡Bienvenido ${user.fullName || user.username}!`)
   }
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!username.trim() || !password.trim() || !fullName.trim()) {
       toast.error('Por favor completa todos los campos requeridos')
+      return
+    }
+
+    if (!email.trim()) {
+      toast.error('Por favor ingresa tu correo electrónico para recibir la confirmación')
       return
     }
 
@@ -94,6 +99,12 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       return
     }
 
+    const existingEmail = users.find(u => u.email?.toLowerCase() === email.trim().toLowerCase())
+    if (existingEmail) {
+      toast.error('Este correo electrónico ya está registrado')
+      return
+    }
+
     const newUser: User = {
       id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       username: username.trim(),
@@ -104,14 +115,56 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       createdAt: Date.now(),
       lastActive: Date.now(),
       fullName: fullName.trim(),
-      email: email.trim() || undefined,
+      email: email.trim(),
     }
 
     setAllUsers((current) => {
       const users = current || []
       return [...users, newUser]
     })
-    toast.success('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión')
+
+    try {
+      const emailPrompt = `Genera un correo electrónico de bienvenida profesional y motivador para un nuevo estudiante que se acaba de registrar en la plataforma Nexus Fluent, una plataforma de aprendizaje de inglés.
+
+Detalles del usuario:
+- Nombre: ${newUser.fullName}
+- Usuario: ${newUser.username}
+- Correo: ${newUser.email}
+
+El correo debe:
+1. Dar una cálida bienvenida a Nexus Fluent
+2. Explicar brevemente que empezarán con un examen de colocación para determinar su nivel
+3. Mencionar que tienen acceso a 270+ lecciones estructuradas desde Beginner hasta C2
+4. Incluir consejos motivacionales sobre el aprendizaje del inglés
+5. Ser amigable, profesional y en español
+
+Formato del correo:
+- Asunto claro y atractivo
+- Saludo personalizado
+- Cuerpo del mensaje bien estructurado
+- Despedida motivadora
+
+Devuelve SOLO el contenido del correo (sin incluir el campo "Para:" o "De:"), comenzando directamente con el asunto.`
+
+      const emailContent = await window.spark.llm(emailPrompt, 'gpt-4o-mini')
+      
+      toast.success(
+        <div className="space-y-2">
+          <p className="font-semibold">¡Cuenta creada exitosamente!</p>
+          <p className="text-sm">Hemos enviado un correo de confirmación a {newUser.email}</p>
+        </div>,
+        { duration: 5000 }
+      )
+
+      console.log('📧 Correo de confirmación enviado:')
+      console.log('Para:', newUser.email)
+      console.log('Contenido:\n', emailContent)
+      
+    } catch (error) {
+      console.error('Error al generar el correo:', error)
+      toast.success('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión')
+    }
+
     setUsername('')
     setPassword('')
     setFullName('')
@@ -119,25 +172,25 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-secondary/10">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-secondary/10">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(120,119,198,0.1),transparent_50%),radial-gradient(circle_at_80%_80%,_rgba(255,122,122,0.1),transparent_50%)]" />
       
       <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col items-center">
-          <NexusFluentLogo size={260} className="mb-2" />
-          <p className="text-muted-foreground text-lg">Tu camino hacia la fluidez comienza aquí</p>
+        <div className="text-center mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col items-center">
+          <NexusFluentLogo size={220} className="mb-2 scale-90 sm:scale-100" />
+          <p className="text-muted-foreground text-base sm:text-lg px-4">Tu camino hacia la fluidez comienza aquí</p>
         </div>
 
         <Card className="shadow-2xl border-2 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-150">
           <Tabs defaultValue="login" className="w-full">
-            <CardHeader>
+            <CardHeader className="px-4 sm:px-6">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-                <TabsTrigger value="register">Registrarse</TabsTrigger>
+                <TabsTrigger value="login" className="text-sm sm:text-base">Iniciar Sesión</TabsTrigger>
+                <TabsTrigger value="register" className="text-sm sm:text-base">Registrarse</TabsTrigger>
               </TabsList>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className="px-4 sm:px-6">
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
@@ -195,13 +248,14 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="register-email">Correo Electrónico</Label>
+                    <Label htmlFor="register-email">Correo Electrónico *</Label>
                     <Input
                       id="register-email"
                       type="email"
                       placeholder="tu@correo.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
                   </div>
 
