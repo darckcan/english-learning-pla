@@ -1,14 +1,64 @@
+# Dependencies
 node_modules
 npm-debug.log
+package-lock.json
+
+# Version control
 .git
 .gitignore
+.github
+
+# Environment files
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Build output (will be created fresh)
 dist
+
+# IDE files
 .vscode
 .idea
+.devcontainer
+
+# Logs
 *.log
+logs
+pids
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+DEPLOY_*.md
+EASYPANEL_*.md
+EMAIL_*.md
+HAPTIC_*.md
+LEEME_*.md
+QUICK_START.md
+README*.md
+SECURITY.md
+SOLUCION_*.md
+STRIPE_*.md
+TACTILE_*.md
+CERTIFICATES_GUIDE.md
+INICIO_AQUI.txt
+
+# Scripts
+*.bat
+*.sh
+
+# EasyPanel specific
+.easypanel
+
+# Vercel
+vercel.json
+
+# Other
+.spark-*
+.file-manifest
+spark.meta.json

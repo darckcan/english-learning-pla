@@ -3,32 +3,45 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files first for better caching
 COPY package*.json ./
+
+# Copy workspace packages
 COPY packages ./packages
 
-# Install dependencies
-RUN npm ci --include=dev
+# Install ALL dependencies (including devDependencies for build)
+RUN npm ci
 
-# Copy source code
-COPY . .
+# Copy all source files
+COPY index.html ./
+COPY tsconfig.json ./
+COPY vite.config.ts ./
+COPY tailwind.config.js ./
+COPY theme.json ./
+COPY components.json ./
+COPY runtime.config.json ./
+COPY src ./src
 
 # Build the application
 RUN npm run build
 
+# Verify build output
+RUN ls -la /app/dist
+
 # Production stage
-FROM node:20-alpine
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Install serve to serve static files
-RUN npm install -g serve
+# Copy built static files from builder
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy built files from builder
-COPY --from=builder /app/dist ./dist
+# Create a simple health check endpoint
+RUN echo '<!DOCTYPE html><html><body>OK</body></html>' > /usr/share/nginx/html/health
 
-# Expose port
-EXPOSE 3000
+# Expose port 80 (EasyPanel default)
+EXPOSE 80
 
-# Start the application
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

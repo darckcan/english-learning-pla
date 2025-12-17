@@ -1,9 +1,28 @@
 {
+  "name": "nexus-fluent",
+  "version": "1.0.0",
+  "description": "Plataforma de aprendizaje de inglés - Nexus Fluent",
   "build": {
-    "command": "npm install && npm run build",
-    "output": "dist"
+    "method": "dockerfile",
+    "dockerfile": "Dockerfile",
+    "context": "."
   },
-  "start": {
-    "command": "npm run preview -- --host 0.0.0.0 --port $PORT"
+  "deployment": {
+    "type": "web",
+    "port": 80,
+    "protocol": "http",
+    "healthCheck": {
+      "path": "/health",
+      "interval": 30,
+      "timeout": 10,
+      "retries": 3
+    }
+  },
+  "resources": {
+    "memory": "768Mi",
+    "cpu": "0.5"
+  },
+  "env": {
+    "NODE_ENV": "production"
   }
 }
