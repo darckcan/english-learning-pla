@@ -117,56 +117,63 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <NexusFluentLogo size={180} />
-            <div className="border-l border-border h-10" />
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg">
-                <Shield size={24} weight="bold" className="text-white" />
+        <div className="container mx-auto px-3 sm:px-6 py-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
+              <div className="hidden sm:block">
+                <NexusFluentLogo size={180} />
               </div>
-              <div>
-                <h1 className="text-xl font-bold">Super Admin</h1>
-                <p className="text-sm text-muted-foreground">{user.fullName || user.username}</p>
+              <div className="sm:hidden">
+                <NexusFluentLogo size={120} />
+              </div>
+              <div className="hidden sm:block border-l border-border h-10" />
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="p-1.5 sm:p-2 bg-gradient-to-br from-primary to-secondary rounded-lg flex-shrink-0">
+                  <Shield size={20} weight="bold" className="text-white sm:w-6 sm:h-6" />
+                </div>
+                <div className="min-w-0">
+                  <h1 className="text-base sm:text-xl font-bold truncate">Super Admin</h1>
+                  <p className="text-xs sm:text-sm text-muted-foreground truncate">{user.fullName || user.username}</p>
+                </div>
               </div>
             </div>
+            <Button variant="outline" onClick={onLogout} size="sm" className="flex-shrink-0">
+              <SignOut size={18} className="sm:mr-2" />
+              <span className="hidden sm:inline">Cerrar Sesión</span>
+            </Button>
           </div>
-          <Button variant="outline" onClick={onLogout}>
-            <SignOut size={20} className="mr-2" />
-            Cerrar Sesión
-          </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-8 space-y-6">
-        <div className="grid gap-6 md:grid-cols-3">
+      <main className="container mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-6">
+        <div className="grid gap-3 sm:gap-6 grid-cols-1 sm:grid-cols-3">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users size={24} className="text-primary" />
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Users size={20} className="text-primary sm:w-6 sm:h-6" />
                 Total Usuarios
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{(allUsers || []).length}</p>
+              <p className="text-3xl sm:text-4xl font-bold">{(allUsers || []).length}</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Estudiantes</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg">Estudiantes</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold text-primary">{students.length}</p>
+              <p className="text-3xl sm:text-4xl font-bold text-primary">{students.length}</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Profesores</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg">Profesores</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold text-secondary">{teachers.length}</p>
+              <p className="text-3xl sm:text-4xl font-bold text-secondary">{teachers.length}</p>
             </CardContent>
           </Card>
         </div>
@@ -181,68 +188,72 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
 
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <CardTitle>Gestión de Usuarios</CardTitle>
-                <CardDescription>Crear, editar y eliminar usuarios del sistema</CardDescription>
+                <CardTitle className="text-base sm:text-lg">Gestión de Usuarios</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">Crear, editar y eliminar usuarios del sistema</CardDescription>
               </div>
               <Dialog open={showAddUser} onOpenChange={setShowAddUser}>
                 <DialogTrigger asChild>
-                  <Button>
-                    <UserPlus size={20} className="mr-2" />
+                  <Button size="sm" className="w-full sm:w-auto">
+                    <UserPlus size={18} className="mr-2" />
                     Agregar Usuario
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-[95vw] sm:max-w-lg">
                   <DialogHeader>
-                    <DialogTitle>Crear Nuevo Usuario</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="text-base sm:text-lg">Crear Nuevo Usuario</DialogTitle>
+                    <DialogDescription className="text-xs sm:text-sm">
                       Completa los datos para crear un nuevo usuario en el sistema
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-4 pt-4">
+                  <div className="space-y-3 sm:space-y-4 pt-4 max-h-[60vh] overflow-y-auto px-1">
                     <div className="space-y-2">
-                      <Label htmlFor="fullname">Nombre Completo *</Label>
+                      <Label htmlFor="fullname" className="text-sm">Nombre Completo *</Label>
                       <Input
                         id="fullname"
                         value={newFullName}
                         onChange={(e) => setNewFullName(e.target.value)}
                         placeholder="Nombre del usuario"
+                        className="text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Correo Electrónico</Label>
+                      <Label htmlFor="email" className="text-sm">Correo Electrónico</Label>
                       <Input
                         id="email"
                         type="email"
                         value={newEmail}
                         onChange={(e) => setNewEmail(e.target.value)}
                         placeholder="correo@ejemplo.com"
+                        className="text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="username">Usuario *</Label>
+                      <Label htmlFor="username" className="text-sm">Usuario *</Label>
                       <Input
                         id="username"
                         value={newUsername}
                         onChange={(e) => setNewUsername(e.target.value)}
                         placeholder="nombreusuario"
+                        className="text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password">Contraseña *</Label>
+                      <Label htmlFor="password" className="text-sm">Contraseña *</Label>
                       <Input
                         id="password"
                         type="password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••••"
+                        className="text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="role">Rol</Label>
+                      <Label htmlFor="role" className="text-sm">Rol</Label>
                       <Select value={newRole} onValueChange={(v) => setNewRole(v as 'student' | 'teacher')}>
-                        <SelectTrigger>
+                        <SelectTrigger className="text-sm">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -251,7 +262,7 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button onClick={handleAddUser} className="w-full">
+                    <Button onClick={handleAddUser} className="w-full" size="sm">
                       Crear Usuario
                     </Button>
                   </div>
@@ -259,66 +270,70 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
               </Dialog>
             </div>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Usuario</TableHead>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead>Rol</TableHead>
-                  <TableHead>Nivel</TableHead>
-                  <TableHead>Niveles Desbloqueados</TableHead>
-                  <TableHead>Fecha Creación</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {(allUsers || [])
-                  .filter((u) => u.role !== 'superadmin')
-                  .map((u) => (
-                    <TableRow key={u.id}>
-                      <TableCell className="font-medium">{u.username}</TableCell>
-                      <TableCell>{u.fullName || '-'}</TableCell>
-                      <TableCell>
-                        <Badge variant={u.role === 'teacher' ? 'default' : 'secondary'}>
-                          {u.role === 'teacher' ? 'Profesor' : 'Estudiante'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{u.currentLevel}</TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {(u.unlockedLevels || ['Beginner']).length} de {LEVELS.length}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {formatDate(u.createdAt)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex gap-2 justify-end">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleToggleAccess(u.id, u.unlockedLevels)}
-                          >
-                            {(u.unlockedLevels || ['Beginner']).length === LEVELS.length ? (
-                              <Lock size={16} />
-                            ) : (
-                              <LockOpen size={16} />
-                            )}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDeleteUser(u.id, u.username)}
-                          >
-                            <Trash size={16} />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+          <CardContent className="overflow-x-auto -mx-3 sm:mx-0">
+            <div className="min-w-[800px] sm:min-w-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-xs sm:text-sm">Usuario</TableHead>
+                    <TableHead className="text-xs sm:text-sm">Nombre</TableHead>
+                    <TableHead className="text-xs sm:text-sm">Rol</TableHead>
+                    <TableHead className="text-xs sm:text-sm">Nivel</TableHead>
+                    <TableHead className="text-xs sm:text-sm">Niveles Desbloqueados</TableHead>
+                    <TableHead className="text-xs sm:text-sm">Fecha Creación</TableHead>
+                    <TableHead className="text-right text-xs sm:text-sm">Acciones</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(allUsers || [])
+                    .filter((u) => u.role !== 'superadmin')
+                    .map((u) => (
+                      <TableRow key={u.id}>
+                        <TableCell className="font-medium text-xs sm:text-sm">{u.username}</TableCell>
+                        <TableCell className="text-xs sm:text-sm">{u.fullName || '-'}</TableCell>
+                        <TableCell>
+                          <Badge variant={u.role === 'teacher' ? 'default' : 'secondary'} className="text-xs">
+                            {u.role === 'teacher' ? 'Profesor' : 'Estudiante'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-xs sm:text-sm">{u.currentLevel}</TableCell>
+                        <TableCell>
+                          <span className="text-xs text-muted-foreground">
+                            {(u.unlockedLevels || ['Beginner']).length} de {LEVELS.length}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {formatDate(u.createdAt)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex gap-1 sm:gap-2 justify-end">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleToggleAccess(u.id, u.unlockedLevels)}
+                              className="h-7 w-7 p-0"
+                            >
+                              {(u.unlockedLevels || ['Beginner']).length === LEVELS.length ? (
+                                <Lock size={14} />
+                              ) : (
+                                <LockOpen size={14} />
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteUser(u.id, u.username)}
+                              className="h-7 w-7 p-0"
+                            >
+                              <Trash size={14} />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </main>

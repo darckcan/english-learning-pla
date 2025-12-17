@@ -60,31 +60,31 @@ export default function EmailTestPanel({ users }: EmailTestPanelProps) {
   return (
     <Card className="border-accent/50">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <PaperPlaneTilt className="w-5 h-5" />
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <PaperPlaneTilt className="w-4 h-4 sm:w-5 sm:h-5" />
           Panel de Prueba de Emails
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-xs sm:text-sm">
           Enviar emails de prueba para verificar el sistema de notificaciones
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="test-user">Usuario de Prueba</Label>
+          <Label htmlFor="test-user" className="text-sm">Usuario de Prueba</Label>
           <Select value={selectedUserId} onValueChange={setSelectedUserId}>
-            <SelectTrigger id="test-user">
+            <SelectTrigger id="test-user" className="text-sm">
               <SelectValue placeholder="Selecciona un usuario..." />
             </SelectTrigger>
             <SelectContent>
               {studentUsers.map(user => (
-                <SelectItem key={user.id} value={user.id}>
+                <SelectItem key={user.id} value={user.id} className="text-sm">
                   {user.fullName || user.username} - {user.email}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           {selectedUser && (
-            <div className="text-sm text-muted-foreground">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               Membresía: {selectedUser.membership?.type || 'ninguna'} 
               {daysRemaining !== null && ` - ${daysRemaining} días restantes`}
             </div>
@@ -92,9 +92,9 @@ export default function EmailTestPanel({ users }: EmailTestPanelProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="test-type">Tipo de Notificación</Label>
+          <Label htmlFor="test-type" className="text-sm">Tipo de Notificación</Label>
           <Select value={testEmailType} onValueChange={(v) => setTestEmailType(v as any)}>
-            <SelectTrigger id="test-type">
+            <SelectTrigger id="test-type" className="text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -110,23 +110,24 @@ export default function EmailTestPanel({ users }: EmailTestPanelProps) {
           onClick={handleSendTestEmail}
           disabled={!selectedUserId || isSending}
           className="w-full"
+          size="sm"
         >
           <EnvelopeSimple className="w-4 h-4 mr-2" />
           {isSending ? 'Enviando...' : 'Enviar Email de Prueba'}
         </Button>
 
         {selectedUser && (
-          <div className="p-4 bg-muted rounded-md text-sm space-y-2">
+          <div className="p-3 sm:p-4 bg-muted rounded-md text-xs sm:text-sm space-y-2">
             <div className="font-semibold">Vista Previa del Email:</div>
             <div>
-              <strong>Para:</strong> {selectedUser.email}
+              <strong>Para:</strong> <span className="break-all">{selectedUser.email}</span>
             </div>
             <div>
               <strong>Asunto:</strong> {generateExpiryEmail(selectedUser, parseInt(testEmailType)).subject}
             </div>
             <div>
               <strong>Mensaje:</strong>
-              <pre className="mt-2 whitespace-pre-wrap text-xs bg-background p-2 rounded">
+              <pre className="mt-2 whitespace-pre-wrap text-xs bg-background p-2 rounded overflow-x-auto">
                 {generateExpiryEmail(selectedUser, parseInt(testEmailType)).body}
               </pre>
             </div>

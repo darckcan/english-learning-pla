@@ -51,19 +51,19 @@ export default function MembershipPricingSettings() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <CurrencyDollar size={24} />
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <CurrencyDollar size={20} className="sm:w-6 sm:h-6" />
           Configuración de Membresías
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-xs sm:text-sm">
           Configura los precios y duración de las membresías de la plataforma
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid sm:grid-cols-3 gap-4">
+      <CardContent className="space-y-4 sm:space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <div className="space-y-2">
-            <Label htmlFor="trial-days" className="flex items-center gap-2">
-              <Clock size={16} />
+            <Label htmlFor="trial-days" className="flex items-center gap-2 text-sm">
+              <Clock size={14} className="sm:w-4 sm:h-4" />
               Días de Prueba Gratuita
             </Label>
             <Input
@@ -73,6 +73,7 @@ export default function MembershipPricingSettings() {
               max="365"
               value={trialDays}
               onChange={(e) => setTrialDays(Number(e.target.value))}
+              className="text-sm"
             />
             <p className="text-xs text-muted-foreground">
               Días de acceso gratuito para nuevos usuarios
@@ -80,8 +81,8 @@ export default function MembershipPricingSettings() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="monthly-price" className="flex items-center gap-2">
-              <CurrencyDollar size={16} />
+            <Label htmlFor="monthly-price" className="flex items-center gap-2 text-sm">
+              <CurrencyDollar size={14} className="sm:w-4 sm:h-4" />
               Precio Mensual (USD)
             </Label>
             <Input
@@ -92,6 +93,7 @@ export default function MembershipPricingSettings() {
               step="0.01"
               value={monthlyPrice}
               onChange={(e) => setMonthlyPrice(Number(e.target.value))}
+              className="text-sm"
             />
             <p className="text-xs text-muted-foreground">
               Precio de la suscripción mensual
@@ -99,8 +101,8 @@ export default function MembershipPricingSettings() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="lifetime-price" className="flex items-center gap-2">
-              <Crown size={16} />
+            <Label htmlFor="lifetime-price" className="flex items-center gap-2 text-sm">
+              <Crown size={14} className="sm:w-4 sm:h-4" />
               Precio Vitalicio (USD)
             </Label>
             <Input
@@ -111,6 +113,7 @@ export default function MembershipPricingSettings() {
               step="0.01"
               value={lifetimePrice}
               onChange={(e) => setLifetimePrice(Number(e.target.value))}
+              className="text-sm"
             />
             <p className="text-xs text-muted-foreground">
               Pago único para acceso ilimitado
@@ -118,32 +121,32 @@ export default function MembershipPricingSettings() {
           </div>
         </div>
 
-        <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-          <p className="text-sm font-medium">Vista Previa:</p>
-          <div className="grid sm:grid-cols-3 gap-3 text-sm">
-            <div className="bg-background rounded p-3 space-y-1">
+        <div className="bg-muted/50 rounded-lg p-3 sm:p-4 space-y-2">
+          <p className="text-xs sm:text-sm font-medium">Vista Previa:</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 text-sm">
+            <div className="bg-background rounded p-2.5 sm:p-3 space-y-1">
               <p className="text-xs text-muted-foreground">Prueba Gratuita</p>
-              <p className="text-lg font-bold">{trialDays} días</p>
+              <p className="text-base sm:text-lg font-bold">{trialDays} días</p>
               <p className="text-xs text-success">Sin costo</p>
             </div>
-            <div className="bg-background rounded p-3 space-y-1">
+            <div className="bg-background rounded p-2.5 sm:p-3 space-y-1">
               <p className="text-xs text-muted-foreground">Mensual</p>
-              <p className="text-lg font-bold">${monthlyPrice.toFixed(2)}</p>
+              <p className="text-base sm:text-lg font-bold">${monthlyPrice.toFixed(2)}</p>
               <p className="text-xs text-muted-foreground">por mes</p>
             </div>
-            <div className="bg-primary/10 border border-primary rounded p-3 space-y-1">
+            <div className="bg-primary/10 border border-primary rounded p-2.5 sm:p-3 space-y-1">
               <p className="text-xs text-muted-foreground">Vitalicia</p>
-              <p className="text-lg font-bold">${lifetimePrice.toFixed(2)}</p>
+              <p className="text-base sm:text-lg font-bold">${lifetimePrice.toFixed(2)}</p>
               <p className="text-xs text-muted-foreground">pago único</p>
             </div>
           </div>
         </div>
 
-        <div className="flex gap-3">
-          <Button onClick={handleSave} className="flex-1">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <Button onClick={handleSave} className="flex-1" size="sm">
             Guardar Cambios
           </Button>
-          <Button onClick={handleReset} variant="outline">
+          <Button onClick={handleReset} variant="outline" size="sm" className="sm:w-auto">
             Restablecer
           </Button>
         </div>
