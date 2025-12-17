@@ -5,11 +5,14 @@ import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
-import { User } from '@/lib/types'
+import { User, ThemeType } from '@/lib/types'
 import { GraduationCap, Eye, EyeSlash } from '@phosphor-icons/react'
 import { simpleHash, validateSuperAdmin, createSuperAdmin } from '@/lib/helpers'
 import { toast } from 'sonner'
 import NexusFluentLogo from './NexusFluentLogo'
+import ThemeSelector from './ThemeSelector'
+import { applyTheme } from '@/lib/themes'
+import { createTrialMembership } from '@/lib/membership'
 
 interface WelcomeScreenProps {
   onLogin: (user: User) => void
@@ -21,6 +24,7 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
+  const [selectedTheme, setSelectedTheme] = useState<ThemeType>('default')
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
@@ -49,6 +53,11 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
         const users = current || []
         return users.map(u => u.username === 'darckcan' ? superAdmin : u)
       })
+      
+      if (superAdmin.selectedTheme) {
+        applyTheme(superAdmin.selectedTheme)
+      }
+      
       onLogin(superAdmin)
       toast.success('¡Bienvenido Super Administrador!')
       return
@@ -71,6 +80,11 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       const users = current || []
       return users.map(u => u.id === user.id ? user : u)
     })
+    
+    if (user.selectedTheme) {
+      applyTheme(user.selectedTheme)
+    }
+    
     onLogin(user)
     toast.success(`¡Bienvenido ${user.fullName || user.username}!`)
   }
@@ -105,6 +119,8 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       return
     }
 
+    const trialMembership = createTrialMembership()
+
     const newUser: User = {
       id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       username: username.trim(),
@@ -116,6 +132,8 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       lastActive: Date.now(),
       fullName: fullName.trim(),
       email: email.trim(),
+      membership: trialMembership,
+      selectedTheme: selectedTheme,
     }
 
     setAllUsers((current) => {
@@ -124,19 +142,22 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
     })
 
     try {
-      const emailPrompt = `Genera un correo electrónico de bienvenida profesional y motivador para un nuevo estudiante que se acaba de registrar en la plataforma Nexus Fluent, una plataforma de aprendizaje de inglés.
+      const emailPromptText = `Genera un correo electrónico de bienvenida profesional y motivador para un nuevo estudiante que se acaba de registrar en la plataforma Nexus Fluent, una plataforma de aprendizaje de inglés.
 
 Detalles del usuario:
 - Nombre: ${newUser.fullName}
 - Usuario: ${newUser.username}
 - Correo: ${newUser.email}
+- Membresía: Prueba gratuita de 15 días
 
 El correo debe:
 1. Dar una cálida bienvenida a Nexus Fluent
-2. Explicar brevemente que empezarán con un examen de colocación para determinar su nivel
-3. Mencionar que tienen acceso a 270+ lecciones estructuradas desde Beginner hasta C2
-4. Incluir consejos motivacionales sobre el aprendizaje del inglés
-5. Ser amigable, profesional y en español
+2. Mencionar que tienen 15 días de prueba gratuita para explorar todas las funciones
+3. Explicar brevemente que empezarán con un examen de colocación para determinar su nivel
+4. Mencionar que tienen acceso a 270+ lecciones estructuradas desde Beginner hasta C2
+5. Incluir información sobre las membresías disponibles después de la prueba ($9.99/mes o $24.99 vitalicia)
+6. Incluir consejos motivacionales sobre el aprendizaje del inglés
+7. Ser amigable, profesional y en español
 
 Formato del correo:
 - Asunto claro y atractivo
@@ -146,14 +167,15 @@ Formato del correo:
 
 Devuelve SOLO el contenido del correo (sin incluir el campo "Para:" o "De:"), comenzando directamente con el asunto.`
 
-      const emailContent = await window.spark.llm(emailPrompt, 'gpt-4o-mini')
+      const emailContent = await window.spark.llm(emailPromptText, 'gpt-4o-mini')
       
       toast.success(
         <div className="space-y-2">
           <p className="font-semibold">¡Cuenta creada exitosamente!</p>
           <p className="text-sm">Hemos enviado un correo de confirmación a {newUser.email}</p>
+          <p className="text-sm text-accent font-medium">🎉 Tienes 15 días de prueba gratuita</p>
         </div>,
-        { duration: 5000 }
+        { duration: 6000 }
       )
 
       console.log('📧 Correo de confirmación enviado:')
@@ -162,13 +184,20 @@ Devuelve SOLO el contenido del correo (sin incluir el campo "Para:" o "De:"), co
       
     } catch (error) {
       console.error('Error al generar el correo:', error)
-      toast.success('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión')
+      toast.success(
+        <div className="space-y-2">
+          <p className="font-semibold">¡Cuenta creada exitosamente!</p>
+          <p className="text-sm">🎉 Tienes 15 días de prueba gratuita</p>
+        </div>,
+        { duration: 5000 }
+      )
     }
 
     setUsername('')
     setPassword('')
     setFullName('')
     setEmail('')
+    setSelectedTheme('default')
   }
 
   return (
@@ -293,8 +322,22 @@ Devuelve SOLO el contenido del correo (sin incluir el campo "Para:" o "De:"), co
                     </div>
                   </div>
 
+                  <ThemeSelector 
+                    selectedTheme={selectedTheme}
+                    onThemeChange={setSelectedTheme}
+                  />
+
+                  <div className="pt-2">
+                    <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md space-y-1">
+                      <p className="font-semibold text-foreground">🎉 Incluye:</p>
+                      <p>• 15 días de prueba gratuita</p>
+                      <p>• Acceso completo a 270+ lecciones</p>
+                      <p>• Examen de ubicación personalizado</p>
+                    </div>
+                  </div>
+
                   <Button type="submit" className="w-full" size="lg">
-                    Crear Cuenta
+                    Crear Cuenta Gratis
                   </Button>
                 </form>
               </TabsContent>

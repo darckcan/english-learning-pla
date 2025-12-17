@@ -29,11 +29,32 @@ Esta plataforma requiere gestión sofisticada de estado para el progreso del usu
 ## Essential Features
 
 ### User Authentication & Onboarding
-- **Functionality**: Registro e inicio de sesión con contraseñas, asignación de roles (estudiante/profesor/superadmin), perfil único por usuario
-- **Purpose**: Personaliza la experiencia de aprendizaje y rastrea el progreso individual con seguridad
+- **Functionality**: Registro e inicio de sesión con contraseñas, asignación de roles (estudiante/profesor/superadmin), perfil único por usuario, **selección de tema visual durante el registro**, confirmación por correo electrónico
+- **Purpose**: Personaliza la experiencia de aprendizaje y rastrea el progreso individual con seguridad, permite personalización visual desde el inicio
 - **Trigger**: Lanzamiento de la app o cierre de sesión
-- **Progression**: Página de inicio → Registro (nombre completo, email, usuario, contraseña) o Login → Prueba de ubicación (usuarios nuevos) → Dashboard
-- **Success criteria**: Usuario puede crear cuenta con contraseña, login persiste, información de perfil se guarda, progreso individual se mantiene por usuario
+- **Progression**: Página de inicio → Registro (nombre completo, email, usuario, contraseña, **selección de tema**) o Login → **Correo de confirmación enviado** → Prueba de ubicación (usuarios nuevos) → Dashboard con **tema personalizado aplicado**
+- **Success criteria**: Usuario puede crear cuenta con contraseña, seleccionar tema visual, recibir correo de confirmación, login persiste, información de perfil se guarda, progreso individual se mantiene por usuario, tema se aplica correctamente
+
+### Sistema de Membresías (Nuevo)
+- **Functionality**: Sistema completo de membresías con prueba gratuita de 15 días, suscripción mensual ($9.99/mes) y membresía vitalicia ($24.99 pago único). Super admin puede modificar precios
+- **Purpose**: Monetizar la plataforma mientras se ofrece un período de prueba generoso para que los usuarios exploren antes de comprometerse
+- **Trigger**: Registro de nuevo usuario (membresía de prueba automática), vencimiento de membresía, actualización manual
+- **Progression**: Registro → 15 días de prueba gratuita → Notificación de vencimiento cercano (7 días antes) → Dashboard muestra opciones de actualización → Usuario selecciona plan → Membresía actualizada
+- **Success criteria**: Nuevos usuarios reciben 15 días de prueba, contador de días restantes visible, notificaciones cuando faltan 7, 3 y 0 días, acceso bloqueado después de expiración, opciones de compra claramente mostradas ($9.99/mes o $24.99 vitalicio)
+
+### Configuración de Precios de Membresías (Super Admin)
+- **Functionality**: Panel de super administrador para modificar días de prueba gratuita, precio mensual y precio vitalicio en cualquier momento
+- **Purpose**: Permite flexibilidad en la estrategia de precios sin necesidad de modificar código
+- **Trigger**: Super admin accede al panel de administración
+- **Progression**: Dashboard super admin → Configuración de membresías → Modificar valores → Vista previa de cambios → Guardar → Nuevos precios aplicados a futuros registros
+- **Success criteria**: Super admin puede modificar los 3 valores (días prueba, precio mensual, precio vitalicio), cambios se guardan correctamente, valores se validan (rangos razonables), vista previa muestra configuración actual
+
+### Sistema de Temas Personalizables (Nuevo)
+- **Functionality**: 5 temas visuales disponibles (Morado Vibrante, Colorido Arcoíris, Alegre y Optimista, Tonos Cálidos, Modo Oscuro). Selección durante registro y cambio desde configuración
+- **Purpose**: Permite personalización visual según preferencias del usuario, mejora experiencia y accesibilidad
+- **Trigger**: Durante registro o desde pestaña de Configuración en dashboard
+- **Progression**: Registro → Selector de tema con vista previa de colores → Selección → Tema aplicado → Dashboard (pestaña Configuración) → Cambiar tema → Aplicación instantánea con mensaje de confirmación
+- **Success criteria**: 5 temas distintos disponibles, cada tema tiene paleta de colores única y coherente, cambios se aplican instantáneamente, selección se guarda en perfil de usuario, tema persiste entre sesiones
 
 ### Sistema de Niveles Bloqueados
 - **Functionality**: Los niveles superiores al asignado permanecen bloqueados hasta completar niveles previos

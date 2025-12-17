@@ -14,6 +14,8 @@ import { toast } from 'sonner'
 import { LEVELS } from '@/lib/curriculum'
 import { formatDate, simpleHash } from '@/lib/helpers'
 import NexusFluentLogo from './NexusFluentLogo'
+import MembershipPricingSettings from './MembershipPricingSettings'
+import { createTrialMembership } from '@/lib/membership'
 
 interface SuperAdminDashboardProps {
   user: User
@@ -57,6 +59,8 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
       lastActive: Date.now(),
       fullName: newFullName.trim(),
       email: newEmail.trim() || undefined,
+      membership: createTrialMembership(),
+      selectedTheme: 'default',
     }
 
     setAllUsers((current) => {
@@ -163,6 +167,8 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
             </CardContent>
           </Card>
         </div>
+
+        <MembershipPricingSettings />
 
         <Card>
           <CardHeader>

@@ -11,6 +11,7 @@ import TeacherDashboard from './components/TeacherDashboard'
 import SuperAdminDashboard from './components/SuperAdminDashboard'
 import VocabularyPractice from './components/VocabularyPractice'
 import { LEVELS } from './lib/curriculum'
+import { applyTheme } from './lib/themes'
 
 type AppView = 'landing' | 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary'
 
@@ -22,6 +23,10 @@ function App() {
 
   useEffect(() => {
     if (currentUser) {
+      if (currentUser.selectedTheme) {
+        applyTheme(currentUser.selectedTheme)
+      }
+      
       if (currentUser.role === 'superadmin') {
         setView('superadmin')
       } else if (currentUser.role === 'teacher') {

@@ -1,5 +1,6 @@
 import { UserProgress, Level, Achievement, LessonScore, User, CompletedLevel } from './types'
 import { LEVELS, LEVEL_INFO, LESSONS, ACHIEVEMENT_DEFINITIONS } from './curriculum'
+import { createLifetimeMembership } from './membership'
 
 const SUPER_ADMIN_USERNAME = 'darckcan'
 const SUPER_ADMIN_PASSWORD = 'M.ario123'
@@ -26,6 +27,8 @@ export function createSuperAdmin(): User {
     lastActive: Date.now(),
     fullName: 'Super Administrador',
     email: 'admin@learnenglish.com',
+    membership: createLifetimeMembership(),
+    selectedTheme: 'default',
   }
 }
 

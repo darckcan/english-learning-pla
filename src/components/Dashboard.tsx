@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { User, UserProgress, Level } from '@/lib/types'
+import { User, UserProgress, Level, ThemeType } from '@/lib/types'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
@@ -17,6 +17,7 @@ import {
   BookOpen,
   TrendUp,
   Certificate,
+  Palette,
 } from '@phosphor-icons/react'
 import { LEVELS, LEVEL_INFO, LESSONS } from '@/lib/curriculum'
 import { 
@@ -33,6 +34,9 @@ import LearningStrategyModal from './LearningStrategyModal'
 import LevelCertificate from './LevelCertificate'
 import AchievementBadge from './AchievementBadge'
 import NexusFluentLogo from './NexusFluentLogo'
+import MembershipStatus from './MembershipStatus'
+import { applyTheme, THEMES } from '@/lib/themes'
+import { useKV } from '@github/spark/hooks'
 
 interface DashboardProps {
   user: User
@@ -54,6 +58,7 @@ export default function Dashboard({
   const [activeTab, setActiveTab] = useState<string>('lessons')
   const [certificateOpen, setCertificateOpen] = useState(false)
   const [selectedCertificateLevel, setSelectedCertificateLevel] = useState<Level | null>(null)
+  const [allUsers, setAllUsers] = useKV<User[]>('all-users', [])
 
   const unlockedLevels = user.unlockedLevels || ['Beginner']
   const currentLevelProgress = calculateLevelProgress(progress, selectedLevel)
@@ -71,6 +76,21 @@ export default function Dashboard({
       setSelectedCertificateLevel(level)
       setCertificateOpen(true)
     }
+  }
+
+  const handleThemeChange = (newTheme: ThemeType) => {
+    applyTheme(newTheme)
+    
+    setAllUsers((current) => {
+      const users = current || []
+      return users.map(u => 
+        u.id === user.id 
+          ? { ...u, selectedTheme: newTheme }
+          : u
+      )
+    })
+    
+    toast.success(`Tema "${THEMES[newTheme].name}" aplicado`)
   }
 
   return (
@@ -128,7 +148,7 @@ export default function Dashboard({
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 max-w-md mb-6 sm:mb-8">
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl mb-6 sm:mb-8">
             <TabsTrigger value="lessons" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
               <House size={16} className="sm:hidden" />
               <House size={18} className="hidden sm:inline" />
@@ -144,6 +164,12 @@ export default function Dashboard({
               <Trophy size={16} className="sm:hidden" />
               <Trophy size={18} className="hidden sm:inline" />
               <span>Logros</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Palette size={16} className="sm:hidden" />
+              <Palette size={18} className="hidden sm:inline" />
+              <span className="hidden sm:inline">Config</span>
+              <span className="sm:hidden">⚙️</span>
             </TabsTrigger>
           </TabsList>
 
@@ -503,6 +529,70 @@ export default function Dashboard({
                     )}
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-6">
+            <MembershipStatus user={user} />
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Palette size={24} />
+                  Tema de la Interfaz
+                </CardTitle>
+                <CardDescription>
+                  Personaliza el aspecto de la plataforma según tu preferencia
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.values(THEMES).map((theme) => (
+                    <Card
+                      key={theme.id}
+                      onClick={() => handleThemeChange(theme.id)}
+                      className={cn(
+                        'cursor-pointer transition-all hover:shadow-lg',
+                        user.selectedTheme === theme.id && 'ring-2 ring-primary shadow-lg'
+                      )}
+                    >
+                      <CardContent className="p-4 space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-sm sm:text-base truncate">{theme.name}</h3>
+                            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
+                              {theme.description}
+                            </p>
+                          </div>
+                          {user.selectedTheme === theme.id && (
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                              <CheckCircle size={16} weight="fill" className="text-primary-foreground" />
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="flex gap-2">
+                          <div
+                            className="flex-1 h-8 rounded"
+                            style={{ backgroundColor: theme.colors.primary }}
+                            title="Primario"
+                          />
+                          <div
+                            className="flex-1 h-8 rounded"
+                            style={{ backgroundColor: theme.colors.secondary }}
+                            title="Secundario"
+                          />
+                          <div
+                            className="flex-1 h-8 rounded"
+                            style={{ backgroundColor: theme.colors.accent }}
+                            title="Acento"
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

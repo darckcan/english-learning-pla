@@ -2,6 +2,17 @@ export type Level = 'Beginner' | 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
 
 export type UserRole = 'student' | 'teacher' | 'superadmin'
 
+export type MembershipType = 'trial' | 'monthly' | 'lifetime'
+
+export type ThemeType = 'default' | 'colorful' | 'cheerful' | 'warm' | 'dark'
+
+export interface Membership {
+  type: MembershipType
+  startDate: number
+  endDate?: number
+  isActive: boolean
+}
+
 export interface User {
   id: string
   username: string
@@ -13,6 +24,8 @@ export interface User {
   lastActive: number
   email?: string
   fullName?: string
+  membership?: Membership
+  selectedTheme?: ThemeType
 }
 
 export interface Lesson {
