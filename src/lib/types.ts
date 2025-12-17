@@ -28,6 +28,11 @@ export interface User {
   selectedTheme?: ThemeType
 }
 
+export interface ShadowingPhrase {
+  text: string
+  translation: string
+}
+
 export interface Lesson {
   id: string
   level: Level
@@ -38,6 +43,7 @@ export interface Lesson {
   grammar: GrammarSection
   exercises: Exercise[]
   shadowingText: string
+  shadowingPhrases?: ShadowingPhrase[]
 }
 
 export interface VocabularyItem {

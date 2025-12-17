@@ -245,6 +245,47 @@ function generateC2ShadowingText(topic: string, classNumber: number): string {
   return texts[classNumber % texts.length]
 }
 
+function generateC2ShadowingPhrases(topic: string, classNumber: number) {
+  const phraseSets = [
+    [
+      { text: 'Notwithstanding the multifaceted challenges inherent in such an undertaking, the inexorable march toward progress demands our unwavering commitment.', translation: 'A pesar de los desafíos multifacéticos inherentes a tal empresa, la marcha inexorable hacia el progreso demanda nuestro compromiso inquebrantable.' },
+      { text: 'Indeed, it is through the synthesis of disparate perspectives that we illuminate the path forward with clarity and purpose.', translation: 'De hecho, es a través de la síntesis de perspectivas dispares que iluminamos el camino adelante con claridad y propósito.' },
+      { text: 'We must eschew facile solutions in favor of nuanced understanding that acknowledges the complexity of these issues.', translation: 'Debemos evitar soluciones fáciles en favor de una comprensión matizada que reconozca la complejidad de estos asuntos.' },
+      { text: 'The implications of this approach extend far beyond the immediate context into realms yet unexplored.', translation: 'Las implicaciones de este enfoque se extienden mucho más allá del contexto inmediato hacia ámbitos aún no explorados.' },
+      { text: 'It is precisely this rigorous methodology that distinguishes academic discourse from mere conjecture.', translation: 'Es precisamente esta metodología rigurosa lo que distingue el discurso académico de la mera conjetura.' },
+    ],
+    [
+      { text: 'The verisimilitude of the narrative was such that it transcended mere storytelling, becoming something altogether more profound.', translation: 'La verosimilitud de la narrativa fue tal que trascendió el mero contar historias, convirtiéndose en algo completamente más profundo.' },
+      { text: 'It became a pellucid window into the human condition, revealing truths that resonate across cultures and epochs.', translation: 'Se convirtió en una ventana diáfana a la condición humana, revelando verdades que resuenan a través de culturas y épocas.' },
+      { text: 'Herein lies the quintessential power of literature and its enduring significance in our collective consciousness.', translation: 'Aquí reside el poder quintaesencial de la literatura y su significado perdurable en nuestra conciencia colectiva.' },
+      { text: 'Its capacity to render the ineffable tangible represents one of humanity\'s most remarkable achievements.', translation: 'Su capacidad de hacer tangible lo inefable representa uno de los logros más notables de la humanidad.' },
+      { text: 'Through this lens, the abstract becomes concrete and the universal becomes intimately personal.', translation: 'A través de este lente, lo abstracto se vuelve concreto y lo universal se vuelve íntimamente personal.' },
+    ],
+    [
+      { text: 'Be that as it may, the preponderance of evidence suggests an inextricable link between these phenomena.', translation: 'Sea como fuere, la preponderancia de evidencia sugiere un vínculo inextricable entre estos fenómenos.' },
+      { text: 'Far be it from me to engage in unwarranted speculation without rigorous empirical foundation.', translation: 'Lejos de mí participar en especulación injustificada sin fundamento empírico riguroso.' },
+      { text: 'Suffice it to say that the implications are both profound and far-reaching in their scope.', translation: 'Baste decir que las implicaciones son tanto profundas como de gran alcance en su extensión.' },
+      { text: 'The ramifications extend into domains that warrant careful and sustained scholarly attention.', translation: 'Las ramificaciones se extienden a dominios que ameritan atención académica cuidadosa y sostenida.' },
+      { text: 'Only through such meticulous analysis can we hope to achieve genuine understanding of the matter.', translation: 'Solo a través de tal análisis meticuloso podemos esperar lograr una comprensión genuina del asunto.' },
+    ],
+    [
+      { text: 'In the final analysis, when all is said and done, we find ourselves confronting perennial questions.', translation: 'En el análisis final, al fin y al cabo, nos encontramos confrontando preguntas perennes.' },
+      { text: 'The vicissitudes of fortune notwithstanding, these questions have vexed philosophers throughout the ages.', translation: 'No obstante las vicisitudes de la fortuna, estas preguntas han desconcertado a filósofos a través de las eras.' },
+      { text: 'Such is the nature of inquiry at its most fundamental level, transcending temporal boundaries.', translation: 'Tal es la naturaleza de la indagación en su nivel más fundamental, trascendiendo fronteras temporales.' },
+      { text: 'We are compelled to engage with these matters not merely academically but existentially.', translation: 'Estamos compelidos a involucrarnos con estos asuntos no meramente académicamente sino existencialmente.' },
+      { text: 'This engagement represents the highest expression of intellectual and philosophical discourse.', translation: 'Este compromiso representa la más alta expresión del discurso intelectual y filosófico.' },
+    ],
+    [
+      { text: 'The discourse surrounding this issue has been characterized by a regrettable paucity of nuance and depth.', translation: 'El discurso en torno a este asunto se ha caracterizado por una lamentable escasez de matices y profundidad.' },
+      { text: 'What is needed is not grandiloquent rhetoric but rather perspicacious examination of fundamental premises.', translation: 'Lo que se necesita no es retórica grandilocuente sino más bien un examen perspicaz de premisas fundamentales.' },
+      { text: 'We must interrogate the underlying assumptions that inform our collective understanding with rigor.', translation: 'Debemos interrogar los supuestos subyacentes que informan nuestra comprensión colectiva con rigor.' },
+      { text: 'Only through such intellectual honesty can we hope to advance beyond superficial analyses.', translation: 'Solo a través de tal honestidad intelectual podemos esperar avanzar más allá de análisis superficiales.' },
+      { text: 'This represents the quintessence of scholarly inquiry at the highest level of mastery.', translation: 'Esto representa la quintaesencia de la indagación académica al más alto nivel de maestría.' },
+    ],
+  ]
+  return phraseSets[classNumber % phraseSets.length]
+}
+
 export const C2_LESSONS_COMPLETE: Lesson[] = C2_CURRICULUM.map((topic, index) => ({
   id: `c2-${index + 1}`,
   level: 'C2' as const,
@@ -255,4 +296,5 @@ export const C2_LESSONS_COMPLETE: Lesson[] = C2_CURRICULUM.map((topic, index) =>
   grammar: generateC2Grammar(topic),
   exercises: generateC2Exercises(topic.classNumber, topic.grammarPattern),
   shadowingText: generateC2ShadowingText(topic.grammarPattern, topic.classNumber),
+  shadowingPhrases: generateC2ShadowingPhrases(topic.grammarPattern, topic.classNumber),
 }))

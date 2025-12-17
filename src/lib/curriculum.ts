@@ -15,6 +15,7 @@ function generateLessonsFromCurriculum(curriculum: typeof A2_CURRICULUM, level: 
     grammar: generateGrammar(topic.grammarPattern, topic.topicFunction),
     exercises: generateExercises(topic.grammarPattern, index + 1),
     shadowingText: generateShadowingText(topic.grammarPattern, topic.topicFunction),
+    shadowingPhrases: generateShadowingPhrases(topic.grammarPattern, topic.topicFunction),
   }))
 }
 
@@ -100,6 +101,31 @@ function generateExercises(pattern: string, lessonNumber: number) {
 
 function generateShadowingText(pattern: string, topic: string) {
   return `This is a shadowing exercise for ${pattern}. Listen carefully and repeat after the audio. Practice speaking naturally and with good pronunciation. The more you practice, the better your English will become. ${topic} is an important skill to master.`
+}
+
+function generateShadowingPhrases(pattern: string, topic: string) {
+  return [
+    { 
+      text: `This is a shadowing exercise for ${pattern}. Listen carefully and repeat.`, 
+      translation: `Este es un ejercicio de shadowing para ${pattern}. Escucha con atención y repite.` 
+    },
+    { 
+      text: `Practice speaking naturally with good pronunciation and intonation.`, 
+      translation: 'Practica hablando naturalmente con buena pronunciación y entonación.' 
+    },
+    { 
+      text: `The more you practice, the better your English will become every day.`, 
+      translation: 'Mientras más practiques, mejor será tu inglés cada día.' 
+    },
+    { 
+      text: `${topic} is an important skill that you need to master.`, 
+      translation: `${topic} es una habilidad importante que necesitas dominar.` 
+    },
+    { 
+      text: 'Remember to focus on the rhythm and flow of the language.', 
+      translation: 'Recuerda enfocarte en el ritmo y fluidez del idioma.' 
+    },
+  ]
 }
 
 export const LEVELS: Level[] = ['Beginner', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
@@ -193,6 +219,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'Hello! My name is Alex. I am happy to meet you. How are you today?',
+      shadowingPhrases: [
+        { text: 'Hello! My name is Alex and I am very happy to meet you.', translation: '¡Hola! Mi nombre es Alex y estoy muy feliz de conocerte.' },
+        { text: 'Good morning! How are you today? I am fine, thank you.', translation: '¡Buenos días! ¿Cómo estás hoy? Estoy bien, gracias.' },
+        { text: 'Nice to meet you! What is your name?', translation: '¡Encantado de conocerte! ¿Cuál es tu nombre?' },
+        { text: 'Thank you very much for your help. You are welcome.', translation: 'Muchas gracias por tu ayuda. De nada.' },
+        { text: 'Goodbye! See you later. Have a nice day!', translation: '¡Adiós! Nos vemos luego. ¡Que tengas un buen día!' },
+      ],
     },
     {
       id: 'beginner-2',
@@ -235,6 +268,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'One, two, three, four, five. I can count from one to five. Six, seven, eight, nine, ten.',
+      shadowingPhrases: [
+        { text: 'One, two, three, four, five. I can count from one to five easily.', translation: 'Uno, dos, tres, cuatro, cinco. Puedo contar del uno al cinco fácilmente.' },
+        { text: 'Six, seven, eight, nine, ten. Now I can count to ten!', translation: 'Seis, siete, ocho, nueve, diez. ¡Ahora puedo contar hasta diez!' },
+        { text: 'I have three brothers and two sisters in my family.', translation: 'Tengo tres hermanos y dos hermanas en mi familia.' },
+        { text: 'There are twenty students in our English class today.', translation: 'Hay veinte estudiantes en nuestra clase de inglés hoy.' },
+        { text: 'This book costs fifteen dollars and fifty cents.', translation: 'Este libro cuesta quince dólares y cincuenta centavos.' },
+      ],
     },
     {
       id: 'beginner-3',
@@ -277,6 +317,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'This is a red book. That is a blue chair. The table is brown. I like green and yellow.',
+      shadowingPhrases: [
+        { text: 'This is a red book on the table. It is very interesting.', translation: 'Este es un libro rojo sobre la mesa. Es muy interesante.' },
+        { text: 'That is a blue chair in the corner of the room.', translation: 'Esa es una silla azul en la esquina de la habitación.' },
+        { text: 'The table is brown and very old, but it is still beautiful.', translation: 'La mesa es marrón y muy vieja, pero todavía es hermosa.' },
+        { text: 'I like green and yellow colors because they are bright and cheerful.', translation: 'Me gustan los colores verde y amarillo porque son brillantes y alegres.' },
+        { text: 'Look at that white car. It is new and very expensive.', translation: 'Mira ese carro blanco. Es nuevo y muy caro.' },
+      ],
     },
     {
       id: 'beginner-4',
@@ -319,6 +366,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'This is my family. My mother is Maria. My father is John. I have one sister and one brother.',
+      shadowingPhrases: [
+        { text: 'This is my family. We live together in a big house in the city.', translation: 'Esta es mi familia. Vivimos juntos en una casa grande en la ciudad.' },
+        { text: 'My mother is Maria. She is a teacher and she loves her job.', translation: 'Mi madre es María. Ella es maestra y ama su trabajo.' },
+        { text: 'My father is John. His work is very important and he travels a lot.', translation: 'Mi padre es John. Su trabajo es muy importante y viaja mucho.' },
+        { text: 'I have one sister and one brother. They are both younger than me.', translation: 'Tengo una hermana y un hermano. Ambos son menores que yo.' },
+        { text: 'Our family is very happy. We spend a lot of time together.', translation: 'Nuestra familia es muy feliz. Pasamos mucho tiempo juntos.' },
+      ],
     },
     {
       id: 'beginner-5',
@@ -361,6 +415,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'Every day, I wake up at 7 AM. I eat breakfast. Then I go to work. In the evening, I study English.',
+      shadowingPhrases: [
+        { text: 'Every day, I wake up at 7 AM and start my morning routine.', translation: 'Todos los días, me despierto a las 7 AM y comienzo mi rutina matutina.' },
+        { text: 'I eat a healthy breakfast with eggs, toast, and orange juice.', translation: 'Como un desayuno saludable con huevos, tostadas y jugo de naranja.' },
+        { text: 'Then I go to work by bus. The trip takes about thirty minutes.', translation: 'Luego voy al trabajo en autobús. El viaje toma alrededor de treinta minutos.' },
+        { text: 'In the evening, I study English for one hour at home.', translation: 'Por la tarde, estudio inglés durante una hora en casa.' },
+        { text: 'After dinner, I watch TV and then I sleep at 11 PM.', translation: 'Después de cenar, veo TV y luego duermo a las 11 PM.' },
+      ],
     },
   ],
   A1: [
@@ -405,6 +466,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'What is your name? Where are you from? How old are you? When is your birthday?',
+      shadowingPhrases: [
+        { text: 'What is your name? My name is Carlos and I am from Mexico.', translation: '¿Cuál es tu nombre? Mi nombre es Carlos y soy de México.' },
+        { text: 'Where are you from? I am from Spain, but I live in the United States now.', translation: '¿De dónde eres? Soy de España, pero vivo en Estados Unidos ahora.' },
+        { text: 'How old are you? I am twenty-five years old and I work as a teacher.', translation: '¿Cuántos años tienes? Tengo veinticinco años y trabajo como maestro.' },
+        { text: 'When is your birthday? My birthday is in December, on the tenth.', translation: '¿Cuándo es tu cumpleaños? Mi cumpleaños es en diciembre, el día diez.' },
+        { text: 'Why do you study English? Because I need it for my job and I love learning languages.', translation: '¿Por qué estudias inglés? Porque lo necesito para mi trabajo y amo aprender idiomas.' },
+      ],
     },
     {
       id: 'a1-2',
@@ -447,6 +515,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'I want to buy a new shirt. How much is it? Is it expensive? No, it is cheap. I will buy it.',
+      shadowingPhrases: [
+        { text: 'I want to buy a new shirt for the party next week.', translation: 'Quiero comprar una camisa nueva para la fiesta la próxima semana.' },
+        { text: 'Excuse me, how much is this beautiful jacket?', translation: 'Disculpe, ¿cuánto cuesta esta chaqueta hermosa?' },
+        { text: 'Is it expensive? No, it is cheap. It only costs thirty dollars.', translation: '¿Es cara? No, es barata. Solo cuesta treinta dólares.' },
+        { text: 'I will buy it. Do you accept credit cards?', translation: 'La compraré. ¿Aceptan tarjetas de crédito?' },
+        { text: 'These shoes are on sale. I need to buy two pairs.', translation: 'Estos zapatos están en oferta. Necesito comprar dos pares.' },
+      ],
     },
     {
       id: 'a1-3',
@@ -489,6 +564,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'I like pizza and pasta. My favorite food is sushi. I love chocolate. Do you prefer tea or coffee?',
+      shadowingPhrases: [
+        { text: 'I like pizza and pasta because they are delicious Italian foods.', translation: 'Me gustan la pizza y la pasta porque son deliciosas comidas italianas.' },
+        { text: 'My favorite food is sushi. I eat it every weekend at a Japanese restaurant.', translation: 'Mi comida favorita es el sushi. Lo como cada fin de semana en un restaurante japonés.' },
+        { text: 'I love chocolate, especially dark chocolate with almonds.', translation: 'Amo el chocolate, especialmente el chocolate oscuro con almendras.' },
+        { text: 'Do you prefer tea or coffee? I prefer coffee in the morning.', translation: '¿Prefieres té o café? Prefiero el café por la mañana.' },
+        { text: 'My sister is hungry. Let\'s go to a restaurant for dinner.', translation: 'Mi hermana tiene hambre. Vamos a un restaurante a cenar.' },
+      ],
     },
     {
       id: 'a1-4',
@@ -531,6 +613,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'What time is it? It is eight o\'clock. I wake up at seven in the morning. I go to bed at ten at night.',
+      shadowingPhrases: [
+        { text: 'What time is it now? It is eight o\'clock in the morning.', translation: '¿Qué hora es ahora? Son las ocho de la mañana.' },
+        { text: 'I wake up at seven every morning and take a shower.', translation: 'Me despierto a las siete todas las mañanas y me ducho.' },
+        { text: 'My English class starts at half past nine and finishes at eleven.', translation: 'Mi clase de inglés comienza a las nueve y media y termina a las once.' },
+        { text: 'I go to bed at ten at night because I am very tired.', translation: 'Me acuesto a las diez de la noche porque estoy muy cansado.' },
+        { text: 'The meeting is at quarter past three in the afternoon.', translation: 'La reunión es a las tres y cuarto de la tarde.' },
+      ],
     },
     {
       id: 'a1-5',
@@ -573,6 +662,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'How is the weather today? It is sunny and warm. I love spring. In winter, it is very cold and sometimes it snows.',
+      shadowingPhrases: [
+        { text: 'How is the weather today? It is sunny and warm, perfect for a walk in the park.', translation: '¿Cómo está el clima hoy? Está soleado y cálido, perfecto para un paseo en el parque.' },
+        { text: 'I love spring because the flowers bloom and the weather is beautiful.', translation: 'Amo la primavera porque las flores florecen y el clima es hermoso.' },
+        { text: 'In winter, it is very cold and sometimes it snows heavily.', translation: 'En invierno, hace mucho frío y a veces nieva mucho.' },
+        { text: 'Summer is my favorite season. It is hot and I can go to the beach.', translation: 'El verano es mi estación favorita. Hace calor y puedo ir a la playa.' },
+        { text: 'It is raining outside. Don\'t forget to take your umbrella!', translation: 'Está lloviendo afuera. ¡No olvides llevar tu paraguas!' },
+      ],
     },
     {
       id: 'a1-6',
@@ -615,6 +711,13 @@ export const LESSONS: Record<Level, Lesson[]> = {
         },
       ],
       shadowingText: 'There is a bank on Main Street. The hospital is next to the park. The restaurant is near my house. I go to the store every day.',
+      shadowingPhrases: [
+        { text: 'There is a bank on Main Street, between the post office and the pharmacy.', translation: 'Hay un banco en la Calle Principal, entre la oficina de correos y la farmacia.' },
+        { text: 'The hospital is next to the park. It is a very large and modern building.', translation: 'El hospital está al lado del parque. Es un edificio muy grande y moderno.' },
+        { text: 'The restaurant is near my house, so I can walk there in five minutes.', translation: 'El restaurante está cerca de mi casa, así que puedo caminar hasta allí en cinco minutos.' },
+        { text: 'I go to the store every day to buy fresh bread and milk.', translation: 'Voy a la tienda todos los días para comprar pan y leche frescos.' },
+        { text: 'There is a beautiful park in the center of the city where families go on weekends.', translation: 'Hay un parque hermoso en el centro de la ciudad donde las familias van los fines de semana.' },
+      ],
     },
     ...A1_LESSONS_7_TO_30,
   ],

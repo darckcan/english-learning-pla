@@ -220,6 +220,31 @@ function generateC1ShadowingText(topic: { grammarPattern: string, topicFunction:
   return `Texto de práctica para shadowing de nivel C1: Este ejercicio integra ${topic.grammarPattern.toLowerCase()} para ${topic.topicFunction.toLowerCase()}. Notwithstanding the inherent complexity of this grammatical structure, mastery of these elements is fundamental to achieving true fluency at the C1 level. Seldom have linguistic challenges proven so rewarding once conquered. Not only does this enhance written communication, but it also significantly elevates spoken discourse. It is precisely through such deliberate practice that learners transcend intermediate plateaus and attain advanced proficiency.`
 }
 
+function generateC1ShadowingPhrases(topic: { grammarPattern: string, topicFunction: string }) {
+  return [
+    { 
+      text: `This advanced shadowing exercise focuses on mastering ${topic.grammarPattern.toLowerCase()} for ${topic.topicFunction.toLowerCase()}.`, 
+      translation: `Este ejercicio avanzado de shadowing se enfoca en dominar ${topic.grammarPattern.toLowerCase()} para ${topic.topicFunction.toLowerCase()}.` 
+    },
+    { 
+      text: 'Notwithstanding the inherent complexity of this grammatical structure, mastery is entirely achievable through dedicated practice.', 
+      translation: 'A pesar de la complejidad inherente de esta estructura gramatical, el dominio es totalmente alcanzable mediante práctica dedicada.' 
+    },
+    { 
+      text: 'Seldom have linguistic challenges proven so rewarding once conquered, particularly at this advanced level.', 
+      translation: 'Raramente los desafíos lingüísticos han demostrado ser tan gratificantes una vez conquistados, particularmente en este nivel avanzado.' 
+    },
+    { 
+      text: 'Not only does this enhance your written communication, but it also significantly elevates your spoken discourse and overall fluency.', 
+      translation: 'Esto no solo mejora tu comunicación escrita, sino que también eleva significativamente tu discurso hablado y fluidez general.' 
+    },
+    { 
+      text: 'It is precisely through such deliberate and consistent practice that learners transcend intermediate plateaus and attain truly advanced proficiency.', 
+      translation: 'Es precisamente a través de esta práctica deliberada y consistente que los estudiantes trascienden las mesetas intermedias y alcanzan una competencia verdaderamente avanzada.' 
+    },
+  ]
+}
+
 export function generateAllC1Lessons(): Lesson[] {
   return C1_CURRICULUM.map((topic, index) => ({
     id: `c1-${index + 1}`,
@@ -231,6 +256,7 @@ export function generateAllC1Lessons(): Lesson[] {
     grammar: generateC1Grammar(topic),
     exercises: generateC1Exercises(topic.classNumber, topic.grammarPattern),
     shadowingText: generateC1ShadowingText(topic),
+    shadowingPhrases: generateC1ShadowingPhrases(topic),
   }))
 }
 

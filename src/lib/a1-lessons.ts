@@ -25,6 +25,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: '___ parents are kind.', correctAnswer: 'Their', explanation: 'Usamos "their" para posesión de ellos.' },
     ],
     shadowingText: 'This is my family. My mother is Maria. My father is John. I have one sister. Her name is Anna.',
+    shadowingPhrases: [
+      { text: 'This is my family. We live together in a big house.', translation: 'Esta es mi familia. Vivimos juntos en una casa grande.' },
+      { text: 'My mother is Maria. She is a kind and loving person.', translation: 'Mi madre es María. Ella es una persona amable y cariñosa.' },
+      { text: 'My father is John. His job is very important.', translation: 'Mi padre es John. Su trabajo es muy importante.' },
+      { text: 'I have one sister. Her name is Anna and she is very smart.', translation: 'Tengo una hermana. Su nombre es Anna y es muy inteligente.' },
+      { text: 'Our grandmother visits us every weekend.', translation: 'Nuestra abuela nos visita cada fin de semana.' },
+    ],
   },
   {
     id: 'a1-8',
@@ -50,6 +57,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'The book costs ___ dollars. (15)', correctAnswer: 'fifteen', explanation: 'Fifteen es 15 en inglés.' },
     ],
     shadowingText: 'My phone number is five five five, one two three four. The shirt costs twenty-five dollars. I need fifty pesos.',
+    shadowingPhrases: [
+      { text: 'What is your phone number? My number is five five five, one two three four.', translation: '¿Cuál es tu número de teléfono? Mi número es cinco cinco cinco, uno dos tres cuatro.' },
+      { text: 'How much does this shirt cost? It costs twenty-five dollars.', translation: '¿Cuánto cuesta esta camisa? Cuesta veinticinco dólares.' },
+      { text: 'The book is fifteen dollars and the pen is three dollars.', translation: 'El libro cuesta quince dólares y el bolígrafo cuesta tres dólares.' },
+      { text: 'I need fifty pesos for the taxi to the airport.', translation: 'Necesito cincuenta pesos para el taxi al aeropuerto.' },
+      { text: 'The total is thirty-seven dollars. Do you want to pay with cash or card?', translation: 'El total es treinta y siete dólares. ¿Quieres pagar con efectivo o tarjeta?' },
+    ],
   },
   {
     id: 'a1-9',
@@ -75,6 +89,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'The sky is ___.', correctAnswer: 'blue', explanation: 'El cielo es azul.' },
     ],
     shadowingText: 'I have a big red car. My house is small but beautiful. She has long black hair. The flowers are yellow and white.',
+    shadowingPhrases: [
+      { text: 'I have a big red car that I love to drive on weekends.', translation: 'Tengo un carro grande y rojo que me encanta manejar los fines de semana.' },
+      { text: 'My house is small but very beautiful and comfortable.', translation: 'Mi casa es pequeña pero muy hermosa y cómoda.' },
+      { text: 'She has long black hair and beautiful green eyes.', translation: 'Ella tiene cabello largo y negro y hermosos ojos verdes.' },
+      { text: 'The flowers in the garden are yellow and white.', translation: 'Las flores en el jardín son amarillas y blancas.' },
+      { text: 'Look at that big blue building across the street.', translation: 'Mira ese edificio grande y azul al otro lado de la calle.' },
+    ],
   },
   {
     id: 'a1-10',
@@ -100,6 +121,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: '___ books are interesting. (far, plural)', correctAnswer: 'Those', explanation: 'Those para plural lejano.' },
     ],
     shadowingText: 'This is my phone. That is your computer. These are my books. Those are your pencils. Come here, please!',
+    shadowingPhrases: [
+      { text: 'This is my phone. It is new and very fast.', translation: 'Este es mi teléfono. Es nuevo y muy rápido.' },
+      { text: 'That is your computer over there on the desk.', translation: 'Esa es tu computadora allá en el escritorio.' },
+      { text: 'These are my books for the English class.', translation: 'Estos son mis libros para la clase de inglés.' },
+      { text: 'Those are your pencils on the other table.', translation: 'Esos son tus lápices en la otra mesa.' },
+      { text: 'Can you come here, please? I need your help.', translation: '¿Puedes venir aquí, por favor? Necesito tu ayuda.' },
+    ],
   },
   {
     id: 'a1-11',
@@ -125,6 +153,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'I ___ got three cats.', correctAnswer: 'have', explanation: 'Con I usamos have.' },
     ],
     shadowingText: 'I have got a dog and a cat. She has got two sisters. We have got a nice house. They have got many friends.',
+    shadowingPhrases: [
+      { text: 'I have got a dog and a cat. They are my best friends.', translation: 'Tengo un perro y un gato. Ellos son mis mejores amigos.' },
+      { text: 'She has got two sisters who live in different cities.', translation: 'Ella tiene dos hermanas que viven en ciudades diferentes.' },
+      { text: 'We have got a nice house with a beautiful garden.', translation: 'Tenemos una casa bonita con un jardín hermoso.' },
+      { text: 'They have got many friends from all around the world.', translation: 'Ellos tienen muchos amigos de todo el mundo.' },
+      { text: 'My brother has got a bicycle and he rides it every day.', translation: 'Mi hermano tiene una bicicleta y la monta todos los días.' },
+    ],
   },
   {
     id: 'a1-12',
@@ -150,6 +185,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'I ___ breakfast at 8 AM.', correctAnswer: 'eat', explanation: 'Con I usamos el verbo base.' },
     ],
     shadowingText: 'Every day, I wake up at seven. I eat breakfast. I go to work at eight. In the evening, I watch TV and study English.',
+    shadowingPhrases: [
+      { text: 'Every day, I wake up at seven in the morning and start my day.', translation: 'Todos los días, me despierto a las siete de la mañana y comienzo mi día.' },
+      { text: 'I eat a healthy breakfast with fruit and coffee.', translation: 'Como un desayuno saludable con fruta y café.' },
+      { text: 'I go to work at eight o\'clock and arrive at nine.', translation: 'Voy al trabajo a las ocho y llego a las nueve.' },
+      { text: 'In the evening, I watch TV with my family for an hour.', translation: 'Por la noche, veo TV con mi familia durante una hora.' },
+      { text: 'After dinner, I study English for thirty minutes every night.', translation: 'Después de cenar, estudio inglés durante treinta minutos todas las noches.' },
+    ],
   },
   {
     id: 'a1-13',
@@ -175,6 +217,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'She ___ at a hospital. (work)', correctAnswer: 'works', explanation: 'Work + s = works.' },
     ],
     shadowingText: 'My father works at a bank. My mother teaches English. My brother studies medicine. My sister lives in Paris.',
+    shadowingPhrases: [
+      { text: 'My father works at a bank in the city center.', translation: 'Mi padre trabaja en un banco en el centro de la ciudad.' },
+      { text: 'My mother teaches English at a high school near our house.', translation: 'Mi madre enseña inglés en una escuela secundaria cerca de nuestra casa.' },
+      { text: 'My brother studies medicine at the university. He wants to be a doctor.', translation: 'Mi hermano estudia medicina en la universidad. Quiere ser doctor.' },
+      { text: 'My sister lives in Paris and works for an international company.', translation: 'Mi hermana vive en París y trabaja para una compañía internacional.' },
+      { text: 'She loves her job and enjoys living in France.', translation: 'Ella ama su trabajo y disfruta vivir en Francia.' },
+    ],
   },
   {
     id: 'a1-14',
@@ -200,6 +249,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'I ___ like cold weather.', correctAnswer: 'don\'t', explanation: 'Con I usamos don\'t.' },
     ],
     shadowingText: 'I don\'t like coffee. She doesn\'t work on weekends. We don\'t live in the city. They don\'t speak Spanish.',
+    shadowingPhrases: [
+      { text: 'I don\'t like coffee, but I love tea in the morning.', translation: 'No me gusta el café, pero amo el té por la mañana.' },
+      { text: 'She doesn\'t work on weekends. She spends time with her family.', translation: 'Ella no trabaja los fines de semana. Pasa tiempo con su familia.' },
+      { text: 'We don\'t live in the city. We prefer the quiet countryside.', translation: 'No vivimos en la ciudad. Preferimos el tranquilo campo.' },
+      { text: 'They don\'t speak Spanish, but they are learning it now.', translation: 'Ellos no hablan español, pero lo están aprendiendo ahora.' },
+      { text: 'He doesn\'t eat meat. He is a vegetarian.', translation: 'Él no come carne. Es vegetariano.' },
+    ],
   },
   {
     id: 'a1-15',
@@ -225,6 +281,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: '___ you like chocolate?', correctAnswer: 'Do', explanation: 'Con you usamos Do.' },
     ],
     shadowingText: 'Do you like music? Does she work on Saturdays? Do they speak English? Does he live in Madrid? Yes, I do. No, she doesn\'t.',
+    shadowingPhrases: [
+      { text: 'Do you like music? Yes, I do. I love listening to jazz.', translation: '¿Te gusta la música? Sí. Me encanta escuchar jazz.' },
+      { text: 'Does she work on Saturdays? No, she doesn\'t. She rests on weekends.', translation: '¿Ella trabaja los sábados? No. Descansa los fines de semana.' },
+      { text: 'Do they speak English fluently? Yes, they do. They practice every day.', translation: '¿Ellos hablan inglés con fluidez? Sí. Practican todos los días.' },
+      { text: 'Does he live in Madrid? Yes, he does. He moved there last year.', translation: '¿Él vive en Madrid? Sí. Se mudó allá el año pasado.' },
+      { text: 'Do you often travel for work? Sometimes I do, but not very often.', translation: '¿Viajas seguido por trabajo? A veces sí, pero no muy seguido.' },
+    ],
   },
   {
     id: 'a1-16',
@@ -250,6 +313,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'The cat is ___ the box.', correctAnswer: 'in', explanation: 'In para dentro de espacios cerrados.' },
     ],
     shadowingText: 'The book is on the table. The pen is in my bag. I am at school. The dog is under the chair. The car is behind the house.',
+    shadowingPhrases: [
+      { text: 'The book is on the table next to my computer.', translation: 'El libro está sobre la mesa junto a mi computadora.' },
+      { text: 'The pen is in my bag. I always keep it there.', translation: 'El bolígrafo está en mi bolsa. Siempre lo guardo ahí.' },
+      { text: 'I am at school right now. My class starts at nine.', translation: 'Estoy en la escuela ahora mismo. Mi clase comienza a las nueve.' },
+      { text: 'The dog is sleeping under the chair in the living room.', translation: 'El perro está durmiendo debajo de la silla en la sala.' },
+      { text: 'The car is parked behind the house, near the garage.', translation: 'El carro está estacionado detrás de la casa, cerca del garaje.' },
+    ],
   },
   {
     id: 'a1-17',
@@ -275,6 +345,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: '___ a beautiful park in the city.', correctAnswer: 'There is', explanation: 'A park es singular, usamos there is.' },
     ],
     shadowingText: 'There is a big house on the hill. There are three bedrooms. There is one bathroom. There are two windows in each room.',
+    shadowingPhrases: [
+      { text: 'There is a big beautiful house on the hill overlooking the valley.', translation: 'Hay una casa grande y hermosa en la colina con vista al valle.' },
+      { text: 'There are three bedrooms upstairs and a living room downstairs.', translation: 'Hay tres habitaciones arriba y una sala abajo.' },
+      { text: 'There is one bathroom on the first floor and another one upstairs.', translation: 'Hay un baño en el primer piso y otro arriba.' },
+      { text: 'There are two windows in each room, so there is lots of natural light.', translation: 'Hay dos ventanas en cada habitación, así que hay mucha luz natural.' },
+      { text: 'There is a beautiful garden with flowers and trees around the house.', translation: 'Hay un jardín hermoso con flores y árboles alrededor de la casa.' },
+    ],
   },
   {
     id: 'a1-18',
@@ -300,6 +377,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'The class starts ___ 9 AM.', correctAnswer: 'at', explanation: 'At para horas específicas.' },
     ],
     shadowingText: 'I wake up at seven in the morning. I work on Monday and Tuesday. My vacation is in July. The meeting is on Friday at three o\'clock.',
+    shadowingPhrases: [
+      { text: 'I wake up at seven in the morning every single day.', translation: 'Me despierto a las siete de la mañana todos los días.' },
+      { text: 'I work on Monday and Tuesday, but I have Wednesday off.', translation: 'Trabajo el lunes y martes, pero tengo el miércoles libre.' },
+      { text: 'My summer vacation is in July. I am going to the beach.', translation: 'Mis vacaciones de verano son en julio. Voy a ir a la playa.' },
+      { text: 'The important meeting is on Friday at three o\'clock in the afternoon.', translation: 'La reunión importante es el viernes a las tres de la tarde.' },
+      { text: 'I usually have lunch at one o\'clock and finish work at six.', translation: 'Usualmente almuerzo a la una y termino el trabajo a las seis.' },
+    ],
   },
   {
     id: 'a1-19',
@@ -325,6 +409,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: '___ do you live?', correctAnswer: 'Where', explanation: 'Where para preguntar por lugares.' },
     ],
     shadowingText: 'What is your name? Where do you live? When is your birthday? Why do you study English? How do you travel to work?',
+    shadowingPhrases: [
+      { text: 'What is your name? My name is Carlos and I am from Mexico.', translation: '¿Cuál es tu nombre? Mi nombre es Carlos y soy de México.' },
+      { text: 'Where do you live? I live in a small apartment near the city center.', translation: '¿Dónde vives? Vivo en un departamento pequeño cerca del centro.' },
+      { text: 'When is your birthday? My birthday is in September, on the fifteenth.', translation: '¿Cuándo es tu cumpleaños? Mi cumpleaños es en septiembre, el quince.' },
+      { text: 'Why do you study English? I study English because I want to travel the world.', translation: '¿Por qué estudias inglés? Estudio inglés porque quiero viajar por el mundo.' },
+      { text: 'How do you travel to work? I usually take the bus, but sometimes I walk.', translation: '¿Cómo viajas al trabajo? Usualmente tomo el autobús, pero a veces camino.' },
+    ],
   },
   {
     id: 'a1-20',
@@ -350,6 +441,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'She ___ drinks coffee. (90%)', correctAnswer: 'usually', explanation: 'Usually indica alta frecuencia.' },
     ],
     shadowingText: 'I always wake up at seven. I usually have breakfast. I sometimes go to the gym. I rarely eat fast food. I never smoke.',
+    shadowingPhrases: [
+      { text: 'I always wake up at seven o\'clock, even on weekends.', translation: 'Siempre me despierto a las siete, incluso los fines de semana.' },
+      { text: 'I usually have breakfast with my family before going to work.', translation: 'Usualmente desayuno con mi familia antes de ir al trabajo.' },
+      { text: 'I sometimes go to the gym in the evening after work.', translation: 'A veces voy al gimnasio por la tarde después del trabajo.' },
+      { text: 'I rarely eat fast food because it is not healthy.', translation: 'Raramente como comida rápida porque no es saludable.' },
+      { text: 'I never smoke. It is very bad for your health.', translation: 'Nunca fumo. Es muy malo para la salud.' },
+    ],
   },
   {
     id: 'a1-21',
@@ -375,6 +473,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: '___ be late!', correctAnswer: 'Don\'t', explanation: 'Don\'t para imperativo negativo.' },
     ],
     shadowingText: 'Open your book to page ten. Listen to the audio. Read the text. Write the answers. Don\'t talk during the test. Please be quiet.',
+    shadowingPhrases: [
+      { text: 'Open your book to page ten and find exercise number three.', translation: 'Abre tu libro en la página diez y encuentra el ejercicio número tres.' },
+      { text: 'Listen carefully to the audio and pay attention to the pronunciation.', translation: 'Escucha cuidadosamente el audio y presta atención a la pronunciación.' },
+      { text: 'Read the text slowly and try to understand the main idea.', translation: 'Lee el texto despacio e intenta entender la idea principal.' },
+      { text: 'Write the answers in your notebook and check them later.', translation: 'Escribe las respuestas en tu cuaderno y revísalas después.' },
+      { text: 'Don\'t talk during the test. Please be quiet and concentrate.', translation: 'No hables durante el examen. Por favor mantén silencio y concéntrate.' },
+    ],
   },
   {
     id: 'a1-22',
@@ -400,6 +505,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'I ___ play the piano.', correctAnswer: 'can\'t', explanation: 'Can\'t para expresar inhabilidad.' },
     ],
     shadowingText: 'I can speak English and Spanish. I can swim but I can\'t dive. Can you play guitar? Yes, I can. Can she drive? No, she can\'t.',
+    shadowingPhrases: [
+      { text: 'I can speak English and Spanish fluently because I practice every day.', translation: 'Puedo hablar inglés y español con fluidez porque practico todos los días.' },
+      { text: 'I can swim very well, but I can\'t dive from high places.', translation: 'Puedo nadar muy bien, pero no puedo clavados desde lugares altos.' },
+      { text: 'Can you play the guitar? Yes, I can. I have been playing for five years.', translation: '¿Puedes tocar la guitarra? Sí, puedo. He estado tocando por cinco años.' },
+      { text: 'Can she drive a car? No, she can\'t. She doesn\'t have a license yet.', translation: '¿Ella puede conducir un carro? No, no puede. Aún no tiene licencia.' },
+      { text: 'They can cook amazing Italian food, but they can\'t bake desserts.', translation: 'Ellos pueden cocinar comida italiana increíble, pero no pueden hornear postres.' },
+    ],
   },
   {
     id: 'a1-23',
@@ -425,6 +537,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'She ___ to study more.', correctAnswer: 'needs', explanation: 'Needs con tercera persona.' },
     ],
     shadowingText: 'I want to learn English. I need to practice every day. She wants to travel to Japan. He needs to buy a new car. Do you want to come with us?',
+    shadowingPhrases: [
+      { text: 'I want to learn English because it will help me in my career.', translation: 'Quiero aprender inglés porque me ayudará en mi carrera.' },
+      { text: 'I need to practice English every day to improve my skills.', translation: 'Necesito practicar inglés todos los días para mejorar mis habilidades.' },
+      { text: 'She wants to travel to Japan next year and visit Tokyo.', translation: 'Ella quiere viajar a Japón el próximo año y visitar Tokio.' },
+      { text: 'He needs to buy a new car because his old one is broken.', translation: 'Él necesita comprar un carro nuevo porque su viejo está roto.' },
+      { text: 'Do you want to come with us to the movies tonight?', translation: '¿Quieres venir con nosotros al cine esta noche?' },
+    ],
   },
   {
     id: 'a1-24',
@@ -450,6 +569,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'She hates ___ up early. (wake)', correctAnswer: 'waking', explanation: 'Hate + gerundio.' },
     ],
     shadowingText: 'I love playing soccer. I like listening to music. I hate waking up early. She enjoys cooking. He prefers watching movies at home.',
+    shadowingPhrases: [
+      { text: 'I love playing soccer with my friends on the weekend.', translation: 'Me encanta jugar fútbol con mis amigos el fin de semana.' },
+      { text: 'I like listening to music while I work or study.', translation: 'Me gusta escuchar música mientras trabajo o estudio.' },
+      { text: 'I hate waking up early in the morning. I prefer sleeping late.', translation: 'Odio despertarme temprano en la mañana. Prefiero dormir tarde.' },
+      { text: 'She enjoys cooking Italian food for her family and friends.', translation: 'Ella disfruta cocinar comida italiana para su familia y amigos.' },
+      { text: 'He prefers watching movies at home rather than going to the cinema.', translation: 'Él prefiere ver películas en casa en lugar de ir al cine.' },
+    ],
   },
   {
     id: 'a1-25',
@@ -475,6 +601,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'It\'s 5:15. It\'s ___ past five.', correctAnswer: 'quarter', explanation: ':15 es quarter past.' },
     ],
     shadowingText: 'What time is it? It\'s eight o\'clock. It\'s half past nine. It\'s quarter to seven. It\'s twenty past three. It\'s five to twelve.',
+    shadowingPhrases: [
+      { text: 'What time is it now? It\'s exactly eight o\'clock in the morning.', translation: '¿Qué hora es ahora? Son exactamente las ocho de la mañana.' },
+      { text: 'The class starts at half past nine and finishes at eleven.', translation: 'La clase comienza a las nueve y media y termina a las once.' },
+      { text: 'We need to leave soon. It\'s already quarter to seven.', translation: 'Necesitamos irnos pronto. Ya son cuarto para las siete.' },
+      { text: 'The meeting is at twenty past three in the afternoon.', translation: 'La reunión es a las tres y veinte de la tarde.' },
+      { text: 'Hurry up! It\'s five to twelve and we have a lunch appointment.', translation: '¡Apúrate! Son cinco para las doce y tenemos una cita para almorzar.' },
+    ],
   },
   {
     id: 'a1-26',
@@ -500,6 +633,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: '___ is this shirt?', correctAnswer: 'How much', explanation: 'How much para precios.' },
     ],
     shadowingText: 'How many students are in the class? How much water do you drink? How much is this book? How many apples do you want?',
+    shadowingPhrases: [
+      { text: 'How many students are in the class today? There are twenty-five students.', translation: '¿Cuántos estudiantes hay en la clase hoy? Hay veinticinco estudiantes.' },
+      { text: 'How much water do you drink every day? I drink about two liters.', translation: '¿Cuánta agua bebes todos los días? Bebo alrededor de dos litros.' },
+      { text: 'How much is this book? It costs fifteen dollars at the bookstore.', translation: '¿Cuánto cuesta este libro? Cuesta quince dólares en la librería.' },
+      { text: 'How many apples do you want to buy? I want five red apples, please.', translation: '¿Cuántas manzanas quieres comprar? Quiero cinco manzanas rojas, por favor.' },
+      { text: 'How much time do we have before the meeting starts?', translation: '¿Cuánto tiempo tenemos antes de que comience la reunión?' },
+    ],
   },
   {
     id: 'a1-27',
@@ -525,6 +665,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'She buys ___ apples. (countable)', correctAnswer: 'many', explanation: 'Many para contables plurales.' },
     ],
     shadowingText: 'I drink a lot of water. I eat some bread. I buy many apples. I need much milk. There is a little sugar.',
+    shadowingPhrases: [
+      { text: 'I drink a lot of water every day to stay healthy and hydrated.', translation: 'Bebo mucha agua todos los días para estar saludable e hidratado.' },
+      { text: 'I eat some bread with butter and jam for breakfast every morning.', translation: 'Como un poco de pan con mantequilla y mermelada para el desayuno cada mañana.' },
+      { text: 'I buy many apples at the market because they are fresh and delicious.', translation: 'Compro muchas manzanas en el mercado porque son frescas y deliciosas.' },
+      { text: 'I need much milk for my coffee and cereal in the morning.', translation: 'Necesito mucha leche para mi café y cereal en la mañana.' },
+      { text: 'There is a little sugar left in the container. We need to buy more.', translation: 'Queda un poco de azúcar en el recipiente. Necesitamos comprar más.' },
+    ],
   },
   {
     id: 'a1-28',
@@ -550,6 +697,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: 'I ___ English now. (study)', correctAnswer: 'am studying', explanation: 'Am + studying para I.' },
     ],
     shadowingText: 'I am studying English right now. She is cooking dinner. They are watching a movie. He is running in the park. We are learning at the moment.',
+    shadowingPhrases: [
+      { text: 'I am studying English right now because I have an exam tomorrow.', translation: 'Estoy estudiando inglés ahora mismo porque tengo un examen mañana.' },
+      { text: 'She is cooking dinner in the kitchen. It smells delicious!', translation: 'Ella está cocinando la cena en la cocina. ¡Huele delicioso!' },
+      { text: 'They are watching a movie at the cinema with their friends.', translation: 'Ellos están viendo una película en el cine con sus amigos.' },
+      { text: 'He is running in the park to train for the marathon next month.', translation: 'Él está corriendo en el parque para entrenar para el maratón el próximo mes.' },
+      { text: 'We are learning new vocabulary at the moment. Please pay attention.', translation: 'Estamos aprendiendo vocabulario nuevo en este momento. Por favor presten atención.' },
+    ],
   },
   {
     id: 'a1-29',
@@ -575,6 +729,13 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex2', type: 'fill-blank', question: '___ sun is very bright today.', correctAnswer: 'The', explanation: 'The para cosas únicas.' },
     ],
     shadowingText: 'I have a car. The car is red. She is an artist. The artist is famous. I see a dog. The dog is playing. I eat an apple every day.',
+    shadowingPhrases: [
+      { text: 'I have a car. The car is red and very fast.', translation: 'Tengo un carro. El carro es rojo y muy rápido.' },
+      { text: 'She is an artist. The artist is famous all over the world.', translation: 'Ella es una artista. La artista es famosa en todo el mundo.' },
+      { text: 'I see a dog in the park. The dog is playing with a ball.', translation: 'Veo un perro en el parque. El perro está jugando con una pelota.' },
+      { text: 'I eat an apple every day because it is very healthy.', translation: 'Como una manzana todos los días porque es muy saludable.' },
+      { text: 'There is a book on the table. The book is about history.', translation: 'Hay un libro sobre la mesa. El libro es sobre historia.' },
+    ],
   },
   {
     id: 'a1-30',
@@ -603,5 +764,16 @@ export const A1_LESSONS_7_TO_30: Lesson[] = [
       { id: 'ex5', type: 'multiple-choice', question: 'I ___ play guitar.', options: ['can', 'cans', 'am can', 'can to'], correctAnswer: 'can', explanation: 'Can + verbo base.' },
     ],
     shadowingText: 'Hello! My name is Anna. I am from Mexico. I live in Madrid now. I work at a school. I teach English. I love my job. I can speak Spanish and English. Every day, I wake up at seven. I eat breakfast and go to work. Right now, I am teaching a class. My students are learning English. They study hard. I am very happy here.',
+    shadowingPhrases: [
+      { text: 'Hello! My name is Anna and I am from Mexico City.', translation: '¡Hola! Mi nombre es Anna y soy de la Ciudad de México.' },
+      { text: 'I live in Madrid now. I moved here two years ago for work.', translation: 'Vivo en Madrid ahora. Me mudé aquí hace dos años por trabajo.' },
+      { text: 'I work at a school in the city center. I teach English to teenagers.', translation: 'Trabajo en una escuela en el centro de la ciudad. Enseño inglés a adolescentes.' },
+      { text: 'I love my job because I enjoy helping students learn and improve.', translation: 'Amo mi trabajo porque disfruto ayudar a los estudiantes a aprender y mejorar.' },
+      { text: 'I can speak Spanish and English fluently, and I am learning French.', translation: 'Puedo hablar español e inglés con fluidez, y estoy aprendiendo francés.' },
+      { text: 'Every day, I wake up at seven, eat a healthy breakfast, and go to work by metro.', translation: 'Todos los días, me despierto a las siete, como un desayuno saludable y voy al trabajo en metro.' },
+      { text: 'Right now, I am teaching a class about present continuous tense.', translation: 'Ahora mismo, estoy enseñando una clase sobre el tiempo presente continuo.' },
+      { text: 'My students are learning English very quickly. They study hard and practice every day.', translation: 'Mis estudiantes están aprendiendo inglés muy rápido. Estudian duro y practican todos los días.' },
+      { text: 'I am very happy here in Madrid. The city is beautiful and the people are friendly.', translation: 'Estoy muy feliz aquí en Madrid. La ciudad es hermosa y la gente es amigable.' },
+    ],
   },
 ]

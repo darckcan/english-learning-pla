@@ -263,8 +263,8 @@ export default function LessonView({
                     <p className="text-sm italic">"{item.example}"</p>
                   </div>
                   <div className="flex flex-col gap-1 shrink-0">
-                    <PronunciationButton text={item.word} />
-                    <PronunciationButton text={item.example} variant="ghost" size="icon" />
+                    <PronunciationButton text={item.word} variant="ghost" size="icon" />
+                    <PronunciationButton text={item.example} variant="outline" size="icon" />
                   </div>
                 </div>
               </CardContent>
@@ -479,50 +479,66 @@ export default function LessonView({
     </Card>
   )
 
-  const renderShadowing = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Shadowing Practice</CardTitle>
-        <CardDescription>
-          Listen and repeat to improve your pronunciation and fluency
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="bg-primary/5 rounded-lg p-8 text-center space-y-6">
-          <p className="text-lg leading-relaxed">{lesson.shadowingText}</p>
-          <div className="flex gap-3 justify-center">
-            <PronunciationButton 
-              text={lesson.shadowingText} 
-              variant="default" 
-              size="default"
-              showLabel
-            />
-            <PronunciationButton 
-              text={lesson.shadowingText} 
-              slow 
-              variant="outline" 
-              size="default"
-              showLabel
-            />
+  const renderShadowing = () => {
+    const shadowingPhrases = lesson.shadowingPhrases || [
+      { text: lesson.shadowingText, translation: '' }
+    ]
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Shadowing Practice</CardTitle>
+          <CardDescription>
+            Listen and repeat to improve your pronunciation and fluency
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            {shadowingPhrases.map((phrase, index) => (
+              <div key={index} className="bg-primary/5 rounded-lg p-6">
+                <div className="space-y-3">
+                  <p className="text-lg leading-relaxed font-medium">{phrase.text}</p>
+                  {phrase.translation && (
+                    <p className="text-sm text-muted-foreground italic">{phrase.translation}</p>
+                  )}
+                  <div className="flex gap-2 justify-start pt-2">
+                    <PronunciationButton 
+                      text={phrase.text} 
+                      variant="default" 
+                      size="sm"
+                      showLabel
+                    />
+                    <PronunciationButton 
+                      text={phrase.text} 
+                      slow 
+                      variant="outline" 
+                      size="sm"
+                      showLabel
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
 
-        <div className="bg-secondary/10 rounded-lg p-6">
-          <h3 className="font-semibold mb-3">Cómo practicar "shadowing":</h3>
-          <ol className="space-y-2 text-sm text-muted-foreground">
-            <li>1. Escucha el texto con atención</li>
-            <li>2. Repítelo en voz alta, intentando imitar el ritmo y la entonación</li>
-            <li>3. Practica varias veces hasta que se sienta natural</li>
-            <li>4. Usa el botón "Despacio" si necesitas más tiempo</li>
-          </ol>
-        </div>
+          <div className="bg-secondary/10 rounded-lg p-6">
+            <h3 className="font-semibold mb-3">Cómo practicar "shadowing":</h3>
+            <ol className="space-y-2 text-sm text-muted-foreground">
+              <li>1. Escucha cada frase con atención</li>
+              <li>2. Repítela en voz alta, intentando imitar el ritmo y la entonación</li>
+              <li>3. Practica varias veces hasta que se sienta natural</li>
+              <li>4. Usa el botón "Despacio" si necesitas más tiempo</li>
+              <li>5. Trabaja en una frase a la vez antes de pasar a la siguiente</li>
+            </ol>
+          </div>
 
-        <Button onClick={handleNext} className="w-full" size="lg">
-          Complete Lesson
-        </Button>
-      </CardContent>
-    </Card>
-  )
+          <Button onClick={handleNext} className="w-full" size="lg">
+            Complete Lesson
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
 
   const renderComplete = () => {
     const correctCount = exerciseResults.filter(Boolean).length
