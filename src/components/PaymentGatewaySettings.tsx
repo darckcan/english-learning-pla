@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { Card, CardContent, CardDescription
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Input } from './ui/input'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Label } from './ui/label'
 import { Switch } from './ui/switch'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
-import { CreditCard, Key, Eye, EyeSlash, CheckCircle, XCircle, Info, Spinner, ShieldCheck } from '@phosphor-icons/react'
 import { toast } from 'sonner'
-
 interface StripeSettings {
-  publicKey: string
   secretKey: string
-  webhookSecret: string
+
+  autoRenewSubscriptions: 
+  lastVerified?: nu
+
+  publicKey: '',
   isTestMode: boolean
   isConfigured: boolean
   autoRenewSubscriptions: boolean
@@ -65,73 +65,73 @@ export default function PaymentGatewaySettings() {
     return key.startsWith('sk_test_') || key.startsWith('sk_live_')
   }
 
-  const handleVerify = async () => {
-    if (!secretKey) {
-      toast.error('Ingresa la clave secreta para verificar')
-      return
-    }
-
-    if (!validateStripeKey(secretKey, 'secret')) {
-      toast.error('La clave secreta no tiene un formato válido')
-      return
-    }
-
-    setIsVerifying(true)
     setVerificationStatus('idle')
-
     try {
-      const response = await fetch('https://api.stripe.com/v1/balance', {
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${secretKey}`,
-        },
-      })
+          'A
+     
 
-      if (response.ok) {
-        setVerificationStatus('success')
-        toast.success('Conexión con Stripe verificada correctamente')
-      } else {
+        toast.success('Conexión con Stripe verific
         setVerificationStatus('error')
-        toast.error('Error al verificar la conexión con Stripe')
       }
-    } catch {
-      setVerificationStatus('error')
-      toast.error('Error de conexión con Stripe')
-    } finally {
-      setIsVerifying(false)
-    }
-  }
+     
 
-  const handleSave = () => {
-    if (!publicKey || !secretKey) {
-      toast.error('Ingresa las claves pública y secreta')
-      return
     }
 
-    if (!validateStripeKey(publicKey, 'public')) {
-      toast.error('La clave pública no tiene un formato válido')
-      return
-    }
 
-    if (!validateStripeKey(secretKey, 'secret')) {
-      toast.error('La clave secreta no tiene un formato válido')
-      return
-    }
+      ret
 
-    const newSettings: StripeSettings = {
-      publicKey,
-      secretKey,
+      toast.error('La 
+    }
+    if (!validateStripeKey(secretKey, 'secret')) 
+      retu
+
+
       webhookSecret,
-      isTestMode,
-      isConfigured: verificationStatus === 'success',
-      autoRenewSubscriptions: autoRenew,
+      isConfigured: verificationStatus =
       sendPaymentReceipts: sendReceipts,
-      lastVerified: Date.now(),
     }
-
     setSettings(() => newSettings)
-    toast.success('Configuración de Stripe guardada correctamente')
   }
+  const
+    setPublic
+    setWebhookSecret('')
+    setAutoRenew(true)
+    setVerifica
+  }
+  ret
+   
+
+        </div>
+          Configura tu cuenta de St
+      </CardHeader>
+        <div
+     
+
+          <AccordionItem value="keys">
+              <div className="flex items-center gap-2">
+            
+     
+
+            <AccordionContent className="space-y-4
+                <p className="font-medium">Instrucciones:</p>
+            
+     
+
+
+                
+                
+                  id
+                 
+                  className="font-mono text-xs sm:tex
+              </div>
+              <div className="space-y-2"
+                  Clave Secreta
+     
+
+                    value={secretK
+                    placeholder="sk_test_..."
+   
 
   const handleClear = () => {
     setSettings(() => DEFAULT_STRIPE_SETTINGS)
@@ -268,51 +268,51 @@ export default function PaymentGatewaySettings() {
           <AccordionItem value="options">
             <AccordionTrigger className="text-sm font-medium">
               <div className="flex items-center gap-2">
-                <CreditCard size={16} />
-                Opciones de Pago
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-4 pt-2">
-              <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium">Renovación Automática</p>
-                  <p className="text-xs text-muted-foreground">Renovar suscripciones automáticamente</p>
-                </div>
-                <Switch
-                  checked={autoRenew}
-                  onCheckedChange={setAutoRenew}
-                />
-              </div>
 
-              <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium">Recibos de Pago</p>
-                  <p className="text-xs text-muted-foreground">Enviar recibos por correo electrónico</p>
-                </div>
-                <Switch
-                  checked={sendReceipts}
-                  onCheckedChange={setSendReceipts}
-                />
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
 
-        <div className="flex gap-2 pt-2">
-          <Button onClick={handleSave} className="flex-1">
-            Guardar Configuración
-          </Button>
-          <Button onClick={handleClear} variant="outline">
-            Limpiar
-          </Button>
-        </div>
 
-        {settings?.lastVerified && (
-          <p className="text-xs text-muted-foreground text-center">
-            Última verificación: {new Date(settings.lastVerified).toLocaleString()}
-          </p>
-        )}
-      </CardContent>
-    </Card>
-  )
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
