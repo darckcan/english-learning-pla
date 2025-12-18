@@ -1,4 +1,4 @@
-import { User, Membership } from './types'
+import { User } from './types'
 import { getDaysRemaining, getMembershipLabel } from './membership'
 
 export interface EmailNotification {
@@ -6,11 +6,29 @@ export interface EmailNotification {
   email: string
   type: 'expiry-7days' | 'expiry-3days' | 'expiry-1day' | 'expired'
   sentAt: number
+  status: 'sent' | 'failed' | 'simulated'
+  errorMessage?: string
 }
 
 export interface EmailTemplate {
   subject: string
   body: string
+}
+
+export interface EmailConfig {
+  provider: 'simulation' | 'emailjs' | 'webhook'
+  emailjsServiceId?: string
+  emailjsTemplateId?: string
+  emailjsPublicKey?: string
+  webhookUrl?: string
+  fromEmail: string
+  fromName: string
+}
+
+const DEFAULT_EMAIL_CONFIG: EmailConfig = {
+  provider: 'simulation',
+  fromEmail: 'notificaciones@nexusfluent.app',
+  fromName: 'Nexus Fluent',
 }
 
 export function generateWelcomeEmail(user: User): EmailTemplate {
@@ -161,44 +179,225 @@ Equipo Nexus Fluent
   }
 }
 
-export async function sendEmail(
+export interface EmailResult {
+  success: boolean
+  status: 'sent' | 'failed' | 'simulated'
+  message: string
+  details?: string
+}
+
+async function sendViaEmailJS(
+  to: string,
+  subject: string,
+  body: string,
+  config: EmailConfig
+): Promise<EmailResult> {
+  if (!config.emailjsServiceId || !config.emailjsTemplateId || !config.emailjsPublicKey) {
+    return {
+      success: false,
+      status: 'failed',
+      message: 'EmailJS no está configurado correctamente',
+      details: 'Faltan: serviceId, templateId o publicKey'
+    }
+  }
+
+  try {
+    const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        service_id: config.emailjsServiceId,
+        template_id: config.emailjsTemplateId,
+        user_id: config.emailjsPublicKey,
+        template_params: {
+          to_email: to,
+          subject: subject,
+          message: body,
+          from_name: config.fromName,
+          reply_to: config.fromEmail,
+        },
+      }),
+    })
+
+    if (response.ok) {
+      return {
+        success: true,
+        status: 'sent',
+        message: `Email enviado exitosamente a ${to}`,
+      }
+    } else {
+      const errorText = await response.text()
+      return {
+        success: false,
+        status: 'failed',
+        message: `Error de EmailJS: ${response.status}`,
+        details: errorText,
+      }
+    }
+  } catch (error) {
+    return {
+      success: false,
+      status: 'failed',
+      message: 'Error de conexión con EmailJS',
+      details: error instanceof Error ? error.message : String(error),
+    }
+  }
+}
+
+async function sendViaWebhook(
+  to: string,
+  subject: string,
+  body: string,
+  config: EmailConfig
+): Promise<EmailResult> {
+  if (!config.webhookUrl) {
+    return {
+      success: false,
+      status: 'failed',
+      message: 'URL del webhook no configurada',
+    }
+  }
+
+  try {
+    const response = await fetch(config.webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        to,
+        subject,
+        body,
+        from: config.fromEmail,
+        fromName: config.fromName,
+        timestamp: Date.now(),
+      }),
+    })
+
+    if (response.ok) {
+      const data = await response.json().catch(() => ({}))
+      return {
+        success: true,
+        status: 'sent',
+        message: `Email enviado via webhook a ${to}`,
+        details: data.message || 'OK',
+      }
+    } else {
+      const errorText = await response.text()
+      return {
+        success: false,
+        status: 'failed',
+        message: `Error del webhook: ${response.status}`,
+        details: errorText,
+      }
+    }
+  } catch (error) {
+    return {
+      success: false,
+      status: 'failed',
+      message: 'Error de conexión con el webhook',
+      details: error instanceof Error ? error.message : String(error),
+    }
+  }
+}
+
+async function sendViaSimulation(
   to: string,
   subject: string,
   body: string
-): Promise<boolean> {
-  try {
-    const emailData = {
-      to,
-      subject,
-      body,
-      from: 'notificaciones@nexusfluent.app',
-      timestamp: Date.now(),
-    }
-
-    const promptText = `You are an email service simulator for Nexus Fluent language learning platform. 
-
-Record and simulate sending this email notification:
-
-To: ${to}
-From: notificaciones@nexusfluent.app
-Subject: ${subject}
-
-Body:
-${body}
-
-Simulate successful email delivery. Respond with exactly "EMAIL_SENT: ${to}" to confirm delivery.`
-
-    const response = await window.spark.llm(promptText, 'gpt-4o-mini')
-    
-    console.log(`📧 Email enviado exitosamente a ${to}`)
-    console.log(`📧 Asunto: ${subject}`)
-    console.log(`📧 Respuesta del servicio: ${response}`)
-    
-    return response.includes('EMAIL_SENT')
-  } catch (error) {
-    console.error('❌ Error al enviar email:', error)
-    return false
+): Promise<EmailResult> {
+  console.log('═══════════════════════════════════════════════════════════')
+  console.log('📧 EMAIL SIMULADO (No se envía realmente)')
+  console.log('═══════════════════════════════════════════════════════════')
+  console.log(`📬 Para: ${to}`)
+  console.log(`📋 Asunto: ${subject}`)
+  console.log('───────────────────────────────────────────────────────────')
+  console.log(body)
+  console.log('═══════════════════════════════════════════════════════════')
+  
+  return {
+    success: true,
+    status: 'simulated',
+    message: `Email SIMULADO para ${to} - No se envió realmente`,
+    details: 'Para enviar emails reales, configure EmailJS o un webhook de email',
   }
+}
+
+export async function sendEmail(
+  to: string,
+  subject: string,
+  body: string,
+  config?: EmailConfig
+): Promise<boolean> {
+  const emailConfig = config || await getEmailConfig()
+  const result = await sendEmailWithDetails(to, subject, body, emailConfig)
+  return result.success
+}
+
+export async function sendEmailWithDetails(
+  to: string,
+  subject: string,
+  body: string,
+  config?: EmailConfig
+): Promise<EmailResult> {
+  const emailConfig = config || await getEmailConfig()
+
+  switch (emailConfig.provider) {
+    case 'emailjs':
+      return sendViaEmailJS(to, subject, body, emailConfig)
+    case 'webhook':
+      return sendViaWebhook(to, subject, body, emailConfig)
+    case 'simulation':
+    default:
+      return sendViaSimulation(to, subject, body)
+  }
+}
+
+export async function getEmailConfig(): Promise<EmailConfig> {
+  try {
+    const savedConfig = await window.spark.kv.get<EmailConfig>('email-config')
+    if (savedConfig) {
+      return { ...DEFAULT_EMAIL_CONFIG, ...savedConfig }
+    }
+  } catch (error) {
+    console.warn('Error al cargar configuración de email:', error)
+  }
+  return DEFAULT_EMAIL_CONFIG
+}
+
+export async function saveEmailConfig(config: Partial<EmailConfig>): Promise<void> {
+  const currentConfig = await getEmailConfig()
+  const newConfig = { ...currentConfig, ...config }
+  await window.spark.kv.set('email-config', newConfig)
+}
+
+export async function testEmailConfiguration(testEmail: string): Promise<EmailResult> {
+  const config = await getEmailConfig()
+  
+  const testTemplate: EmailTemplate = {
+    subject: '🧪 Prueba de Configuración de Email - Nexus Fluent',
+    body: `
+¡Hola!
+
+Este es un email de prueba para verificar que la configuración de notificaciones de Nexus Fluent está funcionando correctamente.
+
+Configuración actual:
+• Proveedor: ${config.provider}
+• Email remitente: ${config.fromEmail}
+• Nombre remitente: ${config.fromName}
+
+Si recibiste este email, ¡la configuración está funcionando! ✅
+
+Fecha y hora de la prueba: ${new Date().toLocaleString('es-MX')}
+
+Saludos,
+Equipo Nexus Fluent
+    `.trim(),
+  }
+
+  return sendEmailWithDetails(testEmail, testTemplate.subject, testTemplate.body, config)
 }
 
 export function shouldSendNotification(
@@ -269,18 +468,46 @@ export async function processEmailNotifications(
       const days = daysRemaining === null ? 0 : daysRemaining
       const emailTemplate = generateExpiryEmail(user, days)
 
-      const success = await sendEmail(user.email, emailTemplate.subject, emailTemplate.body)
+      const result = await sendEmailWithDetails(user.email, emailTemplate.subject, emailTemplate.body)
 
-      if (success) {
-        newNotifications.push({
-          userId: user.id,
-          email: user.email,
-          type,
-          sentAt: Date.now(),
-        })
-      }
+      newNotifications.push({
+        userId: user.id,
+        email: user.email,
+        type,
+        sentAt: Date.now(),
+        status: result.status,
+        errorMessage: result.success ? undefined : result.message,
+      })
     }
   }
 
   return newNotifications
+}
+
+export function getEmailProviderInfo(provider: EmailConfig['provider']): {
+  name: string
+  description: string
+  configRequired: string[]
+} {
+  switch (provider) {
+    case 'emailjs':
+      return {
+        name: 'EmailJS',
+        description: 'Servicio de email gratuito que funciona desde el navegador. Requiere cuenta en emailjs.com',
+        configRequired: ['Service ID', 'Template ID', 'Public Key'],
+      }
+    case 'webhook':
+      return {
+        name: 'Webhook Personalizado',
+        description: 'Envía emails a través de tu propio servidor o servicio de email (SendGrid, Mailgun, etc.)',
+        configRequired: ['URL del Webhook'],
+      }
+    case 'simulation':
+    default:
+      return {
+        name: 'Simulación (Solo consola)',
+        description: 'Los emails se registran en la consola del navegador pero NO se envían realmente. Útil para pruebas.',
+        configRequired: [],
+      }
+  }
 }

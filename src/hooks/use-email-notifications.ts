@@ -27,8 +27,21 @@ export function useEmailNotifications(users: User[], enabled: boolean = true) {
           )
 
           if (newNotifications.length > 0) {
+            const successCount = newNotifications.filter(n => n.status === 'sent').length
+            const simulatedCount = newNotifications.filter(n => n.status === 'simulated').length
+            const failedCount = newNotifications.filter(n => n.status === 'failed').length
+            
             setNotificationHistory((current) => [...(current || []), ...newNotifications])
-            console.log(`✅ ${newNotifications.length} notificaciones por email enviadas`)
+            
+            if (successCount > 0) {
+              console.log(`✅ ${successCount} emails enviados exitosamente`)
+            }
+            if (simulatedCount > 0) {
+              console.log(`🧪 ${simulatedCount} emails simulados (no enviados realmente)`)
+            }
+            if (failedCount > 0) {
+              console.log(`❌ ${failedCount} emails fallidos`)
+            }
           }
 
           setLastCheck(now)

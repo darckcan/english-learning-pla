@@ -99,6 +99,26 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
   - ✅ Sistema de pronunciación disponible (TTS)
   - ✅ Persistencia de datos funciona
 
+### Sistema de Notificaciones por Email
+- **Functionality**: Notificaciones automáticas para vencimiento de membresías (7, 3, 1 día, y expirada) con soporte para múltiples proveedores de email
+- **Purpose**: Mantener a usuarios informados sobre sus membresías y reducir pérdida de suscriptores
+- **Trigger**: Automático cada hora, o manual desde panel de administrador
+- **Progression**: 
+  - Configuración → Seleccionar proveedor (Simulación/EmailJS/Webhook) → Guardar credenciales
+  - Modo automático: Sistema verifica usuarios → Detecta vencimientos → Envía emails → Registra historial
+  - Modo manual: Admin click "Procesar Ahora" → Sistema procesa todos pendientes
+- **Proveedores soportados**:
+  - **Simulación**: Registra emails en consola del navegador (desarrollo/pruebas)
+  - **EmailJS**: Servicio gratuito que funciona desde el frontend (emailjs.com)
+  - **Webhook**: Envía a servidor personalizado (SendGrid, Mailgun, backend propio)
+- **Success criteria**: 
+  - ✅ Admin puede configurar proveedor de email desde panel
+  - ✅ Sistema detecta usuarios con membresías por vencer
+  - ✅ Emails se envían correctamente según el proveedor configurado
+  - ✅ Historial muestra estado de cada notificación (enviado/simulado/fallido)
+  - ✅ Sistema previene envíos duplicados (1 por tipo por día)
+  - ✅ Panel de prueba permite verificar configuración con email de test
+
 ## Edge Case Handling
 - **No membresía activa**: Usuario puede acceder solo a trial, se muestra alerta de expiración
 - **Audio no disponible**: Sistema detecta si navegador no soporta Web Speech API y muestra mensaje
@@ -110,6 +130,9 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
 - **Navegador sin localStorage**: useKV maneja persistencia, fallback a estado temporal
 - **Respuestas de ejercicios con espacios/mayúsculas**: Sistema normaliza respuestas (trim, toLowerCase)
 - **Usuario sin email**: Sistema permite pero desactiva notificaciones por email
+- **Email en modo simulación**: Alerta visible indica que emails NO se envían realmente
+- **EmailJS sin configurar**: Muestra error claro con instrucciones de configuración
+- **Webhook falla**: Registra error específico y permite reintentar
 
 ## Design Direction
 Profesional pero accesible, evocando confianza educativa con toques de gamificación. El diseño debe sentirse como una plataforma de aprendizaje seria pero motivadora, con colores suaves que no cansan, animaciones que deleitan sin distraer, y una jerarquía visual clara que guía al estudiante.
