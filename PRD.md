@@ -57,6 +57,38 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
   - ✅ Usuario recibe notificación de activación
   - ✅ Dashboard de admin muestra estadísticas correctas
 
+### Configuración de Pasarela de Pago (Super Admin)
+- **Functionality**: Panel completo para configurar y gestionar las claves API de Stripe directamente desde el panel de Super Admin
+- **Purpose**: Permitir al administrador configurar la integración de Stripe sin necesidad de modificar código o variables de entorno
+- **Trigger**: Super Admin accede al panel de Super Admin
+- **Progression**: Acceder panel → Ir a sección "Pasarela de Pago - Stripe" → Ingresar claves (pública y secreta) → Verificar conexión → Guardar configuración
+- **Success criteria**: 
+  - ✅ Panel muestra instrucciones claras para obtener claves de Stripe
+  - ✅ Validación de formato de claves (pk_test_, pk_live_, sk_test_, sk_live_)
+  - ✅ Verificación de conexión en tiempo real con API de Stripe
+  - ✅ Indicador visual de estado (Activo/No configurado)
+  - ✅ Soporte para modo prueba y producción
+  - ✅ Configuración de renovación automática de suscripciones
+  - ✅ Configuración de envío de recibos por email
+  - ✅ Almacenamiento seguro de claves en KV storage
+  - ✅ Las claves configuradas se usan automáticamente para procesar pagos
+
+### Gestión Automática de Membresías
+- **Functionality**: Sistema automático para verificar, actualizar y gestionar el estado de todas las membresías de usuarios
+- **Purpose**: Mantener el estado de las membresías actualizado sin intervención manual y facilitar la administración
+- **Trigger**: Automático cada hora, o manual desde panel de Super Admin
+- **Progression**: 
+  - Automático: Sistema verifica usuarios → Detecta membresías expiradas → Desactiva membresías → Registra cambios
+  - Manual: Admin click "Verificar Ahora" → Sistema procesa todos los usuarios → Muestra resumen
+- **Success criteria**: 
+  - ✅ Dashboard muestra estadísticas de membresías (activas, expiradas, por tipo)
+  - ✅ Lista de membresías por expirar en los próximos 7 días
+  - ✅ Lista de membresías expiradas con opción de reactivar
+  - ✅ Verificación automática cada hora (configurable)
+  - ✅ Botón para reactivar membresías individuales (+15 días trial o +30 días mensual)
+  - ✅ Indicador de última verificación
+  - ✅ Switch para habilitar/deshabilitar verificación automática
+
 ### Sistema de Logros y Certificados
 - **Functionality**: Badges por rachas, completar niveles, obtener puntuaciones altas + Certificados PDF para A2, B1, B2
 - **Purpose**: Motivar continuidad y reconocer logros académicos

@@ -14,7 +14,7 @@ import TestScriptPanel from './components/TestScriptPanel'
 import { LEVELS } from './lib/curriculum'
 import { applyTheme } from './lib/themes'
 import { useEmailNotifications } from './hooks/use-email-notifications'
-import { useStripePaymentVerification } from './hooks/use-stripe-payment'
+import { useStripePaymentVerification, useMembershipAutoCheck } from './hooks/use-stripe-payment'
 import { useSyncUser } from './hooks/use-sync-user'
 import { useSyncProgress } from './hooks/use-sync-progress'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -30,6 +30,7 @@ function App() {
 
   useEmailNotifications(allUsers || [], true)
   useStripePaymentVerification()
+  useMembershipAutoCheck()
 
   useEffect(() => {
     if (currentUser) {

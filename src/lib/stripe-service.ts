@@ -1,4 +1,4 @@
-import { STRIPE_CONFIG, StripeProduct } from './stripe-config'
+import { getStripeSettings, StripeSettings } from './stripe-config'
 
 export interface PaymentSession {
   sessionId: string
@@ -15,12 +15,22 @@ export interface PaymentIntentData {
   membershipType: 'monthly' | 'lifetime'
 }
 
+async function getSecretKey(): Promise<string> {
+  const settings = await getStripeSettings()
+  if (!settings.secretKey) {
+    throw new Error('Stripe secret key not configured. Please configure it in Super Admin settings.')
+  }
+  return settings.secretKey
+}
+
 export async function createPaymentIntent(data: PaymentIntentData): Promise<{ clientSecret: string; paymentIntentId: string }> {
   try {
+    const secretKey = await getSecretKey()
+    
     const response = await fetch('https://api.stripe.com/v1/payment_intents', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${STRIPE_CONFIG.secretKey}`,
+        'Authorization': `Bearer ${secretKey}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
@@ -51,6 +61,9 @@ export async function createPaymentIntent(data: PaymentIntentData): Promise<{ cl
 
 export async function createCheckoutSession(data: PaymentIntentData): Promise<{ sessionId: string; url: string }> {
   try {
+    const secretKey = await getSecretKey()
+    const settings = await getStripeSettings()
+    
     const successUrl = `${window.location.origin}?payment=success&session_id={CHECKOUT_SESSION_ID}`
     const cancelUrl = `${window.location.origin}?payment=cancelled`
 
@@ -64,6 +77,10 @@ export async function createCheckoutSession(data: PaymentIntentData): Promise<{ 
       'metadata[userId]': data.userId,
       'metadata[membershipType]': data.membershipType,
     })
+
+    if (settings.sendPaymentReceipts) {
+      params.append('payment_intent_data[receipt_email]', data.customerEmail)
+    }
 
     if (data.membershipType === 'monthly') {
       params.append('line_items[0][price_data][currency]', data.currency)
@@ -83,7 +100,7 @@ export async function createCheckoutSession(data: PaymentIntentData): Promise<{ 
     const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${STRIPE_CONFIG.secretKey}`,
+        'Authorization': `Bearer ${secretKey}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: params,
@@ -107,10 +124,12 @@ export async function createCheckoutSession(data: PaymentIntentData): Promise<{ 
 
 export async function verifyPayment(sessionId: string): Promise<{ status: string; userId?: string; membershipType?: string }> {
   try {
+    const secretKey = await getSecretKey()
+    
     const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${STRIPE_CONFIG.secretKey}`,
+        'Authorization': `Bearer ${secretKey}`,
       },
     })
 
@@ -127,5 +146,33 @@ export async function verifyPayment(sessionId: string): Promise<{ status: string
   } catch (error) {
     console.error('Error verificando pago:', error)
     throw error
+  }
+}
+
+export async function checkExpiredSubscriptions(users: any[], updateUser: (userId: string, membership: any) => void): Promise<number> {
+  let expiredCount = 0
+  const now = Date.now()
+  
+  for (const user of users) {
+    if (user.membership && user.membership.type === 'monthly' && user.membership.isActive) {
+      if (user.membership.endDate && now > user.membership.endDate) {
+        updateUser(user.id, {
+          ...user.membership,
+          isActive: false,
+        })
+        expiredCount++
+      }
+    }
+  }
+  
+  return expiredCount
+}
+
+export async function isStripeConfigured(): Promise<boolean> {
+  try {
+    const settings = await getStripeSettings()
+    return settings.isConfigured && !!settings.publicKey && !!settings.secretKey
+  } catch {
+    return false
   }
 }

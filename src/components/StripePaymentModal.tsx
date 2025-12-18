@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
 import { toast } from 'sonner'
-import { CurrencyDollar, Check, X, CreditCard, Lightning } from '@phosphor-icons/react'
+import { CurrencyDollar, Check, CreditCard, Lightning, Warning } from '@phosphor-icons/react'
 import { User } from '@/lib/types'
-import { createCheckoutSession } from '@/lib/stripe-service'
+import { createCheckoutSession, isStripeConfigured } from '@/lib/stripe-service'
 import { STRIPE_PRODUCTS } from '@/lib/stripe-config'
 import { useKV } from '@github/spark/hooks'
 import { MembershipPricing, DEFAULT_PRICING } from '@/lib/membership'
@@ -21,11 +21,23 @@ export default function StripePaymentModal({ open, onClose, user }: StripePaymen
   const [loading, setLoading] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'lifetime' | null>(null)
   const [pricing] = useKV<MembershipPricing>('membership-pricing', DEFAULT_PRICING)
+  const [stripeReady, setStripeReady] = useState<boolean | null>(null)
 
   const monthlyPrice = pricing?.monthlyPrice || DEFAULT_PRICING.monthlyPrice
   const lifetimePrice = pricing?.lifetimePrice || DEFAULT_PRICING.lifetimePrice
 
+  useEffect(() => {
+    if (open) {
+      isStripeConfigured().then(setStripeReady)
+    }
+  }, [open])
+
   const handlePayment = async (type: 'monthly' | 'lifetime') => {
+    if (!stripeReady) {
+      toast.error('Stripe no está configurado. Contacta al administrador.')
+      return
+    }
+
     setLoading(true)
     setSelectedPlan(type)
 
@@ -66,6 +78,16 @@ export default function StripePaymentModal({ open, onClose, user }: StripePaymen
             Desbloquea todo el contenido y mejora tu inglés sin límites
           </DialogDescription>
         </DialogHeader>
+
+        {stripeReady === false && (
+          <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-800">
+            <Warning size={24} className="flex-shrink-0" />
+            <div>
+              <p className="font-medium">Sistema de pagos no disponible</p>
+              <p className="text-sm">El administrador necesita configurar la pasarela de pagos. Contacta a soporte.</p>
+            </div>
+          </div>
+        )}
 
         <div className="grid md:grid-cols-2 gap-6 mt-6">
           <Card className="relative border-2 hover:border-primary/50 transition-all duration-300">
@@ -113,7 +135,7 @@ export default function StripePaymentModal({ open, onClose, user }: StripePaymen
 
               <Button
                 onClick={() => handlePayment('monthly')}
-                disabled={loading}
+                disabled={loading || stripeReady === false}
                 className="w-full h-12 text-lg"
                 size="lg"
               >
@@ -182,7 +204,7 @@ export default function StripePaymentModal({ open, onClose, user }: StripePaymen
 
               <Button
                 onClick={() => handlePayment('lifetime')}
-                disabled={loading}
+                disabled={loading || stripeReady === false}
                 className="w-full h-12 text-lg bg-accent hover:bg-accent/90 text-accent-foreground"
                 size="lg"
               >

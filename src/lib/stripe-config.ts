@@ -1,25 +1,76 @@
 import { loadStripe, Stripe } from '@stripe/stripe-js'
 
+export interface StripeSettings {
+  publicKey: string
+  secretKey: string
+  webhookSecret?: string
+  isTestMode: boolean
+  isConfigured: boolean
+  lastVerified?: number
+  autoRenewSubscriptions: boolean
+  sendPaymentReceipts: boolean
+}
+
+const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
+  publicKey: '',
+  secretKey: '',
+  webhookSecret: '',
+  isTestMode: true,
+  isConfigured: false,
+  autoRenewSubscriptions: true,
+  sendPaymentReceipts: true,
+}
+
+export async function getStripeSettings(): Promise<StripeSettings> {
+  try {
+    const stored = await window.spark.kv.get<StripeSettings>('stripe-settings')
+    if (stored && stored.publicKey && stored.secretKey) {
+      return stored
+    }
+  } catch (e) {
+    console.warn('Error loading Stripe settings from KV:', e)
+  }
+  
+  const envPublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || ''
+  const envSecretKey = import.meta.env.VITE_STRIPE_SECRET_KEY || ''
+  
+  if (envPublicKey && envSecretKey) {
+    return {
+      ...DEFAULT_STRIPE_SETTINGS,
+      publicKey: envPublicKey,
+      secretKey: envSecretKey,
+      isConfigured: true,
+    }
+  }
+  
+  return DEFAULT_STRIPE_SETTINGS
+}
+
 export const STRIPE_CONFIG = {
-  publicKey: import.meta.env.VITE_STRIPE_PUBLIC_KEY || '',
-  secretKey: import.meta.env.VITE_STRIPE_SECRET_KEY || ''
-}
-
-if (!STRIPE_CONFIG.publicKey) {
-  console.warn('⚠️ VITE_STRIPE_PUBLIC_KEY no está configurada. Configura las variables de entorno.')
-}
-
-if (!STRIPE_CONFIG.secretKey) {
-  console.warn('⚠️ VITE_STRIPE_SECRET_KEY no está configurada. ADVERTENCIA: La clave secreta debería estar en un backend.')
+  get publicKey() {
+    return import.meta.env.VITE_STRIPE_PUBLIC_KEY || ''
+  },
+  get secretKey() {
+    return import.meta.env.VITE_STRIPE_SECRET_KEY || ''
+  }
 }
 
 let stripePromise: Promise<Stripe | null> | null = null
 
-export const getStripe = () => {
+export const getStripe = async () => {
+  const settings = await getStripeSettings()
+  if (!settings.publicKey) {
+    console.warn('⚠️ Stripe public key not configured')
+    return null
+  }
   if (!stripePromise) {
-    stripePromise = loadStripe(STRIPE_CONFIG.publicKey)
+    stripePromise = loadStripe(settings.publicKey)
   }
   return stripePromise
+}
+
+export const getStripeSync = (publicKey: string) => {
+  return loadStripe(publicKey)
 }
 
 export interface StripeProduct {

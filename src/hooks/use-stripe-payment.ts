@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { User } from '@/lib/types'
-import { verifyPayment } from '@/lib/stripe-service'
+import { verifyPayment, isStripeConfigured } from '@/lib/stripe-service'
 import { toast } from 'sonner'
+import { MembershipPricing, DEFAULT_PRICING } from '@/lib/membership'
 
 interface PaymentRecord {
   id: string
@@ -17,6 +18,7 @@ interface PaymentRecord {
 export function useStripePaymentVerification() {
   const [allUsers, setAllUsers] = useKV<User[]>('all-users', [])
   const [payments, setPayments] = useKV<PaymentRecord[]>('payment-records', [])
+  const [pricing] = useKV<MembershipPricing>('membership-pricing', DEFAULT_PRICING)
 
   useEffect(() => {
     const checkPaymentStatus = async () => {
@@ -31,6 +33,13 @@ export function useStripePaymentVerification() {
       }
 
       if (sessionId && paymentStatus === 'success') {
+        const configured = await isStripeConfigured()
+        if (!configured) {
+          toast.error('Stripe no está configurado. Contacta al administrador.')
+          window.history.replaceState({}, document.title, window.location.pathname)
+          return
+        }
+
         try {
           const result = await verifyPayment(sessionId)
           
@@ -38,14 +47,15 @@ export function useStripePaymentVerification() {
             const membershipType = result.membershipType as 'monthly' | 'lifetime'
             
             let userEmail = ''
-            let amount = 0
+            let amount = membershipType === 'lifetime' 
+              ? (pricing?.lifetimePrice || DEFAULT_PRICING.lifetimePrice)
+              : (pricing?.monthlyPrice || DEFAULT_PRICING.monthlyPrice)
             
             setAllUsers((current) => {
               const users = current || []
               return users.map(u => {
                 if (u.id === result.userId) {
                   userEmail = u.email || u.username
-                  amount = membershipType === 'lifetime' ? 24.99 : 9.99
                   
                   const now = Date.now()
                   const endDate = membershipType === 'lifetime' 
@@ -68,6 +78,9 @@ export function useStripePaymentVerification() {
 
             setPayments((current) => {
               const records = current || []
+              const existingRecord = records.find(r => r.id === sessionId)
+              if (existingRecord) return records
+              
               const newRecord: PaymentRecord = {
                 id: sessionId,
                 userId: result.userId!,
@@ -98,5 +111,47 @@ export function useStripePaymentVerification() {
     }
 
     checkPaymentStatus()
-  }, [setAllUsers, setPayments])
+  }, [setAllUsers, setPayments, pricing])
+}
+
+export function useMembershipAutoCheck() {
+  const [allUsers, setAllUsers] = useKV<User[]>('all-users', [])
+  const [autoCheckEnabled] = useKV<boolean>('auto-membership-check', true)
+
+  useEffect(() => {
+    if (!autoCheckEnabled) return
+
+    const checkMemberships = () => {
+      const users = allUsers || []
+      const now = Date.now()
+      let hasExpired = false
+
+      const updatedUsers = users.map(user => {
+        if (!user.membership) return user
+        if (user.membership.type === 'lifetime') return user
+        
+        if (user.membership.endDate && now > user.membership.endDate && user.membership.isActive) {
+          hasExpired = true
+          return {
+            ...user,
+            membership: {
+              ...user.membership,
+              isActive: false,
+            }
+          }
+        }
+        
+        return user
+      })
+
+      if (hasExpired) {
+        setAllUsers(() => updatedUsers)
+      }
+    }
+
+    checkMemberships()
+
+    const interval = setInterval(checkMemberships, 60 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [allUsers, autoCheckEnabled, setAllUsers])
 }

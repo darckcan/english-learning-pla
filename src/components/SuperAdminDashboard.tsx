@@ -14,11 +14,13 @@ import { toast } from 'sonner'
 import { LEVELS } from '@/lib/curriculum'
 import { formatDate, simpleHash } from '@/lib/helpers'
 import NexusFluentLogo from './NexusFluentLogo'
+import PaymentGatewaySettings from './PaymentGatewaySettings'
 import MembershipPricingSettings from './MembershipPricingSettings'
 import PaymentsDashboard from './PaymentsDashboard'
 import EmailNotificationManager from './EmailNotificationManager'
 import EmailTestPanel from './EmailTestPanel'
 import DataIntegrityValidator from './DataIntegrityValidator'
+import MembershipStatusManager from './MembershipStatusManager'
 import { createTrialMembership } from '@/lib/membership'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { ScrollArea } from './ui/scroll-area'
@@ -191,7 +193,11 @@ export default function SuperAdminDashboard({ user, onLogout }: SuperAdminDashbo
           </Card>
         </div>
 
+        <PaymentGatewaySettings />
+
         <MembershipPricingSettings />
+
+        <MembershipStatusManager />
 
         <PaymentsDashboard />
 
