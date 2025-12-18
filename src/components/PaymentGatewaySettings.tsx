@@ -5,73 +5,73 @@ import { Input } from './ui/input'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Label } from './ui/label'
-import { toast } from 'sonner'
+import { Accordion, AccordionC
 import { Switch } from './ui/switch'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
-import { CreditCard, Key, Eye, EyeSlash, CheckCircle, XCircle, Lightning, Warning, Gear, ArrowsClockwise, Info } from '@phosphor-icons/react'
+  publicKey: string
 
 interface StripeSettings {
-  publicKey: string
+  sendPaymentReceip
   secretKey: string
-  webhookSecret?: string
+const DEFAULT_STRIPE_SET
   isTestMode: boolean
-  isConfigured: boolean
-  autoRenewSubscriptions: boolean
+  isTestMode: true,
+  sendPaymentReceipts: true,
   sendPaymentReceipts: boolean
   lastVerified?: number
-}
+ 
 
-const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
+  const [isTestMode, setIsTestMode] = useState(tr
   publicKey: '',
-  secretKey: '',
-  webhookSecret: '',
-  isTestMode: true,
-  isConfigured: false,
-  autoRenewSubscriptions: true,
-  sendPaymentReceipts: true,
-}
+  const [showSec
+  const [isVerifying
 
-export default function PaymentGatewaySettings() {
-  const [settings, setSettings] = useKV<StripeSettings>('stripe-settings', DEFAULT_STRIPE_SETTINGS)
-  
-  const [publicKey, setPublicKey] = useState('')
-  const [secretKey, setSecretKey] = useState('')
-  const [webhookSecret, setWebhookSecret] = useState('')
-  const [isTestMode, setIsTestMode] = useState(true)
-  const [autoRenew, setAutoRenew] = useState(true)
-  const [sendReceipts, setSendReceipts] = useState(true)
-  
-  const [showSecretKey, setShowSecretKey] = useState(false)
-  const [showWebhookSecret, setShowWebhookSecret] = useState(false)
-  const [isVerifying, setIsVerifying] = useState(false)
-  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'success' | 'error'>('idle')
-
-  useEffect(() => {
     if (settings) {
-      setPublicKey(settings.publicKey || '')
-      setSecretKey(settings.secretKey || '')
-      setWebhookSecret(settings.webhookSecret || '')
-      setIsTestMode(settings.isTestMode !== false)
-      setAutoRenew(settings.autoRenewSubscriptions !== false)
-      setSendReceipts(settings.sendPaymentReceipts !== false)
-      if (settings.isConfigured) {
-        setVerificationStatus('success')
-      }
+      setSecretKey(settings.sec
+      setIsTestMode(settings
+ 
+
     }
+
+  
+      return key.startsWith('pk_test_') || key.s
+    return key.startsWith('sk_test_') || key.sta
+
+    if (!secretKey) {
+      return
+
+  
+    }
+    setIsVerifying(true)
+
+      const response = await fetch('https://api.stripe.com/v1/balance', {
+
+        },
+
+        setVerificationStatus('success')
+      } else {
+        const error = await response.json()
+      }
+      setVerificationStatus('error')
+    } finally {
+    }
+
+      }
+     
   }, [settings])
 
-  const validateStripeKey = (key: string, type: 'public' | 'secret'): boolean => {
-    if (!key) return false
-    if (type === 'public') {
-      return key.startsWith('pk_test_') || key.startsWith('pk_live_')
     }
-    return key.startsWith('sk_test_') || key.startsWith('sk_live_')
+    if (!validateStripeKey
+      return
+
+    }
+      return
   }
 
-  const verifyStripeConnection = async () => {
-    if (!secretKey) {
-      toast.error('Ingresa la clave secreta para verificar la conexión')
-      return
+      webhookSecret,
+      isConfigured: v
+      sendPaymentReceipts: sendReceipts,
+    }
     }
 
     if (!validateStripeKey(secretKey, 'secret')) {
@@ -80,63 +80,63 @@ export default function PaymentGatewaySettings() {
     }
 
     setIsVerifying(true)
-    setVerificationStatus('idle')
+    setSendReceipts(true)
 
-    try {
-      const response = await fetch('https://api.stripe.com/v1/balance', {
-        method: 'GET',
+
+    <Card>
+        <div className
         headers: {
-          'Authorization': `Bearer ${secretKey}`,
-        },
-      })
+        <CardDescription className="text-xs sm:te
+        </
+      <C
 
-      if (response.ok) {
+        </div>
         setVerificationStatus('success')
-        toast.success('¡Conexión con Stripe verificada exitosamente!')
+            <AccordionTrigger className="text-sm font-medium">
       } else {
         setVerificationStatus('error')
-        const error = await response.json()
-        toast.error(`Error de Stripe: ${error.error?.message || 'Clave inválida'}`)
-      }
-    } catch (error) {
-      setVerificationStatus('error')
-      toast.error('Error al conectar con Stripe. Verifica tu conexión a internet.')
+                  <Badge variant="secondary
+            </AccordionTrigger>
+       
+                <ul c
+                  <li>Copia la clave
+                  <li>Para producción, desactiva el "Modo Prueba" y usa claves live
     } finally {
-      setIsVerifying(false)
+              <div classNam
     }
-  }
+   
 
-  const handleSave = () => {
+                  placeholde
     if (!publicKey || !secretKey) {
-      toast.error('Las claves pública y secreta son obligatorias')
+
       return
     }
 
-    if (!validateStripeKey(publicKey, 'public')) {
-      toast.error('La clave pública debe comenzar con pk_test_ o pk_live_')
-      return
-    }
+                    type={showSecretKey ? 'text' :
+                    onChange={(e) => setSecretKey(e.target.value)}
+            
+     
 
-    if (!validateStripeKey(secretKey, 'secret')) {
-      toast.error('La clave secreta debe comenzar con sk_test_ o sk_live_')
-      return
-    }
+                  >
+                  </button>
+            
+     
 
-    const isLiveMode = publicKey.startsWith('pk_live_') || secretKey.startsWith('sk_live_')
-    if (isLiveMode && isTestMode) {
-      toast.error('Tienes claves de producción pero el modo prueba está activado')
-      return
-    }
+                <div className="relative">
+                    id="webhook-sec
+                    value={webhookSecret}
+            
+     
 
-    const newSettings: StripeSettings = {
+                    className="absolute r
       publicKey,
-      secretKey,
+                
       webhookSecret,
-      isTestMode,
+              </d
       isConfigured: verificationStatus === 'success',
       autoRenewSubscriptions: autoRenew,
       sendPaymentReceipts: sendReceipts,
-      lastVerified: verificationStatus === 'success' ? Date.now() : undefined,
+                className="w-full"
     }
 
     setSettings(() => newSettings)
@@ -181,8 +181,8 @@ export default function PaymentGatewaySettings() {
                 {settings?.isConfigured && (
                   <Badge variant="secondary" className="ml-2 text-xs">Configurado</Badge>
                 )}
-              </div>
-            </AccordionTrigger>
+                </di
+                  <div>
             <AccordionContent className="space-y-4 pt-2">
               <div className="bg-muted/30 p-3 rounded-lg text-xs space-y-1">
                 <p className="font-medium">Instrucciones:</p>
@@ -192,7 +192,7 @@ export default function PaymentGatewaySettings() {
                   <li>Copia la clave secreta (sk_test_... o sk_live_...)</li>
                   <li>Para producción, desactiva el "Modo Prueba" y usa claves live</li>
                 </ul>
-              </div>
+        </div>
 
               <div className="space-y-2">
                 <Label htmlFor="public-key" className="text-sm flex items-center gap-2">
@@ -204,7 +204,7 @@ export default function PaymentGatewaySettings() {
                   onChange={(e) => setPublicKey(e.target.value)}
                   placeholder="pk_test_..."
                   className="font-mono text-xs sm:text-sm"
-                />
+
               </div>
 
               <div className="space-y-2">
@@ -227,146 +227,146 @@ export default function PaymentGatewaySettings() {
                   >
                     {showSecretKey ? <EyeSlash size={16} /> : <Eye size={16} />}
                   </button>
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="webhook-secret" className="text-sm flex items-center gap-2">
-                  Webhook Secret (Opcional)
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="webhook-secret"
-                    type={showWebhookSecret ? 'text' : 'password'}
-                    value={webhookSecret}
-                    onChange={(e) => setWebhookSecret(e.target.value)}
-                    placeholder="whsec_..."
-                    className="font-mono text-xs sm:text-sm pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowWebhookSecret(!showWebhookSecret)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showWebhookSecret ? <EyeSlash size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Para recibir notificaciones automáticas de pagos (webhooks)
-                </p>
-              </div>
 
-              <Button
-                onClick={verifyStripeConnection}
-                disabled={!secretKey || isVerifying}
-                variant="outline"
-                className="w-full"
-                size="sm"
-              >
-                {isVerifying ? (
-                  <>
-                    <ArrowsClockwise size={16} className="mr-2 animate-spin" />
-                    Verificando conexión...
-                  </>
-                ) : (
-                  <>
-                    <Lightning size={16} className="mr-2" />
-                    Verificar Conexión con Stripe
-                  </>
-                )}
-              </Button>
 
-              {verificationStatus === 'success' && (
-                <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-lg text-sm">
-                  <CheckCircle size={18} />
-                  <span>Conexión verificada exitosamente</span>
-                </div>
-              )}
 
-              {verificationStatus === 'error' && (
-                <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg text-sm">
-                  <XCircle size={18} />
-                  <span>Error en la verificación. Revisa las claves.</span>
-                </div>
-              )}
-            </AccordionContent>
-          </AccordionItem>
 
-          <AccordionItem value="settings">
-            <AccordionTrigger className="text-sm font-medium">
-              <div className="flex items-center gap-2">
-                <Gear size={16} />
-                Configuración de Pagos
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-4 pt-2">
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="space-y-0.5">
-                  <Label className="text-sm font-medium">Modo Prueba</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Usar entorno de pruebas de Stripe (no cobra dinero real)
-                  </p>
-                </div>
-                <Switch
-                  checked={isTestMode}
-                  onCheckedChange={setIsTestMode}
-                />
-              </div>
 
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="space-y-0.5">
-                  <Label className="text-sm font-medium">Renovación Automática</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Renovar membresías mensuales automáticamente
-                  </p>
-                </div>
-                <Switch
-                  checked={autoRenew}
-                  onCheckedChange={setAutoRenew}
-                />
-              </div>
 
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="space-y-0.5">
-                  <Label className="text-sm font-medium">Enviar Recibos</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Enviar recibo por correo al completar un pago
-                  </p>
-                </div>
-                <Switch
-                  checked={sendReceipts}
-                  onCheckedChange={setSendReceipts}
-                />
-              </div>
 
-              {!isTestMode && (
-                <div className="flex items-start gap-2 text-amber-600 bg-amber-50 p-3 rounded-lg text-sm">
-                  <Warning size={18} className="flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium">Modo Producción Activado</p>
-                    <p className="text-xs mt-1">Los pagos serán procesados con dinero real. Asegúrate de usar claves de producción (pk_live_ y sk_live_).</p>
-                  </div>
-                </div>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
 
-        {settings?.lastVerified && (
-          <p className="text-xs text-muted-foreground text-center">
-            Última verificación: {new Date(settings.lastVerified).toLocaleString('es-ES')}
-          </p>
-        )}
 
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
-          <Button onClick={handleSave} className="flex-1" size="sm">
-            Guardar Configuración
-          </Button>
-          <Button onClick={handleClear} variant="outline" size="sm" className="text-destructive hover:bg-destructive/10">
-            Eliminar Configuración
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
