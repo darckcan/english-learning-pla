@@ -337,14 +337,31 @@ export default function EmailTestPanel({ users }: EmailTestPanelProps) {
                   <p className="text-xs text-muted-foreground">
                     Regístrate gratis en <a href="https://www.emailjs.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">emailjs.com</a> y crea un servicio y plantilla.
                   </p>
+                  
+                  <div className="p-2 bg-primary/10 border border-primary/30 rounded-md">
+                    <p className="text-xs font-medium text-primary mb-1">⚠️ Configuración de Plantilla EmailJS</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Tu plantilla en EmailJS debe usar estos nombres de variables:
+                    </p>
+                    <ul className="text-[10px] text-muted-foreground mt-1 space-y-0.5 font-mono">
+                      <li>• <code className="bg-muted px-1 rounded">{'{{to_email}}'}</code> - Email destinatario</li>
+                      <li>• <code className="bg-muted px-1 rounded">{'{{subject}}'}</code> - Asunto del email</li>
+                      <li>• <code className="bg-muted px-1 rounded">{'{{message}}'}</code> - Contenido del mensaje</li>
+                      <li>• <code className="bg-muted px-1 rounded">{'{{from_name}}'}</code> - Nombre del remitente</li>
+                    </ul>
+                  </div>
+
                   <div className="space-y-2">
                     <Label className="text-xs">Service ID</Label>
                     <Input
                       placeholder="service_xxxxxxx"
                       value={emailConfig.emailjsServiceId || ''}
                       onChange={(e) => updateConfig({ emailjsServiceId: e.target.value })}
-                      className="text-sm"
+                      className="text-sm font-mono"
                     />
+                    <p className="text-[10px] text-muted-foreground">
+                      Encuentra esto en EmailJS → Email Services → Service ID
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-xs">Template ID</Label>
@@ -352,8 +369,11 @@ export default function EmailTestPanel({ users }: EmailTestPanelProps) {
                       placeholder="template_xxxxxxx"
                       value={emailConfig.emailjsTemplateId || ''}
                       onChange={(e) => updateConfig({ emailjsTemplateId: e.target.value })}
-                      className="text-sm"
+                      className="text-sm font-mono"
                     />
+                    <p className="text-[10px] text-muted-foreground">
+                      Encuentra esto en EmailJS → Email Templates → Template ID
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-xs">Public Key</Label>
@@ -361,8 +381,11 @@ export default function EmailTestPanel({ users }: EmailTestPanelProps) {
                       placeholder="Tu public key de EmailJS"
                       value={emailConfig.emailjsPublicKey || ''}
                       onChange={(e) => updateConfig({ emailjsPublicKey: e.target.value })}
-                      className="text-sm"
+                      className="text-sm font-mono"
                     />
+                    <p className="text-[10px] text-muted-foreground">
+                      Encuentra esto en EmailJS → Account → Public Key
+                    </p>
                   </div>
                 </div>
               )}

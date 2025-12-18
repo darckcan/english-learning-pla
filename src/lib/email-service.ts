@@ -193,13 +193,40 @@ async function sendViaEmailJS(
   config: EmailConfig
 ): Promise<EmailResult> {
   if (!config.emailjsServiceId || !config.emailjsTemplateId || !config.emailjsPublicKey) {
+    const missing: string[] = []
+    if (!config.emailjsServiceId) missing.push('Service ID')
+    if (!config.emailjsTemplateId) missing.push('Template ID')
+    if (!config.emailjsPublicKey) missing.push('Public Key')
     return {
       success: false,
       status: 'failed',
       message: 'EmailJS no está configurado correctamente',
-      details: 'Faltan: serviceId, templateId o publicKey'
+      details: `Faltan: ${missing.join(', ')}`
     }
   }
+
+  const templateParams = {
+    to_name: to.split('@')[0],
+    to_email: to,
+    email: to,
+    user_email: to,
+    from_name: config.fromName || 'Nexus Fluent',
+    from_email: config.fromEmail || 'notificaciones@nexusfluent.app',
+    reply_to: config.fromEmail || 'notificaciones@nexusfluent.app',
+    subject: subject,
+    title: subject,
+    message: body,
+    message_html: body.replace(/\n/g, '<br>'),
+    content: body,
+    body: body,
+  }
+
+  console.log('📧 EmailJS - Enviando con parámetros:', {
+    service_id: config.emailjsServiceId,
+    template_id: config.emailjsTemplateId,
+    to: to,
+    subject: subject,
+  })
 
   try {
     const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
@@ -211,32 +238,51 @@ async function sendViaEmailJS(
         service_id: config.emailjsServiceId,
         template_id: config.emailjsTemplateId,
         user_id: config.emailjsPublicKey,
-        template_params: {
-          to_email: to,
-          subject: subject,
-          message: body,
-          from_name: config.fromName,
-          reply_to: config.fromEmail,
-        },
+        template_params: templateParams,
       }),
     })
 
-    if (response.ok) {
+    const responseText = await response.text()
+
+    if (response.ok || responseText === 'OK') {
       return {
         success: true,
         status: 'sent',
         message: `Email enviado exitosamente a ${to}`,
       }
     } else {
-      const errorText = await response.text()
+      console.error('❌ EmailJS Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        response: responseText
+      })
+      
+      let errorMessage = `Error de EmailJS: ${response.status}`
+      let errorDetails = responseText
+      
+      if (response.status === 422) {
+        errorMessage = 'Error 422: Parámetros de plantilla incorrectos'
+        errorDetails = `La plantilla de EmailJS espera parámetros diferentes. Verifica que tu plantilla use estos nombres: to_email, subject, message, from_name. Respuesta: ${responseText}`
+      } else if (response.status === 401) {
+        errorMessage = 'Error 401: Public Key inválida'
+        errorDetails = 'Verifica que tu Public Key de EmailJS sea correcta'
+      } else if (response.status === 403) {
+        errorMessage = 'Error 403: Service ID o Template ID inválido'
+        errorDetails = 'Verifica que tu Service ID y Template ID sean correctos'
+      } else if (response.status === 400) {
+        errorMessage = 'Error 400: Solicitud inválida'
+        errorDetails = `Revisa la configuración de EmailJS. Respuesta: ${responseText}`
+      }
+      
       return {
         success: false,
         status: 'failed',
-        message: `Error de EmailJS: ${response.status}`,
-        details: errorText,
+        message: errorMessage,
+        details: errorDetails,
       }
     }
   } catch (error) {
+    console.error('❌ EmailJS Connection Error:', error)
     return {
       success: false,
       status: 'failed',

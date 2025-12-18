@@ -110,6 +110,8 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
 - **Proveedores soportados**:
   - **Simulación**: Registra emails en consola del navegador (desarrollo/pruebas)
   - **EmailJS**: Servicio gratuito que funciona desde el frontend (emailjs.com)
+    - Requiere plantilla con variables: `{{to_email}}`, `{{subject}}`, `{{message}}`, `{{from_name}}`
+    - Error 422 indica que la plantilla no tiene las variables correctas
   - **Webhook**: Envía a servidor personalizado (SendGrid, Mailgun, backend propio)
 - **Success criteria**: 
   - ✅ Admin puede configurar proveedor de email desde panel
