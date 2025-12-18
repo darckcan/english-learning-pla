@@ -2,27 +2,27 @@ import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Button } from './ui/button'
 import { Badge } from './ui/badge'
+import { Button } from './ui/button'
+import { toast } from 'sonner'
 import { Switch } from './ui/switch'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
 import { toast } from 'sonner'
 import { CreditCard, Key, Eye, EyeSlash, CheckCircle, XCircle, Lightning, Warning, Gear, ArrowsClockwise, Info } from '@phosphor-icons/react'
 
-export interface StripeSettings {
-  publicKey: string
-  secretKey: string
-  webhookSecret?: string
-  isTestMode: boolean
-  isConfigured: boolean
   lastVerified?: number
+  publicKey: string
+}
+  webhookSecret?: string
+  publicKey: '',
+  isConfigured: boolean
+  isTestMode: true,
   autoRenewSubscriptions: boolean
-  sendPaymentReceipts: boolean
+  sendPaymentReceipts: true,
 }
 
 const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
-  publicKey: '',
+  const [publicK
   secretKey: '',
   webhookSecret: '',
   isTestMode: true,
@@ -56,56 +56,56 @@ export default function PaymentGatewaySettings() {
       setSendReceipts(settings.sendPaymentReceipts !== false)
       if (settings.isConfigured) {
         setVerificationStatus('success')
-      }
+      i
     }
-  }, [settings])
+      } else {
 
   const validateStripeKey = (key: string, type: 'public' | 'secret'): boolean => {
     if (!key) return false
     if (type === 'public') {
       return key.startsWith('pk_test_') || key.startsWith('pk_live_')
-    }
+     
     return key.startsWith('sk_test_') || key.startsWith('sk_live_')
-  }
+
 
   const verifyStripeConnection = async () => {
     if (!secretKey) {
       toast.error('Ingresa la clave secreta para verificar la conexión')
       return
-    }
+     
 
-    setIsVerifying(true)
+    if (!validateStripeK
     setVerificationStatus('idle')
 
     try {
       const response = await fetch('https://api.stripe.com/v1/balance', {
         method: 'GET',
-        headers: {
+    }
           'Authorization': `Bearer ${secretKey}`,
         },
       })
 
       if (response.ok) {
-        setVerificationStatus('success')
+      autoRenewSubscriptions: autoRenew,
         toast.success('¡Conexión con Stripe verificada exitosamente!')
-      } else {
+
         const error = await response.json()
-        setVerificationStatus('error')
+  }
         toast.error(`Error de Stripe: ${error.error?.message || 'Clave inválida'}`)
       }
     } catch (error) {
       setVerificationStatus('error')
       toast.error('Error al conectar con Stripe. Verifica tu conexión a internet.')
-    } finally {
+    setVerifica
       setIsVerifying(false)
-    }
+  }
   }
 
   const handleSave = () => {
-    if (!publicKey || !secretKey) {
+  }
       toast.error('Las claves pública y secreta son obligatorias')
-      return
-    }
+    <Card>
+     
 
     if (!validateStripeKey(publicKey, 'public')) {
       toast.error('La clave pública debe comenzar con pk_test_ o pk_live_')
@@ -124,147 +124,147 @@ export default function PaymentGatewaySettings() {
     }
 
     const newSettings: StripeSettings = {
-      publicKey,
+          <div c
       secretKey,
-      webhookSecret,
+              <li>Ve
       isTestMode,
-      isConfigured: verificationStatus === 'success',
+              <li>Para producción, desactiva el "Modo
       lastVerified: verificationStatus === 'success' ? Date.now() : undefined,
-      autoRenewSubscriptions: autoRenew,
-      sendPaymentReceipts: sendReceipts,
-    }
+              </div>
+              <div className="space-y-2"
+     
 
-    setSettings(() => newSettings)
-    toast.success('Configuración de Stripe guardada correctamente')
-  }
+                    id="webhook-se
+                    value={webhookSecret}
+   
 
-  const handleClear = () => {
-    if (!confirm('¿Estás seguro de eliminar la configuración de Stripe?')) return
+                    type="but
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-mut
     
-    setPublicKey('')
-    setSecretKey('')
-    setWebhookSecret('')
-    setIsTestMode(true)
-    setVerificationStatus('idle')
-    setSettings(() => DEFAULT_STRIPE_SETTINGS)
-    toast.success('Configuración de Stripe eliminada')
-  }
-
-  const getMaskedKey = (key: string) => {
-    if (!key) return ''
-    if (key.length <= 12) return '•'.repeat(key.length)
-    return key.slice(0, 7) + '•'.repeat(20) + key.slice(-4)
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <CreditCard size={20} className="text-primary sm:w-6 sm:h-6" />
-            </div>
-            <div>
-              <CardTitle className="text-base sm:text-lg">Pasarela de Pago - Stripe</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                Configura las APIs para procesar pagos de membresías
-              </CardDescription>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {settings?.isConfigured && (
-              <Badge variant="default" className="bg-green-500 text-xs">
-                <CheckCircle size={12} className="mr-1" />
-                Activo
-              </Badge>
-            )}
-            <Badge variant={isTestMode ? 'secondary' : 'destructive'} className="text-xs">
-              {isTestMode ? 'Modo Prueba' : 'Producción'}
-            </Badge>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4 sm:space-y-6">
-        <div className="bg-muted/50 rounded-lg p-3 sm:p-4 flex items-start gap-3">
-          <Info size={18} className="text-primary flex-shrink-0 mt-0.5" />
-          <div className="text-xs sm:text-sm text-muted-foreground">
-            <p className="font-medium text-foreground mb-1">¿Cómo obtener las claves de Stripe?</p>
-            <ol className="list-decimal list-inside space-y-1">
-              <li>Ve a <span className="font-mono text-primary">dashboard.stripe.com</span></li>
-              <li>Navega a Desarrolladores → Claves de API</li>
-              <li>Copia la Clave pública (pk_) y la Clave secreta (sk_)</li>
-              <li>Para producción, desactiva el "Modo Prueba" en Stripe</li>
-            </ol>
-          </div>
-        </div>
-
-        <Accordion type="single" collapsible defaultValue="keys" className="w-full">
-          <AccordionItem value="keys">
-            <AccordionTrigger className="text-sm font-medium">
-              <div className="flex items-center gap-2">
-                <Key size={16} />
-                Claves de API
+                </di
+                  Pa
               </div>
+              <Button
+                disabled={!secret
+                className="w-full"
+              >
+   
+
+                ) : (
+                    <Li
+                  </>
+              </Button>
+   
+
+          
+
+                <d
+                  <span>Error en la verificación. Revisa la
+              )}
+          </AccordionItem>
+          <AccordionItem value="settings">
+              <div
+                C
             </AccordionTrigger>
-            <AccordionContent className="space-y-4 pt-2">
-              <div className="space-y-2">
-                <Label htmlFor="public-key" className="text-sm flex items-center gap-2">
-                  Clave Pública (Publishable Key)
-                  {publicKey && (
-                    validateStripeKey(publicKey, 'public') ? (
-                      <CheckCircle size={14} className="text-green-500" />
-                    ) : (
-                      <XCircle size={14} className="text-destructive" />
-                    )
-                  )}
-                </Label>
-                <Input
-                  id="public-key"
-                  type="text"
-                  value={publicKey}
-                  onChange={(e) => setPublicKey(e.target.value)}
-                  placeholder="pk_test_..."
-                  className="font-mono text-xs sm:text-sm"
+              <div className="flex items-center justify-betwee
+                  <Label className="text-sm font-medium">Modo Prueba
+                    Usar entorno
+                </
+                
                 />
-                <p className="text-xs text-muted-foreground">
-                  Comienza con pk_test_ (prueba) o pk_live_ (producción)
-                </p>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="secret-key" className="text-sm flex items-center gap-2">
-                  Clave Secreta (Secret Key)
-                  {secretKey && (
-                    validateStripeKey(secretKey, 'secret') ? (
-                      <CheckCircle size={14} className="text-green-500" />
-                    ) : (
-                      <XCircle size={14} className="text-destructive" />
-                    )
-                  )}
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="secret-key"
-                    type={showSecretKey ? 'text' : 'password'}
-                    value={secretKey}
-                    onChange={(e) => setSecretKey(e.target.value)}
-                    placeholder="sk_test_..."
-                    className="font-mono text-xs sm:text-sm pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowSecretKey(!showSecretKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showSecretKey ? <EyeSlash size={16} /> : <Eye size={16} />}
-                  </button>
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foregro
+                  </p>
+                <Switc
+              
+              </div>
+              <div className="flex items-center justify-b
+                  <L
+                
+              
+                  c
+                />
+
+                <div className="flex items-start gap-2 text-amber-600 bg-a
+                  <div>
+                    <p className="text-xs mt-1">Los pagos serán procesados con dinero real. Asegúra
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Comienza con sk_test_ (prueba) o sk_live_ (producción)
-                </p>
+            </AccordionContent>
+        </Accordion>
+        {settings?.lastVerified && (
+            Última verificación: {new Date(settings.lastVerified).toLocaleSt
+        )}
+        <div cla
+            Gu
+
+          </Button>
+      </CardContent>
+  )
+
+
+
               </div>
 
+
               <div className="space-y-2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 <Label htmlFor="webhook-secret" className="text-sm flex items-center gap-2">
                   Webhook Secret (Opcional)
                 </Label>
