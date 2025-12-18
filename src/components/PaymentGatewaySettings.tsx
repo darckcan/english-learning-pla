@@ -1,14 +1,40 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Badge } from './ui/badge'
+import { toast } from 'sonner'
+
+// Componentes UI
 import { Input } from './ui/input'
-import { Label } from './ui/label'
 import { Button } from './ui/button'
+import { Badge } from './ui/badge'
+import { Label } from './ui/label'
+import { Switch } from './ui/switch'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card'
-import { CreditCard, Key, Eye, EyeSlash, CheckCircle, Warning, Spinner, Link as LinkIcon, ShieldCheck } from '@phosphor-icons/react'
-import { toast } from 'sonner'
-import { StripeSettings, getStripeSettings, saveStripeSettings, validateStripeKey } from '@/lib/stripe-config'
+
+// Iconos
+import { 
+  CreditCard, 
+  Key, 
+  Eye, 
+  EyeSlash, 
+  ShieldCheck, 
+  Warning, 
+  CheckCircle, 
+  Spinner, 
+  Link as LinkIcon 
+} from '@phosphor-icons/react'
+
+// Tipos
+interface StripeSettings {
+  publicKey: string
+  monthlyPriceId: string
+  lifetimePriceId: string
+  monthlyPaymentLink: string
+  lifetimePaymentLink: string
+  webhookSecret: string
+  isConfigured: boolean
+  lastVerified?: number
+}
 
 const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
   publicKey: '',
@@ -20,22 +46,37 @@ const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
   isConfigured: false,
 }
 
-export default function StripeGatewaySettings() {
+export default function PaymentGatewaySettings() {
+  // Estado persistente
+  const [settings, saveStripeSettings] = useKV<StripeSettings>('stripe_settings', DEFAULT_STRIPE_SETTINGS)
+
+  // Estados locales del formulario
   const [publicKey, setPublicKey] = useState('')
   const [monthlyPriceId, setMonthlyPriceId] = useState('')
   const [lifetimePriceId, setLifetimePriceId] = useState('')
   const [monthlyPaymentLink, setMonthlyPaymentLink] = useState('')
   const [lifetimePaymentLink, setLifetimePaymentLink] = useState('')
   const [webhookSecret, setWebhookSecret] = useState('')
-  
-  const [showPublicKey, setShowPublicKey] = useState(false)
-  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'success' | 'error' | 'test-mode'>('idle')
-  const [isVerifying, setIsVerifying] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [lastVerified, setLastVerified] = useState<number | undefined>()
 
+  // Estados de UI
+  const [showPublicKey, setShowPublicKey] = useState(false)
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'success' | 'error' | 'test-mode'>('idle')
+  const [lastVerified, setLastVerified] = useState<number | undefined>(undefined)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Validación de claves
+  const validateStripeKey = (key: string) => {
+    if (!key) return { valid: false, isLive: false, type: 'unknown' }
+    if (key.startsWith('pk_live_')) return { valid: true, isLive: true, type: 'public' }
+    if (key.startsWith('pk_test_')) return { valid: true, isLive: false, type: 'public' }
+    if (key.startsWith('sk_')) return { valid: false, isLive: false, type: 'secret' } // Seguridad: no permitir secret key aquí
+    return { valid: false, isLive: false, type: 'unknown' }
+  }
+
+  // Cargar configuración al iniciar
   useEffect(() => {
-    getStripeSettings().then((settings) => {
+    if (settings) {
       setPublicKey(settings.publicKey || '')
       setMonthlyPriceId(settings.monthlyPriceId || '')
       setLifetimePriceId(settings.lifetimePriceId || '')
@@ -43,18 +84,16 @@ export default function StripeGatewaySettings() {
       setLifetimePaymentLink(settings.lifetimePaymentLink || '')
       setWebhookSecret(settings.webhookSecret || '')
       setLastVerified(settings.lastVerified)
-      
-      if (settings.isConfigured) {
+
+      if (settings.isConfigured && settings.publicKey) {
         const validation = validateStripeKey(settings.publicKey)
-        if (validation.valid && validation.isLive) {
-          setVerificationStatus('success')
-        } else if (validation.valid && !validation.isLive) {
-          setVerificationStatus('test-mode')
+        if (validation.valid) {
+          setVerificationStatus(validation.isLive ? 'success' : 'test-mode')
         }
       }
       setIsLoading(false)
-    })
-  }, [])
+    }
+  }, [settings])
 
   const handleVerify = async () => {
     if (!publicKey) {
@@ -63,22 +102,23 @@ export default function StripeGatewaySettings() {
     }
 
     const validation = validateStripeKey(publicKey)
-    
-    if (!validation.valid) {
-      toast.error('La clave pública no tiene un formato válido. Debe comenzar con pk_live_ o pk_test_')
+
+    if (validation.type === 'secret') {
+      toast.error('❌ Error de seguridad: Has ingresado la Clave Secreta (sk_...). Aquí solo va la Clave Pública (pk_...).')
       setVerificationStatus('error')
       return
     }
 
-    if (validation.type !== 'public') {
-      toast.error('Debes usar la clave pública (Publishable Key), no la secreta')
+    if (!validation.valid) {
+      toast.error('La clave pública no tiene un formato válido. Debe comenzar con pk_live_ (Producción) o pk_test_ (Pruebas)')
       setVerificationStatus('error')
       return
     }
 
     setIsVerifying(true)
-    
+
     try {
+      // Simular verificación de red
       await new Promise(resolve => setTimeout(resolve, 800))
 
       if (validation.isLive) {
@@ -86,9 +126,9 @@ export default function StripeGatewaySettings() {
         toast.success('✅ Claves de PRODUCCIÓN verificadas correctamente')
       } else {
         setVerificationStatus('test-mode')
-        toast.warning('⚠️ Estás usando claves de PRUEBA. Para pagos reales, usa claves de producción (pk_live_)')
+        toast.warning('⚠️ Estás usando claves de PRUEBA. Recuerda cambiar a producción para lanzar.')
       }
-      
+
       await handleSave()
 
     } catch (error) {
@@ -102,7 +142,7 @@ export default function StripeGatewaySettings() {
   const handleSave = async () => {
     const hasPaymentMethod = !!(monthlyPriceId || lifetimePriceId || monthlyPaymentLink || lifetimePaymentLink)
     const validation = validateStripeKey(publicKey)
-    
+
     const newSettings: StripeSettings = {
       publicKey,
       monthlyPriceId,
@@ -113,7 +153,7 @@ export default function StripeGatewaySettings() {
       isConfigured: validation.valid && hasPaymentMethod,
       lastVerified: Date.now()
     }
-    
+
     await saveStripeSettings(newSettings)
     setLastVerified(newSettings.lastVerified)
     toast.success('Configuración guardada')
@@ -127,6 +167,7 @@ export default function StripeGatewaySettings() {
     setLifetimePaymentLink('')
     setWebhookSecret('')
     setVerificationStatus('idle')
+    setLastVerified(undefined)
     await saveStripeSettings(DEFAULT_STRIPE_SETTINGS)
     toast.success('Configuración eliminada')
   }
@@ -148,14 +189,15 @@ export default function StripeGatewaySettings() {
           <div className="flex items-center gap-3">
             <CreditCard className="h-6 w-6 text-primary" />
             <div>
-              <CardTitle>Pasarela de Pago - Stripe (Producción)</CardTitle>
-              <CardDescription>Configura Stripe para procesar pagos reales</CardDescription>
+              <CardTitle>Pasarela de Pago - Stripe</CardTitle>
+              <CardDescription>Configura Stripe para procesar pagos (Producción/Pruebas)</CardDescription>
             </div>
           </div>
+          
           {verificationStatus === 'success' && (
             <Badge className="bg-green-100 text-green-800 border-green-300">
               <ShieldCheck className="h-4 w-4 mr-1" />
-              Producción
+              Producción (Live)
             </Badge>
           )}
           {verificationStatus === 'test-mode' && (
@@ -167,41 +209,38 @@ export default function StripeGatewaySettings() {
           {verificationStatus === 'error' && (
             <Badge variant="destructive">
               <Warning className="h-4 w-4 mr-1" />
-              Error
+              Error Config
             </Badge>
           )}
         </div>
       </CardHeader>
+
       <CardContent className="space-y-6">
+        
+        {/* Alertas de Estado */}
         {verificationStatus === 'test-mode' && (
-          <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-800">
-            <Warning size={24} className="flex-shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
+            <Warning size={20} className="flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium">Modo de Pruebas Activo</p>
-              <p className="text-sm mt-1">
-                Estás usando claves de prueba (pk_test_). Los pagos no serán reales.
-                Para aceptar pagos de clientes, cambia a claves de producción desde tu 
-                <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener noreferrer" className="underline ml-1 font-medium">
-                  Dashboard de Stripe
-                </a>.
-              </p>
+              <p className="font-bold">Modo de Pruebas Activo</p>
+              <p>Estás usando claves <code>pk_test_</code>. No se realizarán cobros reales.</p>
             </div>
           </div>
         )}
 
         {verificationStatus === 'success' && (
-          <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
-            <ShieldCheck size={24} className="flex-shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
+            <ShieldCheck size={20} className="flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium">Modo Producción Activo</p>
-              <p className="text-sm mt-1">
-                Stripe está configurado para procesar pagos reales. Los cargos a tarjetas serán efectivos.
-              </p>
+              <p className="font-bold">Modo Producción Activo</p>
+              <p>El sistema está listo para procesar pagos reales con tarjetas de crédito.</p>
             </div>
           </div>
         )}
 
         <Accordion type="single" collapsible defaultValue="api-keys">
+          
+          {/* SECCIÓN 1: CLAVES API */}
           <AccordionItem value="api-keys">
             <AccordionTrigger>
               <div className="flex items-center gap-2">
@@ -217,7 +256,7 @@ export default function StripeGatewaySettings() {
                     id="public-key"
                     type={showPublicKey ? 'text' : 'password'}
                     value={publicKey}
-                    onChange={(e) => setPublicKey(e.target.value)}
+                    onChange={(e) => setPublicKey(e.target.value.trim())}
                     placeholder="pk_live_..."
                     className="pr-10"
                   />
@@ -230,18 +269,13 @@ export default function StripeGatewaySettings() {
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  <strong>Producción:</strong> pk_live_... &nbsp;|&nbsp; <strong>Pruebas:</strong> pk_test_...
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Encuentra tus claves en{' '}
-                  <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener noreferrer" className="underline text-primary">
-                    dashboard.stripe.com/apikeys
-                  </a>
+                  Pega aquí tu clave que comienza con <strong>pk_live_</strong> para producción.
                 </p>
               </div>
             </AccordionContent>
           </AccordionItem>
 
+          {/* SECCIÓN 2: PAYMENT LINKS (RECOMENDADO PARA NO-CODE) */}
           <AccordionItem value="payment-links">
             <AccordionTrigger>
               <div className="flex items-center gap-2">
@@ -250,79 +284,70 @@ export default function StripeGatewaySettings() {
               </div>
             </AccordionTrigger>
             <AccordionContent className="space-y-4 pt-4">
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-sm">
-                <p className="font-medium">✨ Método más fácil</p>
-                <p className="mt-1">
-                  Los Payment Links se crean desde tu Dashboard de Stripe sin necesidad de código.
-                  <a href="https://dashboard.stripe.com/payment-links" target="_blank" rel="noopener noreferrer" className="underline ml-1">
-                    Crear Payment Link →
-                  </a>
-                </p>
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-xs mb-2">
+                <p className="font-bold">✨ Método Simplificado</p>
+                <p>Crea enlaces de pago en tu Dashboard de Stripe y pégalos aquí.</p>
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="monthly-payment-link">Payment Link - Membresía Mensual</Label>
+                <Label htmlFor="monthly-link">Enlace Membresía Mensual</Label>
                 <Input
-                  id="monthly-payment-link"
+                  id="monthly-link"
                   value={monthlyPaymentLink}
-                  onChange={(e) => setMonthlyPaymentLink(e.target.value)}
+                  onChange={(e) => setMonthlyPaymentLink(e.target.value.trim())}
                   placeholder="https://buy.stripe.com/..."
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="lifetime-payment-link">Payment Link - Membresía Vitalicia</Label>
+                <Label htmlFor="lifetime-link">Enlace Membresía Vitalicia</Label>
                 <Input
-                  id="lifetime-payment-link"
+                  id="lifetime-link"
                   value={lifetimePaymentLink}
-                  onChange={(e) => setLifetimePaymentLink(e.target.value)}
+                  onChange={(e) => setLifetimePaymentLink(e.target.value.trim())}
                   placeholder="https://buy.stripe.com/..."
                 />
               </div>
             </AccordionContent>
           </AccordionItem>
 
+          {/* SECCIÓN 3: PRICE IDS (AVANZADO) */}
           <AccordionItem value="price-ids">
             <AccordionTrigger>
               <div className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4" />
-                Price IDs (Alternativo)
+                Price IDs (API Avanzada)
               </div>
             </AccordionTrigger>
             <AccordionContent className="space-y-4 pt-4">
-              <div className="p-3 bg-muted rounded-lg text-sm text-muted-foreground">
-                <p>
-                  Usa Price IDs si prefieres el flujo de Checkout tradicional.
-                  Encuéntralos en tu producto de Stripe bajo "API ID".
-                </p>
-              </div>
-              
+              <p className="text-xs text-muted-foreground">
+                Usa esto si integras Stripe Checkout via API en lugar de enlaces directos.
+              </p>
               <div className="space-y-2">
-                <Label htmlFor="monthly-price-id">Price ID - Membresía Mensual</Label>
+                <Label htmlFor="monthly-id">Price ID Mensual</Label>
                 <Input
-                  id="monthly-price-id"
+                  id="monthly-id"
                   value={monthlyPriceId}
-                  onChange={(e) => setMonthlyPriceId(e.target.value)}
+                  onChange={(e) => setMonthlyPriceId(e.target.value.trim())}
                   placeholder="price_..."
                 />
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="lifetime-price-id">Price ID - Membresía Vitalicia</Label>
+                <Label htmlFor="lifetime-id">Price ID Vitalicio</Label>
                 <Input
-                  id="lifetime-price-id"
+                  id="lifetime-id"
                   value={lifetimePriceId}
-                  onChange={(e) => setLifetimePriceId(e.target.value)}
+                  onChange={(e) => setLifetimePriceId(e.target.value.trim())}
                   placeholder="price_..."
                 />
               </div>
             </AccordionContent>
           </AccordionItem>
 
+          {/* SECCIÓN 4: WEBHOOK */}
           <AccordionItem value="webhook">
             <AccordionTrigger>
               <div className="flex items-center gap-2">
-                <Key className="h-4 w-4" />
                 Webhook Secret (Opcional)
               </div>
             </AccordionTrigger>
@@ -333,25 +358,21 @@ export default function StripeGatewaySettings() {
                   id="webhook-secret"
                   type="password"
                   value={webhookSecret}
-                  onChange={(e) => setWebhookSecret(e.target.value)}
+                  onChange={(e) => setWebhookSecret(e.target.value.trim())}
                   placeholder="whsec_..."
                 />
                 <p className="text-xs text-muted-foreground">
-                  Usado para verificar eventos de webhook. Configúralo en{' '}
-                  <a href="https://dashboard.stripe.com/webhooks" target="_blank" rel="noopener noreferrer" className="underline text-primary">
-                    dashboard.stripe.com/webhooks
-                  </a>
+                  Necesario para activar automáticamente las cuentas tras el pago.
                 </p>
               </div>
             </AccordionContent>
           </AccordionItem>
+
         </Accordion>
 
+        {/* ACCIONES */}
         <div className="flex flex-wrap gap-3 pt-4 border-t">
-          <Button
-            onClick={handleVerify}
-            disabled={isVerifying || !publicKey}
-          >
+          <Button onClick={handleVerify} disabled={isVerifying || !publicKey}>
             {isVerifying ? (
               <>
                 <Spinner className="h-4 w-4 mr-2 animate-spin" />
@@ -364,19 +385,22 @@ export default function StripeGatewaySettings() {
               </>
             )}
           </Button>
+
           <Button variant="secondary" onClick={handleSave}>
-            Solo Guardar
+            Guardar sin Verificar
           </Button>
+
           <Button variant="outline" onClick={handleClearConfig}>
-            Limpiar Configuración
+            Limpiar
           </Button>
         </div>
 
         {lastVerified && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-center text-muted-foreground mt-2">
             Última verificación: {new Date(lastVerified).toLocaleString()}
           </p>
         )}
+
       </CardContent>
     </Card>
   )
