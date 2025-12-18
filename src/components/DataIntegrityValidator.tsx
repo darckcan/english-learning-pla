@@ -99,22 +99,43 @@ export default function DataIntegrityValidator() {
             ? `${userProgress.points} pts` 
             : `❌ Puntos no coinciden`
         })
+      }
+    }
+
+    const totalProgress = Object.keys(allProgress || {}).length
+    const orphanedProgress = Object.keys(allProgress || {}).filter(
+      id => !(allUsers || []).find(u => u.id === id)
+    )
+
+    validationResults.push({
+      category: 'DB',
+      test: 'Usuarios registrados',
+      status: 'pass',
+      message: `${(allUsers || []).length} usuarios`
     })
+
+    validationResults.push({
+      category: 'DB',
+      test: 'Registros de progreso',
+      status: 'pass',
+      message: `${totalProgress} registros`
+    })
+
     validationResults.push({
       category: 'Integridad',
       test: 'Progreso huérfano',
-      category: 'DB',: 'warning',
-      test: 'Usuarios registrados',
+      status: orphanedProgress.length > 0 ? 'warning' : 'pass',
+      message: orphanedProgress.length === 0
         ? 'Sin huérfanos' 
-      message: `${(allUsers || []).length} usuarios`
+        : `⚠️ ${orphanedProgress.length} huérfanos`
     })
 
     setResults(validationResults)
     setIsValidating(false)
-      category: 'DB',
-      test: 'Registros de progreso',
+  }
+
   useEffect(() => {
-      message: `${totalProgress} registros`
+    runValidation()
   }, [])
 
   const passCount = results.filter(r => r.status === 'pass').length
@@ -122,13 +143,25 @@ export default function DataIntegrityValidator() {
   const warningCount = results.filter(r => r.status === 'warning').length
 
   return (
-      test: 'Progreso huérfano',
+    <Card>
       <CardHeader className="p-3 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        ? 'Sin huérfanos' 
-        : `⚠️ ${orphanedProgress.length} huérfanos`
+          <div>
+            <CardTitle className="flex items-center gap-2 text-sm sm:text-lg">
               <Database size={16} className="sm:w-5 sm:h-5" />
               Validador de Datos
+            </CardTitle>
+            <CardDescription className="text-[10px] sm:text-sm">
+              Verifica integridad de datos
+            </CardDescription>
+          </div>
+          <Button onClick={runValidation} disabled={isValidating} size="sm" className="h-8 text-xs">
+            {isValidating ? 'Validando...' : 'Re-validar'}
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="p-2 sm:p-6 pt-0 space-y-3">
+        <div className="flex flex-wrap gap-1.5 sm:gap-3">
           <Badge variant={failCount > 0 ? 'destructive' : 'default'} className="text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1">
             ✓ {passCount}
           </Badge>
@@ -142,46 +175,40 @@ export default function DataIntegrityValidator() {
               ⚠ {warningCount}
             </Badge>
           )}
-    <Card>
-      <CardHeader className="p-3 sm:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-sm sm:text-lg">
-              <Database size={16} className="sm:w-5 sm:h-5" />
-              Validador de Datos
-            </CardTitle>
-            <CardDescription className="text-[10px] sm:text-sm">
-              Verifica integridad de datos
-            </CardDescription>
-          </div>0 border-yellow-200 dark:border-yellow-800'
-          <Button onClick={runValidation} disabled={isValidating} size="sm" className="h-8 text-xs">
-            {isValidating ? 'Validando...' : 'Re-validar'}
-          </Button>
-        </div>.5">
-      </CardHeader>s' && <CheckCircle size={14} weight="fill" className="text-green-600 sm:w-5 sm:h-5" />}
-      <CardContent className="p-2 sm:p-6 pt-0 space-y-3">t="fill" className="text-red-600 sm:w-5 sm:h-5" />}
-        <div className="flex flex-wrap gap-1.5 sm:gap-3">e="text-yellow-600 sm:w-5 sm:h-5" />}
-          <Badge variant={failCount > 0 ? 'destructive' : 'default'} className="text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1">
-            ✓ {passCount}
-          </Badge>tems-center gap-1 sm:gap-2 flex-wrap">
-          {failCount > 0 && (" className="text-[9px] sm:text-xs px-1 sm:px-1.5">
-            <Badge variant="destructive" className="text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1">
-              ✗ {failCount}
-            </Badge>-[11px] sm:text-sm font-medium truncate">{result.test}</span>
-          )}
-          {warningCount > 0 && (text-[10px] sm:text-sm text-muted-foreground mt-0.5 truncate">{result.message}</p>
-            <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1">
-              ⚠ {warningCount}
-            </Badge>
-          )}
         </div>
 
         <div className="space-y-1.5 sm:space-y-2">
           {results.map((result, index) => (
             <div
-              key={index}              className={`p-2 sm:p-3 rounded-lg border ${                result.status === 'pass'                   ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800'                   : result.status === 'fail'                  ? 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800'                  : 'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800'              }`}            >              <div className="flex items-start gap-2">                <div className="flex-shrink-0 mt-0.5">                  {result.status === 'pass' && <CheckCircle size={14} weight="fill" className="text-green-600 sm:w-5 sm:h-5" />}                  {result.status === 'fail' && <XCircle size={14} weight="fill" className="text-red-600 sm:w-5 sm:h-5" />}                  {result.status === 'warning' && <Warning size={14} weight="fill" className="text-yellow-600 sm:w-5 sm:h-5" />}                </div>                <div className="flex-1 min-w-0">                  <div className="flex items-center gap-1 sm:gap-2 flex-wrap">                    <Badge variant="outline" className="text-[9px] sm:text-xs px-1 sm:px-1.5">
+              key={index}
+              className={`p-2 sm:p-3 rounded-lg border ${
+                result.status === 'pass' 
+                  ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800'
+                  : result.status === 'fail'
+                  ? 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800'
+                  : 'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800'
+              }`}
+            >
+              <div className="flex items-start gap-2">
+                <div className="flex-shrink-0 mt-0.5">
+                  {result.status === 'pass' && <CheckCircle size={14} weight="fill" className="text-green-600 sm:w-5 sm:h-5" />}
+                  {result.status === 'fail' && <XCircle size={14} weight="fill" className="text-red-600 sm:w-5 sm:h-5" />}
+                  {result.status === 'warning' && <Warning size={14} weight="fill" className="text-yellow-600 sm:w-5 sm:h-5" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                    <Badge variant="outline" className="text-[9px] sm:text-xs px-1 sm:px-1.5">
                       {result.category}
                     </Badge>
                     <span className="text-[11px] sm:text-sm font-medium truncate">{result.test}</span>
+                  </div>
                   <p className="text-[10px] sm:text-sm text-muted-foreground mt-0.5 truncate">{result.message}</p>
-            </div>          ))}        </div>      </CardContent>    </Card>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
