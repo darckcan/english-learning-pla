@@ -70,8 +70,9 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
   - ✅ Soporte para Payment Links (método recomendado y más fácil)
   - ✅ Soporte alternativo para Price IDs tradicionales
   - ✅ Links directos a Dashboard de Stripe para crear Payment Links
-  - ✅ Almacenamiento seguro de configuración en KV storage
+  - ✅ Almacenamiento seguro de configuración en KV storage (clave unificada: `stripe_settings`)
   - ✅ Las claves configuradas se usan automáticamente para procesar pagos
+  - ✅ Modal de membresías detecta correctamente si Stripe está configurado
 
 ### Gestión Automática de Membresías
 - **Functionality**: Sistema automático para verificar, actualizar y gestionar el estado de todas las membresías de usuarios

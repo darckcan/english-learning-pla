@@ -21,7 +21,7 @@ const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
   isConfigured: false,
 }
 
-const STORAGE_KEY = 'stripe-production-settings'
+const STORAGE_KEY = 'stripe_settings'
 
 export async function getStripeSettings(): Promise<StripeSettings> {
   try {
