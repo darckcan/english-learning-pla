@@ -82,16 +82,42 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
               <NexusFluentLogo size={140} className="scale-[0.65] sm:scale-75 md:scale-100 origin-left" />
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
-              <Button 
-                onClick={() => setShowMembershipModal(true)} 
-                variant="ghost" 
-                size="sm" 
-                className="shadow-sm hover:shadow-md transition-all text-xs sm:text-sm flex-shrink-0 px-2 sm:px-3 gap-1 sm:gap-2"
+              <motion.div
+                initial={{ scale: 1 }}
+                animate={{ 
+                  scale: [1, 1.03, 1],
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  ease: "easeInOut"
+                }}
+                className="relative"
               >
-                <Crown size={16} weight="fill" className="text-accent" />
-                <span className="hidden sm:inline">Membresías</span>
-                <span className="sm:hidden">Planes</span>
-              </Button>
+                <div className="absolute -inset-1 bg-gradient-to-r from-accent via-primary to-secondary rounded-lg opacity-50 blur-sm animate-gradient" />
+                <div className="absolute inset-0 bg-gradient-to-r from-accent/30 to-primary/30 rounded-lg animate-shimmer" />
+                <Button 
+                  onClick={() => setShowMembershipModal(true)} 
+                  variant="outline" 
+                  size="sm" 
+                  className="relative bg-card/90 backdrop-blur-sm border-accent/50 hover:border-accent hover:bg-accent/10 shadow-lg hover:shadow-accent/25 transition-all text-xs sm:text-sm flex-shrink-0 px-2 sm:px-3 gap-1 sm:gap-2 group"
+                >
+                  <motion.div
+                    animate={{ rotate: [0, -10, 10, -10, 0] }}
+                    transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
+                  >
+                    <Crown size={16} weight="fill" className="text-accent group-hover:text-accent/80 transition-colors" />
+                  </motion.div>
+                  <span className="hidden sm:inline font-medium bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">Membresías</span>
+                  <span className="sm:hidden font-medium bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">Planes</span>
+                  <motion.span
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="absolute -top-1 -right-1 w-2 h-2 bg-accent rounded-full"
+                  />
+                </Button>
+              </motion.div>
               <Button onClick={onGetStarted} variant="outline" size="sm" className="shadow-sm hover:shadow-md transition-all text-xs sm:text-sm flex-shrink-0 px-3 sm:px-4">
                 Iniciar Sesión
               </Button>
