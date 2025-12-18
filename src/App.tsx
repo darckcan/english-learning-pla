@@ -10,6 +10,7 @@ import LessonView from './components/LessonView'
 import TeacherDashboard from './components/TeacherDashboard'
 import SuperAdminDashboard from './components/SuperAdminDashboard'
 import VocabularyPractice from './components/VocabularyPractice'
+import TestScriptPanel from './components/TestScriptPanel'
 import { LEVELS } from './lib/curriculum'
 import { applyTheme } from './lib/themes'
 import { useEmailNotifications } from './hooks/use-email-notifications'
@@ -18,7 +19,7 @@ import { useSyncUser } from './hooks/use-sync-user'
 import { useSyncProgress } from './hooks/use-sync-progress'
 import { AnimatePresence, motion } from 'framer-motion'
 
-type AppView = 'landing' | 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary'
+type AppView = 'landing' | 'welcome' | 'placement' | 'dashboard' | 'lesson' | 'teacher' | 'superadmin' | 'vocabulary' | 'test-script'
 
 function App() {
   const [currentUser, setCurrentUser] = useSyncUser()
@@ -107,6 +108,21 @@ function App() {
     setView('welcome')
   }
 
+  const handleOpenTestScript = () => {
+    setView('test-script')
+  }
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+        e.preventDefault()
+        setView('test-script')
+      }
+    }
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [])
+
   const pageVariants = {
     initial: { 
       opacity: 0, 
@@ -174,7 +190,7 @@ function App() {
               animate="animate"
               exit="exit"
             >
-              <LandingPage onGetStarted={handleGetStarted} />
+              <LandingPage onGetStarted={handleGetStarted} onOpenTestScript={handleOpenTestScript} />
             </motion.div>
           )}
           {view === 'welcome' && (
@@ -270,6 +286,17 @@ function App() {
               exit="exit"
             >
               <SuperAdminDashboard user={currentUser} onLogout={handleLogout} />
+            </motion.div>
+          )}
+          {view === 'test-script' && (
+            <motion.div
+              key="test-script"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <TestScriptPanel onBack={() => setView('landing')} />
             </motion.div>
           )}
         </AnimatePresence>

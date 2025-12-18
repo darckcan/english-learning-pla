@@ -21,9 +21,10 @@ import PublicMembershipModal from './PublicMembershipModal'
 
 interface LandingPageProps {
   onGetStarted: () => void
+  onOpenTestScript?: () => void
 }
 
-export default function LandingPage({ onGetStarted }: LandingPageProps) {
+export default function LandingPage({ onGetStarted, onOpenTestScript }: LandingPageProps) {
   const [showMembershipModal, setShowMembershipModal] = useState(false)
 
   const features = [
@@ -444,9 +445,20 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
               </div>
               <span className="font-bold text-sm sm:text-base md:text-lg">Nexus Fluent</span>
             </div>
-            <p className="text-muted-foreground text-[10px] sm:text-xs md:text-sm text-center">
-              © 2024 Nexus Fluent. Plataforma de aprendizaje de inglés.
-            </p>
+            <div className="flex items-center gap-4">
+              {onOpenTestScript && (
+                <button
+                  onClick={onOpenTestScript}
+                  className="text-muted-foreground/50 hover:text-muted-foreground text-[10px] sm:text-xs transition-colors"
+                  title="Abrir panel de pruebas (Ctrl+Shift+T)"
+                >
+                  🧪 Test Mode
+                </button>
+              )}
+              <p className="text-muted-foreground text-[10px] sm:text-xs md:text-sm text-center">
+                © 2024 Nexus Fluent. Plataforma de aprendizaje de inglés.
+              </p>
+            </div>
           </div>
         </div>
       </footer>

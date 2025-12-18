@@ -78,6 +78,27 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
 - **Progression**: Acceder práctica → Elegir modo (review/quiz) → Ver palabra/ejemplo → Audio → Siguiente
 - **Success criteria**: Usuario puede repasar y probar su conocimiento de vocabulario de todos los niveles desbloqueados
 
+### Script de Pruebas Automatizado
+- **Functionality**: Panel de pruebas completo que valida el flujo desde registro hasta completar lecciones
+- **Purpose**: Verificar que toda la funcionalidad de la aplicación funciona correctamente
+- **Trigger**: Usuario hace clic en "🧪 Test Mode" en el footer o presiona Ctrl+Shift+T
+- **Progression**: Acceder panel → Ejecutar pruebas → Ver resultados en tiempo real → Log de ejecución → Resumen final
+- **Success criteria**: 
+  - ✅ Limpieza de datos de prueba anteriores
+  - ✅ Validaciones de registro funcionan correctamente
+  - ✅ Registro de usuario exitoso con membresía trial
+  - ✅ Detección de usuarios duplicados
+  - ✅ Validación de credenciales incorrectas en login
+  - ✅ Login exitoso con credenciales correctas
+  - ✅ Examen de ubicación completo con asignación de nivel
+  - ✅ Estructura de lecciones válida en todos los niveles
+  - ✅ Completar lección con puntuación
+  - ✅ Seguimiento de progreso persiste correctamente
+  - ✅ Sistema de puntos y racha funciona
+  - ✅ Membresía trial configurada con 15 días
+  - ✅ Sistema de pronunciación disponible (TTS)
+  - ✅ Persistencia de datos funciona
+
 ## Edge Case Handling
 - **No membresía activa**: Usuario puede acceder solo a trial, se muestra alerta de expiración
 - **Audio no disponible**: Sistema detecta si navegador no soporta Web Speech API y muestra mensaje
