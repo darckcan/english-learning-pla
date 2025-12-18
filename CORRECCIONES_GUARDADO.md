@@ -18,18 +18,23 @@ const [currentUser, setCurrentUser] = useSyncUser()
 
 ---
 
-### 2. ✅ Hook de Sincronización de Progreso
+### 2. ✅ Hook de Sincronización de Progreso (CORREGIDO v2)
 **Archivo creado:** `src/hooks/use-sync-progress.ts`
 
-**Funcionalidad:**
-- Sincroniza automáticamente `user-progress` con `all-user-progress`
-- Los cambios de progreso se reflejan inmediatamente para profesores y admins
-- Mantiene consistencia de datos en tiempo real
+**Problema detectado (v1):**
+- Usaba key FIJA `'user-progress'` para TODOS los usuarios
+- Esto causaba que todos los usuarios compartieran el mismo progreso
+- Al cambiar de usuario, se sobrescribía el progreso
+
+**Solución (v2):**
+- Key dinámica por usuario: `user-progress-${userId}`
+- Cada usuario tiene su propio progreso independiente
+- Se sincroniza con `all-user-progress` para admins
 
 **Uso:**
 ```typescript
 const [userProgress, setUserProgress] = useSyncProgress(userId)
-// Actualiza automáticamente en all-user-progress
+// Actualiza user-progress-{userId} y all-user-progress automáticamente
 ```
 
 ---
@@ -98,6 +103,39 @@ const [allProgress, setAllProgress] = useKV<Record<string, UserProgress>>('all-u
 ```
 
 **Resultado:** Ahora SuperAdmin y Teacher leen de la misma fuente de datos
+
+---
+
+### 6. ✅ WelcomeScreen.tsx - Login Automático tras Registro
+**Archivo modificado:** `src/components/WelcomeScreen.tsx`
+
+**Problema detectado:**
+- Después del registro exitoso, el usuario NO hacía login automático
+- Solo se mostraba un toast y se limpiaban los campos
+- El usuario tenía que hacer login manualmente
+- Esto podía causar confusión y datos no sincronizados
+
+**Solución:**
+- Después del registro exitoso, se hace login automático con `onLogin(newUser)`
+- Se aplica el tema seleccionado automáticamente
+- El usuario es llevado directamente al placement test
+
+**Antes:**
+```typescript
+setUsername('')
+setPassword('')
+setFullName('')
+setEmail('')
+setSelectedTheme('default')
+```
+
+**Después:**
+```typescript
+if (newUser.selectedTheme) {
+  applyTheme(newUser.selectedTheme)
+}
+onLogin(newUser)
+```
 
 ---
 
@@ -182,13 +220,14 @@ useSyncUser/useSyncProgress detecta cambio
 
 ```typescript
 // Keys utilizadas (UNIFICADAS Y CORRECTAS):
-'current-user'          → User | null          [Usuario logueado actualmente]
-'user-progress'         → UserProgress | null  [Progreso del usuario actual]
-'all-users'             → User[]               [Todos los usuarios - FUENTE DE VERDAD]
-'all-user-progress'     → Record<string, UserProgress> [Todo el progreso - FUENTE DE VERDAD]
+'current-user'              → User | null          [Usuario logueado actualmente]
+'user-progress-{userId}'    → UserProgress | null  [Progreso específico de cada usuario]
+'all-users'                 → User[]               [Todos los usuarios - FUENTE DE VERDAD]
+'all-user-progress'         → Record<string, UserProgress> [Todo el progreso - FUENTE DE VERDAD]
 
 // Keys ELIMINADAS/CORREGIDAS:
 ❌ 'all-progress' → Ahora es 'all-user-progress' (unificado)
+❌ 'user-progress' (key fija) → Ahora es 'user-progress-{userId}' (key dinámica)
 ```
 
 ---

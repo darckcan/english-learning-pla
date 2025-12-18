@@ -1,24 +1,35 @@
 import { useKV } from '@github/spark/hooks'
 import { UserProgress } from '@/lib/types'
+import { useEffect, useCallback, useRef } from 'react'
 
 export function useSyncProgress(userId: string) {
-  const [userProgress, setUserProgressRaw] = useKV<UserProgress | null>('user-progress', null)
-  const [, setAllProgress] = useKV<Record<string, UserProgress>>('all-user-progress', {})
+  const userProgressKey = userId ? `user-progress-${userId}` : 'user-progress-temp'
+  const [userProgress, setUserProgressRaw] = useKV<UserProgress | null>(userProgressKey, null)
+  const [allProgress, setAllProgress] = useKV<Record<string, UserProgress>>('all-user-progress', {})
   
-  const setUserProgress = (updater: (prev: UserProgress | null) => UserProgress | null) => {
+  const userIdRef = useRef(userId)
+  userIdRef.current = userId
+
+  useEffect(() => {
+    if (userId && allProgress && allProgress[userId] && !userProgress) {
+      setUserProgressRaw(() => allProgress[userId])
+    }
+  }, [userId, allProgress, userProgress, setUserProgressRaw])
+
+  const setUserProgress = useCallback((updater: (prev: UserProgress | null) => UserProgress | null) => {
     setUserProgressRaw((prev) => {
       const updated = updater(prev ?? null)
       
-      if (updated && userId) {
+      if (updated && userIdRef.current) {
         setAllProgress((all) => ({
           ...(all || {}),
-          [userId]: updated
+          [userIdRef.current]: updated
         }))
       }
       
       return updated
     })
-  }
+  }, [setUserProgressRaw, setAllProgress])
   
   return [userProgress, setUserProgress] as const
 }

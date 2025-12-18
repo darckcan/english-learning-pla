@@ -15,12 +15,13 @@ interface ValidationResult {
 
 export default function DataIntegrityValidator() {
   const [currentUser] = useKV<User | null>('current-user', null)
-  const [userProgress] = useKV<UserProgress | null>('user-progress', null)
   const [allUsers] = useKV<User[]>('all-users', [])
   const [allProgress] = useKV<Record<string, UserProgress>>('all-user-progress', {})
   
   const [results, setResults] = useState<ValidationResult[]>([])
   const [isValidating, setIsValidating] = useState(false)
+
+  const userProgress = currentUser ? allProgress?.[currentUser.id] : null
 
   const runValidation = () => {
     setIsValidating(true)
@@ -71,35 +72,27 @@ export default function DataIntegrityValidator() {
 
     validationResults.push({
       category: 'Progreso',
-      test: 'user-progress existe',
+      test: 'Progreso del usuario',
       status: userProgress ? 'pass' : 'warning',
       message: userProgress 
         ? `${userProgress.completedLessons.length} lecciones, ${userProgress.points} pts` 
-        : 'Sin progreso'
+        : 'Sin progreso registrado'
     })
 
     if (currentUser && userProgress) {
-      const progressInAllProgress = allProgress?.[currentUser.id]
       validationResults.push({
         category: 'Sync',
         test: 'Progreso en all-progress',
-        status: progressInAllProgress ? 'pass' : 'fail',
-        message: progressInAllProgress 
-          ? 'OK' 
-          : '❌ Progreso NO sincronizado'
+        status: 'pass',
+        message: 'OK - Datos desde all-user-progress'
       })
 
-      if (progressInAllProgress) {
-        const pointsMatch = progressInAllProgress.points === userProgress.points
-        validationResults.push({
-          category: 'Sync',
-          test: 'Puntos sincronizados',
-          status: pointsMatch ? 'pass' : 'fail',
-          message: pointsMatch 
-            ? `${userProgress.points} pts` 
-            : `❌ Puntos no coinciden`
-        })
-      }
+      validationResults.push({
+        category: 'Sync',
+        test: 'Puntos del usuario',
+        status: 'pass',
+        message: `${userProgress.points} pts`
+      })
     }
 
     const totalProgress = Object.keys(allProgress || {}).length

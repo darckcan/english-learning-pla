@@ -177,6 +177,8 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       selectedTheme: selectedTheme,
     }
 
+    let registrationSuccessful = false
+    
     setAllUsers((current) => {
       const users = current || []
       const finalCheck = users.find(u => 
@@ -185,13 +187,27 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       )
       
       if (finalCheck) {
-        haptics.error()
-        toast.error('Error: El usuario o correo ya existe. Por favor recarga la página.')
         return users
       }
       
+      registrationSuccessful = true
       return [...users, newUser]
     })
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    if (!registrationSuccessful) {
+      const currentUsers = allUsers || []
+      const stillExists = currentUsers.find(u => 
+        u.username.toLowerCase() === cleanUsername || 
+        u.email?.toLowerCase() === cleanEmail
+      )
+      if (stillExists) {
+        haptics.error()
+        toast.error('Error: El usuario o correo ya existe. Por favor recarga la página.')
+        return
+      }
+    }
 
     if (newUser.email) {
       try {
@@ -233,11 +249,11 @@ export default function WelcomeScreen({ onLogin }: WelcomeScreenProps) {
       )
     }
 
-    setUsername('')
-    setPassword('')
-    setFullName('')
-    setEmail('')
-    setSelectedTheme('default')
+    if (newUser.selectedTheme) {
+      applyTheme(newUser.selectedTheme)
+    }
+    
+    onLogin(newUser)
   }
 
   return (
