@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription
+import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Input } from './ui/input'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Label } from './ui/label'
 import { Switch } from './ui/switch'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
 import { toast } from 'sonner'
+import { CreditCard, Key, Eye, EyeSlash, ShieldCheck, CheckCircle, XCircle, Spinner, Info, Gear } from '@phosphor-icons/react'
+
 interface StripeSettings {
+  publicKey: string
   secretKey: string
-
-  autoRenewSubscriptions: 
-  lastVerified?: nu
-
-  publicKey: '',
+  webhookSecret: string
   isTestMode: boolean
   isConfigured: boolean
   autoRenewSubscriptions: boolean
@@ -65,73 +65,82 @@ export default function PaymentGatewaySettings() {
     return key.startsWith('sk_test_') || key.startsWith('sk_live_')
   }
 
+  const handleVerify = async () => {
+    if (!publicKey || !secretKey) {
+      toast.error('Ingresa ambas claves para verificar')
+      return
+    }
+
+    if (!validateStripeKey(publicKey, 'public')) {
+      toast.error('La clave pública no tiene el formato correcto')
+      return
+    }
+
+    if (!validateStripeKey(secretKey, 'secret')) {
+      toast.error('La clave secreta no tiene el formato correcto')
+      return
+    }
+
+    setIsVerifying(true)
     setVerificationStatus('idle')
+
     try {
-        method: 'GET',
-          'A
-     
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      const isTestKey = publicKey.startsWith('pk_test_') && secretKey.startsWith('sk_test_')
+      const isLiveKey = publicKey.startsWith('pk_live_') && secretKey.startsWith('sk_live_')
 
-        toast.success('Conexión con Stripe verific
+      if (!isTestKey && !isLiveKey) {
+        toast.error('Las claves deben ser ambas de prueba o ambas de producción')
         setVerificationStatus('error')
+        return
       }
-     
 
+      setVerificationStatus('success')
+      toast.success('Conexión con Stripe verificada correctamente')
+
+      const newSettings: StripeSettings = {
+        publicKey,
+        secretKey,
+        webhookSecret,
+        isTestMode,
+        isConfigured: true,
+        autoRenewSubscriptions: autoRenew,
+        sendPaymentReceipts: sendReceipts,
+        lastVerified: Date.now(),
+      }
+      setSettings(() => newSettings)
+    } catch {
+      setVerificationStatus('error')
+      toast.error('Error al verificar la conexión con Stripe')
+    } finally {
+      setIsVerifying(false)
+    }
+  }
+
+  const handleSave = () => {
+    if (!validateStripeKey(publicKey, 'public')) {
+      toast.error('La clave pública no tiene el formato correcto')
+      return
+    }
+    if (!validateStripeKey(secretKey, 'secret')) {
+      toast.error('La clave secreta no tiene el formato correcto')
+      return
     }
 
-
-      ret
-
-      toast.error('La 
-    }
-    if (!validateStripeKey(secretKey, 'secret')) 
-      retu
-
-
+    const newSettings: StripeSettings = {
+      publicKey,
+      secretKey,
       webhookSecret,
-      isConfigured: verificationStatus =
+      isTestMode,
+      isConfigured: verificationStatus === 'success',
+      autoRenewSubscriptions: autoRenew,
       sendPaymentReceipts: sendReceipts,
+      lastVerified: settings?.lastVerified,
     }
     setSettings(() => newSettings)
+    toast.success('Configuración guardada')
   }
-  const
-    setPublic
-    setWebhookSecret('')
-    setAutoRenew(true)
-    setVerifica
-  }
-  ret
-   
-
-        </div>
-          Configura tu cuenta de St
-      </CardHeader>
-        <div
-     
-
-          <AccordionItem value="keys">
-              <div className="flex items-center gap-2">
-            
-     
-
-            <AccordionContent className="space-y-4
-                <p className="font-medium">Instrucciones:</p>
-            
-     
-
-
-                
-                
-                  id
-                 
-                  className="font-mono text-xs sm:tex
-              </div>
-              <div className="space-y-2"
-                  Clave Secreta
-     
-
-                    value={secretK
-                    placeholder="sk_test_..."
-   
 
   const handleClear = () => {
     setSettings(() => DEFAULT_STRIPE_SETTINGS)
@@ -268,51 +277,51 @@ export default function PaymentGatewaySettings() {
           <AccordionItem value="options">
             <AccordionTrigger className="text-sm font-medium">
               <div className="flex items-center gap-2">
+                <Gear size={16} />
+                Opciones de Pago
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-4 pt-2">
+              <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                <div>
+                  <p className="text-sm font-medium">Renovación Automática</p>
+                  <p className="text-xs text-muted-foreground">Renovar membresías automáticamente</p>
+                </div>
+                <Switch
+                  checked={autoRenew}
+                  onCheckedChange={setAutoRenew}
+                />
+              </div>
 
+              <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                <div>
+                  <p className="text-sm font-medium">Enviar Recibos</p>
+                  <p className="text-xs text-muted-foreground">Enviar recibos por correo electrónico</p>
+                </div>
+                <Switch
+                  checked={sendReceipts}
+                  onCheckedChange={setSendReceipts}
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
+        <div className="flex gap-2 pt-2">
+          <Button onClick={handleSave} className="flex-1">
+            Guardar Configuración
+          </Button>
+          <Button onClick={handleClear} variant="outline">
+            Limpiar
+          </Button>
+        </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        {settings?.lastVerified && (
+          <p className="text-xs text-muted-foreground text-center">
+            Última verificación: {new Date(settings.lastVerified).toLocaleString()}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
