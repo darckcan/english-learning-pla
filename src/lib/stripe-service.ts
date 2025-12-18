@@ -1,155 +1,93 @@
-import { getStripeSettings, StripeSettings } from './stripe-config'
+import { getStripeSettings, getStripe, StripeSettings } from './stripe-config'
 
-export interface PaymentSession {
-  sessionId: string
-  url: string
-  status: 'pending' | 'complete' | 'expired'
-}
-
-export interface PaymentIntentData {
-  amount: number
-  currency: string
-  productName: string
-  customerEmail: string
+export interface CheckoutParams {
+  priceId: string
   userId: string
+  customerEmail: string
   membershipType: 'monthly' | 'lifetime'
 }
 
-async function getSecretKey(): Promise<string> {
-  const settings = await getStripeSettings()
-  if (!settings.secretKey) {
-    throw new Error('Stripe secret key not configured. Please configure it in Super Admin settings.')
+export async function redirectToCheckout(params: CheckoutParams): Promise<void> {
+  const stripe = await getStripe()
+  
+  if (!stripe) {
+    throw new Error('Stripe no está configurado. Contacta al administrador.')
   }
-  return settings.secretKey
-}
 
-export async function createPaymentIntent(data: PaymentIntentData): Promise<{ clientSecret: string; paymentIntentId: string }> {
-  try {
-    const secretKey = await getSecretKey()
-    
-    const response = await fetch('https://api.stripe.com/v1/payment_intents', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${secretKey}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        amount: Math.round(data.amount * 100).toString(),
-        currency: data.currency,
-        'metadata[userId]': data.userId,
-        'metadata[membershipType]': data.membershipType,
-        'metadata[customerEmail]': data.customerEmail,
-        description: `Pago de ${data.productName} para ${data.customerEmail}`,
-      }),
-    })
+  const successUrl = `${window.location.origin}?payment=success&user_id=${encodeURIComponent(params.userId)}&membership_type=${params.membershipType}`
+  const cancelUrl = `${window.location.origin}?payment=cancelled`
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error?.message || 'Error al crear la intención de pago')
-    }
+  const { error } = await stripe.redirectToCheckout({
+    lineItems: [{ price: params.priceId, quantity: 1 }],
+    mode: params.membershipType === 'monthly' ? 'subscription' : 'payment',
+    successUrl,
+    cancelUrl,
+    customerEmail: params.customerEmail,
+    clientReferenceId: params.userId,
+  })
 
-    const paymentIntent = await response.json()
-    return {
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id,
-    }
-  } catch (error) {
-    console.error('Error creando payment intent:', error)
-    throw error
+  if (error) {
+    console.error('Stripe checkout error:', error)
+    throw new Error(error.message || 'Error al iniciar el checkout')
   }
 }
 
-export async function createCheckoutSession(data: PaymentIntentData): Promise<{ sessionId: string; url: string }> {
+export async function createCheckoutWithPaymentLink(
+  paymentLinkUrl: string,
+  userId: string,
+  membershipType: 'monthly' | 'lifetime'
+): Promise<void> {
+  const url = new URL(paymentLinkUrl)
+  url.searchParams.set('client_reference_id', userId)
+  url.searchParams.set('prefilled_email', '')
+  
+  const successParam = encodeURIComponent(`${window.location.origin}?payment=success&user_id=${userId}&membership_type=${membershipType}`)
+  
+  window.location.href = url.toString()
+}
+
+export async function isStripeConfigured(): Promise<boolean> {
   try {
-    const secretKey = await getSecretKey()
     const settings = await getStripeSettings()
-    
-    const successUrl = `${window.location.origin}?payment=success&session_id={CHECKOUT_SESSION_ID}`
-    const cancelUrl = `${window.location.origin}?payment=cancelled`
-
-    const params = new URLSearchParams({
-      'success_url': successUrl,
-      'cancel_url': cancelUrl,
-      'payment_method_types[]': 'card',
-      'mode': data.membershipType === 'monthly' ? 'subscription' : 'payment',
-      'customer_email': data.customerEmail,
-      'client_reference_id': data.userId,
-      'metadata[userId]': data.userId,
-      'metadata[membershipType]': data.membershipType,
-    })
-
-    if (settings.sendPaymentReceipts) {
-      params.append('payment_intent_data[receipt_email]', data.customerEmail)
-    }
-
-    if (data.membershipType === 'monthly') {
-      params.append('line_items[0][price_data][currency]', data.currency)
-      params.append('line_items[0][price_data][product_data][name]', data.productName)
-      params.append('line_items[0][price_data][product_data][description]', 'Acceso completo a todos los niveles y clases')
-      params.append('line_items[0][price_data][unit_amount]', Math.round(data.amount * 100).toString())
-      params.append('line_items[0][price_data][recurring][interval]', 'month')
-      params.append('line_items[0][quantity]', '1')
-    } else {
-      params.append('line_items[0][price_data][currency]', data.currency)
-      params.append('line_items[0][price_data][product_data][name]', data.productName)
-      params.append('line_items[0][price_data][product_data][description]', 'Acceso de por vida a todo el contenido')
-      params.append('line_items[0][price_data][unit_amount]', Math.round(data.amount * 100).toString())
-      params.append('line_items[0][quantity]', '1')
-    }
-
-    const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${secretKey}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: params,
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error?.message || 'Error al crear sesión de checkout')
-    }
-
-    const session = await response.json()
-    return {
-      sessionId: session.id,
-      url: session.url,
-    }
-  } catch (error) {
-    console.error('Error creando checkout session:', error)
-    throw error
+    return settings.isConfigured && !!settings.publicKey && (!!settings.monthlyPriceId || !!settings.lifetimePriceId)
+  } catch {
+    return false
   }
 }
 
-export async function verifyPayment(sessionId: string): Promise<{ status: string; userId?: string; membershipType?: string }> {
-  try {
-    const secretKey = await getSecretKey()
-    
-    const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${secretKey}`,
-      },
-    })
+export async function verifyPaymentFromUrl(): Promise<{
+  success: boolean
+  userId?: string
+  membershipType?: 'monthly' | 'lifetime'
+} | null> {
+  const urlParams = new URLSearchParams(window.location.search)
+  const paymentStatus = urlParams.get('payment')
+  const userId = urlParams.get('user_id')
+  const membershipType = urlParams.get('membership_type') as 'monthly' | 'lifetime' | null
 
-    if (!response.ok) {
-      throw new Error('Error al verificar el pago')
-    }
-
-    const session = await response.json()
-    return {
-      status: session.payment_status,
-      userId: session.metadata?.userId,
-      membershipType: session.metadata?.membershipType,
-    }
-  } catch (error) {
-    console.error('Error verificando pago:', error)
-    throw error
+  if (paymentStatus === 'cancelled') {
+    return { success: false }
   }
+
+  if (paymentStatus === 'success' && userId && membershipType) {
+    return {
+      success: true,
+      userId,
+      membershipType,
+    }
+  }
+
+  return null
 }
 
-export async function checkExpiredSubscriptions(users: any[], updateUser: (userId: string, membership: any) => void): Promise<number> {
+export function clearPaymentParams(): void {
+  window.history.replaceState({}, document.title, window.location.pathname)
+}
+
+export async function checkExpiredSubscriptions(
+  users: any[], 
+  updateUser: (userId: string, membership: any) => void
+): Promise<number> {
   let expiredCount = 0
   const now = Date.now()
   
@@ -166,13 +104,4 @@ export async function checkExpiredSubscriptions(users: any[], updateUser: (userI
   }
   
   return expiredCount
-}
-
-export async function isStripeConfigured(): Promise<boolean> {
-  try {
-    const settings = await getStripeSettings()
-    return settings.isConfigured && !!settings.publicKey && !!settings.secretKey
-  } catch {
-    return false
-  }
 }

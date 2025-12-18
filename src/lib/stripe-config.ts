@@ -2,29 +2,25 @@ import { loadStripe, Stripe } from '@stripe/stripe-js'
 
 export interface StripeSettings {
   publicKey: string
-  secretKey: string
-  webhookSecret?: string
+  monthlyPriceId: string
+  lifetimePriceId: string
   isTestMode: boolean
   isConfigured: boolean
   lastVerified?: number
-  autoRenewSubscriptions: boolean
-  sendPaymentReceipts: boolean
 }
 
 const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
   publicKey: '',
-  secretKey: '',
-  webhookSecret: '',
+  monthlyPriceId: '',
+  lifetimePriceId: '',
   isTestMode: true,
   isConfigured: false,
-  autoRenewSubscriptions: true,
-  sendPaymentReceipts: true,
 }
 
 export async function getStripeSettings(): Promise<StripeSettings> {
   try {
     const stored = await window.spark.kv.get<StripeSettings>('stripe-settings')
-    if (stored && stored.publicKey && stored.secretKey) {
+    if (stored && stored.publicKey) {
       return stored
     }
   } catch (e) {
@@ -32,13 +28,11 @@ export async function getStripeSettings(): Promise<StripeSettings> {
   }
   
   const envPublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || ''
-  const envSecretKey = import.meta.env.VITE_STRIPE_SECRET_KEY || ''
   
-  if (envPublicKey && envSecretKey) {
+  if (envPublicKey) {
     return {
       ...DEFAULT_STRIPE_SETTINGS,
       publicKey: envPublicKey,
-      secretKey: envSecretKey,
       isConfigured: true,
     }
   }
@@ -46,31 +40,33 @@ export async function getStripeSettings(): Promise<StripeSettings> {
   return DEFAULT_STRIPE_SETTINGS
 }
 
-export const STRIPE_CONFIG = {
-  get publicKey() {
-    return import.meta.env.VITE_STRIPE_PUBLIC_KEY || ''
-  },
-  get secretKey() {
-    return import.meta.env.VITE_STRIPE_SECRET_KEY || ''
-  }
+export async function saveStripeSettings(settings: StripeSettings): Promise<void> {
+  await window.spark.kv.set('stripe-settings', settings)
 }
 
+let stripeInstance: Stripe | null = null
 let stripePromise: Promise<Stripe | null> | null = null
 
-export const getStripe = async () => {
+export const getStripe = async (): Promise<Stripe | null> => {
+  if (stripeInstance) return stripeInstance
+  
   const settings = await getStripeSettings()
   if (!settings.publicKey) {
     console.warn('⚠️ Stripe public key not configured')
     return null
   }
+  
   if (!stripePromise) {
     stripePromise = loadStripe(settings.publicKey)
   }
-  return stripePromise
+  
+  stripeInstance = await stripePromise
+  return stripeInstance
 }
 
-export const getStripeSync = (publicKey: string) => {
-  return loadStripe(publicKey)
+export const resetStripeInstance = () => {
+  stripeInstance = null
+  stripePromise = null
 }
 
 export interface StripeProduct {
