@@ -4,7 +4,9 @@ export interface StripeSettings {
   publicKey: string
   monthlyPriceId: string
   lifetimePriceId: string
-  isTestMode: boolean
+  monthlyPaymentLink: string
+  lifetimePaymentLink: string
+  webhookSecret: string
   isConfigured: boolean
   lastVerified?: number
 }
@@ -13,13 +15,17 @@ const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
   publicKey: '',
   monthlyPriceId: '',
   lifetimePriceId: '',
-  isTestMode: true,
+  monthlyPaymentLink: '',
+  lifetimePaymentLink: '',
+  webhookSecret: '',
   isConfigured: false,
 }
 
+const STORAGE_KEY = 'stripe-production-settings'
+
 export async function getStripeSettings(): Promise<StripeSettings> {
   try {
-    const stored = await window.spark.kv.get<StripeSettings>('stripe-settings')
+    const stored = await window.spark.kv.get<StripeSettings>(STORAGE_KEY)
     if (stored && stored.publicKey) {
       return stored
     }
@@ -27,21 +33,12 @@ export async function getStripeSettings(): Promise<StripeSettings> {
     console.warn('Error loading Stripe settings from KV:', e)
   }
   
-  const envPublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || ''
-  
-  if (envPublicKey) {
-    return {
-      ...DEFAULT_STRIPE_SETTINGS,
-      publicKey: envPublicKey,
-      isConfigured: true,
-    }
-  }
-  
   return DEFAULT_STRIPE_SETTINGS
 }
 
 export async function saveStripeSettings(settings: StripeSettings): Promise<void> {
-  await window.spark.kv.set('stripe-settings', settings)
+  await window.spark.kv.set(STORAGE_KEY, settings)
+  resetStripeInstance()
 }
 
 let stripeInstance: Stripe | null = null
@@ -95,4 +92,20 @@ export const STRIPE_PRODUCTS = {
     currency: 'usd',
     interval: 'lifetime' as const
   }
+}
+
+export function validateStripeKey(key: string): { valid: boolean; isLive: boolean; type: 'public' | 'secret' | 'unknown' } {
+  if (key.startsWith('pk_live_')) {
+    return { valid: true, isLive: true, type: 'public' }
+  }
+  if (key.startsWith('pk_test_')) {
+    return { valid: true, isLive: false, type: 'public' }
+  }
+  if (key.startsWith('sk_live_')) {
+    return { valid: true, isLive: true, type: 'secret' }
+  }
+  if (key.startsWith('sk_test_')) {
+    return { valid: true, isLive: false, type: 'secret' }
+  }
+  return { valid: false, isLive: false, type: 'unknown' }
 }

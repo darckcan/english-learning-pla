@@ -1,95 +1,87 @@
-# 🚀 Guía Rápida: Variables de Entorno Stripe
+# 🚀 Guía: Configuración de Stripe para Producción
 
-## ✅ ¿Qué se hizo?
+## ✅ Resumen
 
-Las claves de Stripe se movieron del código a variables de entorno para mayor seguridad.
+La pasarela de pago Stripe ahora se configura **directamente desde el panel de Super Admin**, sin necesidad de variables de entorno ni modificar código.
 
-## 🏠 Desarrollo Local
+## 🔧 Pasos para Configurar
 
-**No necesitas hacer nada.** El archivo `.env` ya está configurado.
+### 1. Obtener tus Claves de Producción en Stripe
 
-```bash
-# Las claves están aquí:
-cat .env
+1. Ve a [dashboard.stripe.com/apikeys](https://dashboard.stripe.com/apikeys)
+2. Asegúrate de estar en **modo Live** (no Test) - hay un toggle arriba a la derecha
+3. Copia tu **Publishable key** (empieza con `pk_live_`)
+4. La **Secret key** NO es necesaria en esta configuración frontend
 
-# Y funcionan automáticamente al iniciar:
-npm run dev
-```
+### 2. Crear tus Payment Links (Método Recomendado)
 
-## 🌐 Producción (IMPORTANTE)
+1. Ve a [dashboard.stripe.com/payment-links](https://dashboard.stripe.com/payment-links)
+2. Crea un Payment Link para **Membresía Mensual**:
+   - Nombre: "Membresía Mensual - Nexus Fluent"
+   - Precio: $9.99 USD (o el que prefieras)
+   - Tipo: Suscripción mensual
+3. Crea otro Payment Link para **Membresía Vitalicia**:
+   - Nombre: "Membresía Vitalicia - Nexus Fluent"  
+   - Precio: $24.99 USD (o el que prefieras)
+   - Tipo: Pago único
+4. Copia las URLs de ambos Payment Links (empiezan con `https://buy.stripe.com/...`)
 
-**Debes configurar las variables en tu plataforma de hosting:**
+### 3. Configurar en Nexus Fluent
 
-### EasyPanel
-1. Abre tu aplicación en EasyPanel
-2. Ve a la pestaña **"Environment"**
-3. Agrega estas 2 variables:
+1. Inicia sesión como **Super Admin**
+2. Ve a la sección **"Pasarela de Pago - Stripe"**
+3. Expande **"Clave de API (Requerido)"**:
+   - Pega tu clave pública (`pk_live_...`)
+4. Expande **"Payment Links (Recomendado)"**:
+   - Pega el Payment Link de membresía mensual
+   - Pega el Payment Link de membresía vitalicia
+5. Click en **"Verificar y Guardar"**
+6. Debería aparecer la badge verde "Producción"
 
-```
-VITE_STRIPE_PUBLIC_KEY = pk_live_51NLv8cBSxEn7IlGkOJ3sfzOBWdlVkNkpVN7XrJ7v0z8LWxcSf3If43DJpxTWKdLSUF6aNa3cYKlY1IAeFw91fZY0008GleX7lm
+## ✅ Verificación
 
-VITE_STRIPE_SECRET_KEY = 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
-```
+Después de configurar:
 
-4. **Guarda y redeplega**
+1. El badge debe mostrar **"Producción"** (verde)
+2. Si muestra **"Modo Pruebas"** (amarillo), estás usando claves de test
+3. Prueba el flujo de pago con una tarjeta real (o de test si estás en modo pruebas)
 
-### Vercel
-```bash
-vercel env add VITE_STRIPE_PUBLIC_KEY
-# Pega: pk_live_51NLv8cBSxEn7IlGkOJ3sfzOBWdlVkNkpVN7XrJ7v0z8LWxcSf3If43DJpxTWKdLSUF6aNa3cYKlY1IAeFw91fZY0008GleX7lm
+## 📋 Tipos de Claves
 
-vercel env add VITE_STRIPE_SECRET_KEY
-# Pega: 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
-```
+| Prefijo | Tipo | Uso |
+|---------|------|-----|
+| `pk_live_` | Clave pública de producción | ✅ Pagos reales |
+| `pk_test_` | Clave pública de pruebas | ⚠️ Solo para testing |
+| `sk_live_` | Clave secreta de producción | ❌ No usar en frontend |
+| `sk_test_` | Clave secreta de pruebas | ❌ No usar en frontend |
 
-### Railway
-1. Proyecto → **Variables**
-2. Agrega las dos variables
-3. Railway redeploya automáticamente
+## ⚠️ Importante
 
-### Netlify
-1. Site settings → **Environment variables**
-2. Agrega las dos variables
-3. Redeplega el sitio
+- **NO** necesitas la clave secreta (sk_) para esta configuración
+- Las claves se guardan de forma segura en el almacenamiento de la aplicación
+- Si cambias de modo pruebas a producción, los usuarios deberán pagar con tarjetas reales
 
-## 🔍 Verificar que Funciona
+## 🔄 Alternativa: Price IDs
 
-Después de configurar las variables y deplegar:
+Si prefieres usar el checkout tradicional de Stripe en lugar de Payment Links:
 
-1. Abre tu aplicación
-2. Intenta hacer una compra de prueba
-3. Deberías ser redirigido a Stripe correctamente
+1. Crea productos en [dashboard.stripe.com/products](https://dashboard.stripe.com/products)
+2. Copia el **Price ID** de cada producto (empieza con `price_...`)
+3. En el panel de configuración, expande **"Price IDs (Alternativo)"**
+4. Pega los Price IDs correspondientes
 
-## ❌ Errores Comunes
+## ❓ Solución de Problemas
 
-### "VITE_STRIPE_PUBLIC_KEY no está configurada"
-**Solución:** Configura la variable en tu plataforma de hosting y redeplega.
+### "Sistema de pagos no disponible"
+- Verifica que ingresaste la clave pública correctamente
+- Asegúrate de haber guardado la configuración
+- Verifica que al menos un Payment Link o Price ID esté configurado
 
-### "Error al crear sesión de checkout"
-**Solución:** Verifica que ambas variables estén configuradas correctamente.
+### Los pagos no se procesan
+- Confirma que estás usando claves de producción (`pk_live_`)
+- Verifica que los Payment Links estén activos en tu dashboard de Stripe
+- Revisa el [dashboard de Stripe](https://dashboard.stripe.com/payments) para ver intentos de pago
 
-### Los pagos no funcionan en producción
-**Solución:** 
-1. Verifica que las variables estén en la plataforma de hosting
-2. Asegúrate de haber redeployado después de agregar las variables
-3. Revisa la consola del navegador en busca de errores
-
-## 📞 ¿Necesitas Ayuda?
-
-- **Documentación completa:** Ver `STRIPE_ENV_SETUP.md`
-- **Resumen de cambios:** Ver `CAMBIOS_SEGURIDAD_STRIPE.md`
-- **Stripe Dashboard:** https://dashboard.stripe.com
-
-## 📋 Checklist Rápido
-
-- [x] Claves movidas a `.env` (ya hecho)
-- [ ] Variables configuradas en plataforma de hosting
-- [ ] Aplicación redeployada
-- [ ] Pagos probados en producción
-- [ ] Todo funciona correctamente
-
----
-
-**Tiempo estimado:** 5 minutos  
-**Dificultad:** Fácil  
-**Estado:** Casi listo, solo faltan las variables en producción
+### Badge muestra "Modo Pruebas"
+- Estás usando una clave de prueba (`pk_test_`)
+- Para pagos reales, cambia a la clave de producción desde tu dashboard de Stripe

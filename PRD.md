@@ -58,19 +58,19 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
   - ✅ Dashboard de admin muestra estadísticas correctas
 
 ### Configuración de Pasarela de Pago (Super Admin)
-- **Functionality**: Panel completo para configurar y gestionar las claves API de Stripe directamente desde el panel de Super Admin
-- **Purpose**: Permitir al administrador configurar la integración de Stripe sin necesidad de modificar código o variables de entorno
+- **Functionality**: Panel completo para configurar Stripe para producción, con soporte para Payment Links y Price IDs
+- **Purpose**: Permitir al administrador configurar la integración de Stripe para pagos reales sin modificar código
 - **Trigger**: Super Admin accede al panel de Super Admin
-- **Progression**: Acceder panel → Ir a sección "Pasarela de Pago - Stripe" → Ingresar claves (pública y secreta) → Verificar conexión → Guardar configuración
+- **Progression**: Acceder panel → Ir a sección "Pasarela de Pago - Stripe" → Ingresar clave pública de producción (pk_live_) → Configurar Payment Links o Price IDs → Verificar conexión → Guardar configuración
 - **Success criteria**: 
   - ✅ Panel muestra instrucciones claras para obtener claves de Stripe
-  - ✅ Validación de formato de claves (pk_test_, pk_live_, sk_test_, sk_live_)
-  - ✅ Verificación de conexión en tiempo real con API de Stripe
-  - ✅ Indicador visual de estado (Activo/No configurado)
-  - ✅ Soporte para modo prueba y producción
-  - ✅ Configuración de renovación automática de suscripciones
-  - ✅ Configuración de envío de recibos por email
-  - ✅ Almacenamiento seguro de claves en KV storage
+  - ✅ Validación de formato de claves (pk_live_ para producción, pk_test_ para pruebas)
+  - ✅ Indicador visual de modo (Producción/Modo Pruebas/Error)
+  - ✅ Advertencia clara cuando se usan claves de prueba
+  - ✅ Soporte para Payment Links (método recomendado y más fácil)
+  - ✅ Soporte alternativo para Price IDs tradicionales
+  - ✅ Links directos a Dashboard de Stripe para crear Payment Links
+  - ✅ Almacenamiento seguro de configuración en KV storage
   - ✅ Las claves configuradas se usan automáticamente para procesar pagos
 
 ### Gestión Automática de Membresías
