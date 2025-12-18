@@ -4,7 +4,7 @@ import { Button } from './ui/button'
 import { Badge } from './ui/badge'
 import { Progress } from './ui/progress'
 import { ArrowLeft, Check, X } from '@phosphor-icons/react'
-import { LESSONS } from '@/lib/curriculum'
+import { getLessonsForLevel } from '@/lib/curriculum-lazy'
 import { Level, VocabularyItem } from '@/lib/types'
 import PronunciationButton from './PronunciationButton'
 import { Input } from './ui/input'
@@ -31,7 +31,7 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
     const vocab: (VocabularyItem & { level: Level; lessonTitle: string })[] = []
     
     unlockedLevels.forEach((level) => {
-      const lessons = LESSONS[level] || []
+      const lessons = getLessonsForLevel(level) || []
       lessons.forEach((lesson) => {
         lesson.vocabulary.forEach((item) => {
           vocab.push({
@@ -49,29 +49,15 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
   const currentWord = allVocabulary[currentIndex]
 
   const cardVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 20 : -20,
-      opacity: 0,
-      scale: 0.98
-    }),
+    enter: { opacity: 0 },
     center: {
-      x: 0,
       opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
-      }
+      transition: { duration: 0.15 }
     },
-    exit: (direction: number) => ({
-      x: direction > 0 ? -20 : 20,
+    exit: {
       opacity: 0,
-      scale: 0.98,
-      transition: {
-        duration: 0.25,
-        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
-      }
-    })
+      transition: { duration: 0.1 }
+    }
   }
 
   const [direction, setDirection] = useState(0)

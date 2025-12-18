@@ -124,59 +124,18 @@ function App() {
   }, [])
 
   const pageVariants = {
-    initial: { 
-      opacity: 0, 
-      x: 20,
-      scale: 0.98
-    },
-    animate: { 
-      opacity: 1, 
-      x: 0,
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: [0.22, 1, 0.36, 1] as [number, number, number, number]
-      }
-    },
-    exit: { 
-      opacity: 0, 
-      x: -20,
-      scale: 0.98,
-      transition: {
-        duration: 0.25,
-        ease: [0.22, 1, 0.36, 1] as [number, number, number, number]
-      }
-    }
-  }
-
-  const mobilePageVariants = {
-    initial: { 
-      opacity: 0, 
-      y: 15,
-      scale: 0.97
-    },
+    initial: { opacity: 0, y: 8 },
     animate: { 
       opacity: 1, 
       y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.35,
-        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
-      }
+      transition: { duration: 0.2 }
     },
     exit: { 
       opacity: 0, 
-      y: -15,
-      scale: 0.97,
-      transition: {
-        duration: 0.3,
-        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
-      }
+      y: -8,
+      transition: { duration: 0.15 }
     }
   }
-
-  const isMobile = window.innerWidth < 768
-  const variants = isMobile ? mobilePageVariants : pageVariants
 
   return (
     <>
@@ -185,7 +144,7 @@ function App() {
           {view === 'landing' && (
             <motion.div
               key="landing"
-              variants={variants}
+              variants={pageVariants}
               initial="initial"
               animate="animate"
               exit="exit"
@@ -196,7 +155,7 @@ function App() {
           {view === 'welcome' && (
             <motion.div
               key="welcome"
-              variants={variants}
+              variants={pageVariants}
               initial="initial"
               animate="animate"
               exit="exit"
@@ -207,7 +166,7 @@ function App() {
           {view === 'placement' && currentUser && (
             <motion.div
               key="placement"
-              variants={variants}
+              variants={pageVariants}
               initial="initial"
               animate="animate"
               exit="exit"
@@ -218,7 +177,7 @@ function App() {
           {view === 'dashboard' && currentUser && userProgress && (
             <motion.div
               key="dashboard"
-              variants={variants}
+              variants={pageVariants}
               initial="initial"
               animate="animate"
               exit="exit"
@@ -237,7 +196,7 @@ function App() {
           {view === 'vocabulary' && currentUser && userProgress && (
             <motion.div
               key="vocabulary"
-              variants={variants}
+              variants={pageVariants}
               initial="initial"
               animate="animate"
               exit="exit"
@@ -251,7 +210,7 @@ function App() {
           {view === 'lesson' && currentUser && userProgress && selectedLessonId && (
             <motion.div
               key="lesson"
-              variants={variants}
+              variants={pageVariants}
               initial="initial"
               animate="animate"
               exit="exit"
@@ -269,7 +228,7 @@ function App() {
           {view === 'teacher' && currentUser && (
             <motion.div
               key="teacher"
-              variants={variants}
+              variants={pageVariants}
               initial="initial"
               animate="animate"
               exit="exit"
@@ -280,7 +239,7 @@ function App() {
           {view === 'superadmin' && currentUser && (
             <motion.div
               key="superadmin"
-              variants={variants}
+              variants={pageVariants}
               initial="initial"
               animate="animate"
               exit="exit"
@@ -291,7 +250,7 @@ function App() {
           {view === 'test-script' && (
             <motion.div
               key="test-script"
-              variants={variants}
+              variants={pageVariants}
               initial="initial"
               animate="animate"
               exit="exit"

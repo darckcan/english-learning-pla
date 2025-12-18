@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { User, UserProgress, Exercise, LessonScore, Level, CompletedLevel } from '@/lib/types'
+import { useState, useMemo } from 'react'
+import { User, UserProgress, LessonScore, Level, CompletedLevel } from '@/lib/types'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Progress } from './ui/progress'
@@ -8,8 +8,8 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Label } from './ui/label'
 import { Badge } from './ui/badge'
 import { Separator } from './ui/separator'
-import { ArrowLeft, CheckCircle, XCircle, Lightbulb, SpeakerHigh } from '@phosphor-icons/react'
-import { LESSONS } from '@/lib/curriculum'
+import { ArrowLeft, CheckCircle, XCircle, Lightbulb } from '@phosphor-icons/react'
+import { getLessonById } from '@/lib/curriculum-lazy'
 import { checkAndAwardAchievements, updateStreak, checkLevelCompletion } from '@/lib/helpers'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -35,9 +35,7 @@ export default function LessonView({
   onBack,
   setUserProgress,
 }: LessonViewProps) {
-  const lesson = Object.values(LESSONS)
-    .flat()
-    .find((l) => l.id === lessonId)
+  const lesson = useMemo(() => getLessonById(lessonId), [lessonId])
 
   const [section, setSection] = useState<LessonSection>('intro')
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
@@ -64,28 +62,14 @@ export default function LessonView({
   const currentExercise = lesson.exercises[currentExerciseIndex]
 
   const sectionVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 15,
-      scale: 0.97
-    },
+    hidden: { opacity: 0 },
     visible: { 
       opacity: 1, 
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.35,
-        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
-      }
+      transition: { duration: 0.15 }
     },
     exit: { 
       opacity: 0, 
-      y: -15,
-      scale: 0.97,
-      transition: {
-        duration: 0.3,
-        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
-      }
+      transition: { duration: 0.1 }
     }
   }
 

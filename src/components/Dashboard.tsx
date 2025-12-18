@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { User, UserProgress, Level, ThemeType } from '@/lib/types'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
@@ -19,13 +19,12 @@ import {
   Certificate,
   Palette,
 } from '@phosphor-icons/react'
-import { LEVELS, LEVEL_INFO, LESSONS } from '@/lib/curriculum'
+import { LEVELS, LEVEL_INFO } from '@/lib/curriculum'
+import { getLessonsForLevel, preloadLevel } from '@/lib/curriculum-lazy'
 import { 
   calculateLevelProgress, 
-  isLessonUnlocked, 
   isStreakAtRisk, 
   isLevelLocked,
-  checkLevelCompletion,
   getLevelCompletionBadges
 } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
@@ -38,7 +37,7 @@ import MembershipStatus from './MembershipStatus'
 import MembershipExpiryAlert from './MembershipExpiryAlert'
 import StripePaymentModal from './StripePaymentModal'
 import { applyTheme, THEMES } from '@/lib/themes'
-import { useKV } from '@github/spark/hooks'
+import { VirtualizedLessonList } from './VirtualizedLessonList'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface DashboardProps {
@@ -66,38 +65,33 @@ export default function Dashboard({
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
 
   const unlockedLevels = user.unlockedLevels || ['Beginner']
-  const currentLevelProgress = calculateLevelProgress(progress, selectedLevel)
-  const levelLessons = LESSONS[selectedLevel]
+  const currentLevelProgress = useMemo(() => calculateLevelProgress(progress, selectedLevel), [progress, selectedLevel])
+  
+  const levelLessons = useMemo(() => getLessonsForLevel(selectedLevel), [selectedLevel])
+  
+  useEffect(() => {
+    const levelIndex = LEVELS.indexOf(selectedLevel)
+    if (levelIndex < LEVELS.length - 1) {
+      preloadLevel(LEVELS[levelIndex + 1])
+    }
+  }, [selectedLevel])
+  
   const completedLessons = progress.completedLessons || []
   const totalLessons = completedLessons.length
-  const streakAtRisk = isStreakAtRisk(progress.lastActivityDate)
+  const streakAtRisk = useMemo(() => isStreakAtRisk(progress.lastActivityDate), [progress.lastActivityDate])
   
   const completedLevelsData = progress.completedLevels || []
-  const levelCompletionBadges = getLevelCompletionBadges(progress)
+  const levelCompletionBadges = useMemo(() => getLevelCompletionBadges(progress), [progress])
 
   const tabContentVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 10,
-      scale: 0.98
-    },
+    hidden: { opacity: 0 },
     visible: { 
       opacity: 1, 
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
-      }
+      transition: { duration: 0.15 }
     },
     exit: { 
       opacity: 0, 
-      y: -10,
-      scale: 0.98,
-      transition: {
-        duration: 0.25,
-        ease: [0.19, 1, 0.22, 1] as [number, number, number, number]
-      }
+      transition: { duration: 0.1 }
     }
   }
 
@@ -326,83 +320,12 @@ export default function Dashboard({
                 <Progress value={currentLevelProgress} className="mt-3 sm:mt-4" />
               </CardHeader>
               <CardContent className="px-3 pb-3 sm:px-6 sm:pb-6">
-                <div className="grid gap-3 sm:gap-4">
-                  {levelLessons.map((lesson) => {
-                    const completedLessons = progress.completedLessons || []
-                    const isCompleted = completedLessons.includes(lesson.id)
-                    const isUnlocked = isLessonUnlocked(progress, lesson.id, selectedLevel)
-                    const lessonScores = progress.lessonScores || {}
-                    const score = lessonScores[lesson.id]
-
-                    return (
-                      <Card
-                        key={lesson.id}
-                        className={cn(
-                          'transition-all hover:shadow-md',
-                          !isUnlocked && 'opacity-50'
-                        )}
-                      >
-                        <CardContent className="flex items-center justify-between p-2.5 sm:p-3 md:p-4 gap-2">
-                          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
-                            <div
-                              className={cn(
-                                'w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0',
-                                isCompleted
-                                  ? 'bg-success/20'
-                                  : isUnlocked
-                                    ? 'bg-primary/10'
-                                    : 'bg-muted'
-                              )}
-                            >
-                              {isCompleted ? (
-                                <CheckCircle size={18} weight="fill" className="text-success sm:hidden" />
-                              ) : null}
-                              {isCompleted ? (
-                                <CheckCircle size={20} weight="fill" className="text-success hidden sm:inline md:hidden" />
-                              ) : null}
-                              {isCompleted ? (
-                                <CheckCircle size={24} weight="fill" className="text-success hidden md:inline" />
-                              ) : isUnlocked ? (
-                                <>
-                                  <BookOpen size={18} className="text-primary sm:hidden" />
-                                  <BookOpen size={20} className="text-primary hidden sm:inline md:hidden" />
-                                  <BookOpen size={24} className="text-primary hidden md:inline" />
-                                </>
-                              ) : (
-                                <>
-                                  <Lock size={18} className="text-muted-foreground sm:hidden" />
-                                  <Lock size={20} className="text-muted-foreground hidden sm:inline md:hidden" />
-                                  <Lock size={24} className="text-muted-foreground hidden md:inline" />
-                                </>
-                              )}
-                            </div>
-
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-foreground text-xs sm:text-sm md:text-base truncate">{lesson.title}</h3>
-                              <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">{lesson.objective}</p>
-                              {score && (
-                                <p className="text-[10px] sm:text-xs text-success font-medium mt-0.5 sm:mt-1">
-                                  Score: {score.score}/{score.maxScore} (
-                                  {Math.round((score.score / score.maxScore) * 100)}%)
-                                </p>
-                              )}
-                            </div>
-                          </div>
-
-                          <Button
-                            onClick={() => onStartLesson(lesson.id)}
-                            disabled={!isUnlocked}
-                            variant={isCompleted ? 'outline' : 'default'}
-                            size="sm"
-                            className="text-xs sm:text-sm flex-shrink-0"
-                          >
-                            {isCompleted ? 'Repasar' : 'Comenzar'}
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    )
-                  })}
-                </div>
+                <VirtualizedLessonList
+                  lessons={levelLessons}
+                  progress={progress}
+                  selectedLevel={selectedLevel}
+                  onStartLesson={onStartLesson}
+                />
               </CardContent>
             </Card>
                 </motion.div>

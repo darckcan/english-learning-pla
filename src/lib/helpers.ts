@@ -1,5 +1,6 @@
 import { UserProgress, Level, Achievement, LessonScore, User, CompletedLevel } from './types'
-import { LEVELS, LEVEL_INFO, LESSONS, ACHIEVEMENT_DEFINITIONS } from './curriculum'
+import { LEVELS, LEVEL_INFO, ACHIEVEMENT_DEFINITIONS } from './curriculum'
+import { getLessonsForLevel } from './curriculum-lazy'
 import { createLifetimeMembership } from './membership'
 
 const SUPER_ADMIN_USERNAME = 'darckcan'
@@ -58,7 +59,7 @@ export function calculateLevelProgress(progress: UserProgress, level: Level): nu
 }
 
 export function getNextLesson(progress: UserProgress, level: Level): string | null {
-  const levelLessons = LESSONS[level]
+  const levelLessons = getLessonsForLevel(level)
   const completedLessons = progress.completedLessons || []
   const completed = new Set(completedLessons)
 
@@ -71,7 +72,7 @@ export function getNextLesson(progress: UserProgress, level: Level): string | nu
 }
 
 export function isLessonUnlocked(progress: UserProgress, lessonId: string, level: Level): boolean {
-  const levelLessons = LESSONS[level]
+  const levelLessons = getLessonsForLevel(level)
   const lessonIndex = levelLessons.findIndex((l) => l.id === lessonId)
 
   if (lessonIndex === 0) return true
@@ -132,16 +133,27 @@ export function checkAndAwardAchievements(
     })
   }
 
-  const currentLevel = progress.currentLesson
-    ? LESSONS[progress.levelProgress as any]?.find((l) => l.id === progress.currentLesson)?.level
-    : null
-  if (currentLevel) {
-    const levelProgress = calculateLevelProgress(progress, currentLevel)
-    if (levelProgress === 100 && !existingIds.has('level-complete')) {
-      newAchievements.push({
-        ...ACHIEVEMENT_DEFINITIONS.find((a) => a.id === 'level-complete')!,
-        unlockedAt: Date.now(),
-      })
+  const currentLesson = progress.currentLesson
+  if (currentLesson) {
+    const levelPart = currentLesson.split('-')[0]
+    const levelMap: Record<string, Level> = {
+      'beginner': 'Beginner',
+      'a1': 'A1',
+      'a2': 'A2',
+      'b1': 'B1',
+      'b2': 'B2',
+      'c1': 'C1',
+      'c2': 'C2',
+    }
+    const currentLevel = levelMap[levelPart]
+    if (currentLevel) {
+      const levelProgress = calculateLevelProgress(progress, currentLevel)
+      if (levelProgress === 100 && !existingIds.has('level-complete')) {
+        newAchievements.push({
+          ...ACHIEVEMENT_DEFINITIONS.find((a) => a.id === 'level-complete')!,
+          unlockedAt: Date.now(),
+        })
+      }
     }
   }
 
@@ -214,7 +226,7 @@ export function checkLevelCompletion(
   progress: UserProgress,
   level: Level
 ): { isComplete: boolean; totalLessons: number; averageScore: number } {
-  const levelLessons = LESSONS[level]
+  const levelLessons = getLessonsForLevel(level)
   const completedLessons = progress.completedLessons || []
   const lessonScores = progress.lessonScores || {}
   

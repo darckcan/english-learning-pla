@@ -13,11 +13,12 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
 ## Essential Features
 
 ### Sistema de Lecciones Completo
-- **Functionality**: Currículo progresivo de 275 lecciones desde Beginner hasta C2
+- **Functionality**: Currículo progresivo de 275 lecciones desde Beginner hasta C2 con carga lazy por nivel
 - **Purpose**: Proporcionar educación estructurada siguiendo el Marco Común Europeo de Referencia
 - **Trigger**: Usuario selecciona una lección desde el dashboard
 - **Progression**: Seleccionar lección → Introducción → Vocabulario (con audio) → Gramática → Ejercicios → Shadowing → Completar
 - **Success criteria**: El usuario completa lecciones, obtiene puntos, y progresa a través de los niveles
+- **Optimización**: Las lecciones se cargan solo cuando el usuario selecciona un nivel, con preloading del nivel siguiente. Lista de lecciones virtualizada para rendimiento
 
 ### Sistema de Audio Interactivo
 - **Functionality**: Pronunciación de palabras, ejemplos y frases completas usando Web Speech API
@@ -171,16 +172,17 @@ Tipografía moderna y legible - Inter para contenido general (excelente legibili
 
 ## Animations
 
-Animaciones suaves y funcionales usando Framer Motion - transiciones entre páginas que dan contexto espacial, feedback micro-interactivo en botones y cards, y celebraciones visuales para logros sin interrumpir el flujo de aprendizaje.
+Animaciones ligeras y optimizadas para rendimiento - usando tiempos reducidos (150-200ms) para evitar lentitud especialmente en móvil. Las animaciones priorizan la funcionalidad sobre el deleite visual, respetando `prefers-reduced-motion` del sistema.
 
-- Transiciones de página con AnimatePresence (300-350ms con easing suave)
-- Hover states en cards y botones (150-200ms)
+- Transiciones de página simples con fade (200ms)
+- Transiciones de tabs con fade rápido (150ms)
+- Hover states ligeros en cards y botones (100-150ms)
 - Feedback háptico en interacciones importantes (usando vibration API cuando disponible)
-- Animaciones de logro con bounce y scale (600ms)
-- Progress bars con transiciones animadas (400ms)
-- Skeleton loaders para estados de carga
-- Toast notifications con slide-in desde arriba
-- Modal dialogs con fade + scale para entrada/salida
+- Animaciones de logro con scale simple (400ms)
+- Progress bars con transiciones animadas (300ms)
+- Toast notifications con fade-in rápido
+- Modal dialogs con fade simple
+- **Optimización móvil**: Sin scale ni transforms pesados para mejor rendimiento en dispositivos de gama media/baja
 
 ## Component Selection
 
