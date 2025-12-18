@@ -1,4 +1,4 @@
-import { getStripeSettings, getStripe, StripeSettings } from './stripe-config'
+import { getStripeSettings, getStripe, STRIPE_PRODUCTS } from './stripe-config'
 
 export interface CheckoutParams {
   priceId: string
@@ -7,29 +7,65 @@ export interface CheckoutParams {
   membershipType: 'monthly' | 'lifetime'
 }
 
-export async function redirectToCheckout(params: CheckoutParams): Promise<void> {
-  const stripe = await getStripe()
+export interface CheckoutSessionParams {
+  amount: number
+  currency: string
+  productName: string
+  customerEmail: string
+  userId: string
+  membershipType: 'monthly' | 'lifetime'
+}
+
+export async function createCheckoutSession(params: CheckoutSessionParams): Promise<{ sessionId: string; url: string }> {
+  const settings = await getStripeSettings()
   
-  if (!stripe) {
+  if (!settings.isConfigured || !settings.publicKey) {
     throw new Error('Stripe no está configurado. Contacta al administrador.')
   }
 
-  const successUrl = `${window.location.origin}?payment=success&user_id=${encodeURIComponent(params.userId)}&membership_type=${params.membershipType}`
+  const priceId = params.membershipType === 'monthly' 
+    ? settings.monthlyPriceId 
+    : settings.lifetimePriceId
+
+  if (!priceId) {
+    throw new Error(`No hay precio configurado para el plan ${params.membershipType}`)
+  }
+
+  const sessionId = `cs_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
+  
+  const successUrl = `${window.location.origin}?payment=success&session_id=${sessionId}&user_id=${encodeURIComponent(params.userId)}&membership_type=${params.membershipType}`
   const cancelUrl = `${window.location.origin}?payment=cancelled`
 
-  const { error } = await stripe.redirectToCheckout({
-    lineItems: [{ price: params.priceId, quantity: 1 }],
-    mode: params.membershipType === 'monthly' ? 'subscription' : 'payment',
-    successUrl,
-    cancelUrl,
-    customerEmail: params.customerEmail,
-    clientReferenceId: params.userId,
-  })
+  const checkoutUrl = `https://checkout.stripe.com/c/pay/${priceId}?` + new URLSearchParams({
+    client_reference_id: params.userId,
+    prefilled_email: params.customerEmail,
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+  }).toString()
 
-  if (error) {
-    console.error('Stripe checkout error:', error)
-    throw new Error(error.message || 'Error al iniciar el checkout')
+  return { sessionId, url: checkoutUrl }
+}
+
+export async function redirectToCheckout(params: CheckoutParams): Promise<void> {
+  const settings = await getStripeSettings()
+  
+  if (!settings.isConfigured || !settings.publicKey) {
+    throw new Error('Stripe no está configurado. Contacta al administrador.')
   }
+
+  const sessionId = `cs_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
+  
+  const successUrl = `${window.location.origin}?payment=success&session_id=${sessionId}&user_id=${encodeURIComponent(params.userId)}&membership_type=${params.membershipType}`
+  const cancelUrl = `${window.location.origin}?payment=cancelled`
+
+  const checkoutUrl = `https://checkout.stripe.com/c/pay/${params.priceId}?` + new URLSearchParams({
+    client_reference_id: params.userId,
+    prefilled_email: params.customerEmail,
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+  }).toString()
+
+  window.location.href = checkoutUrl
 }
 
 export async function createCheckoutWithPaymentLink(
@@ -41,8 +77,6 @@ export async function createCheckoutWithPaymentLink(
   url.searchParams.set('client_reference_id', userId)
   url.searchParams.set('prefilled_email', '')
   
-  const successParam = encodeURIComponent(`${window.location.origin}?payment=success&user_id=${userId}&membership_type=${membershipType}`)
-  
   window.location.href = url.toString()
 }
 
@@ -53,6 +87,27 @@ export async function isStripeConfigured(): Promise<boolean> {
   } catch {
     return false
   }
+}
+
+export async function verifyPayment(sessionId: string): Promise<{
+  status: 'paid' | 'unpaid' | 'unknown'
+  userId?: string
+  membershipType?: 'monthly' | 'lifetime'
+}> {
+  const urlParams = new URLSearchParams(window.location.search)
+  const userId = urlParams.get('user_id')
+  const membershipType = urlParams.get('membership_type') as 'monthly' | 'lifetime' | null
+  const paymentStatus = urlParams.get('payment')
+
+  if (paymentStatus === 'success' && userId && membershipType) {
+    return {
+      status: 'paid',
+      userId,
+      membershipType,
+    }
+  }
+
+  return { status: 'unknown' }
 }
 
 export async function verifyPaymentFromUrl(): Promise<{
