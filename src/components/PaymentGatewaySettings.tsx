@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
+// Componentes UI
 import { Badge } from './ui/badge'
-import { Input } from './ui/input'
+import { Input } from './ui/input' // Solo una vez
 import { Label } from './ui/label'
 import { Button } from './ui/button'
 import { Switch } from './ui/switch'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
+// Asegúrate de tener este archivo o ajusta la ruta
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card' 
+// Iconos
 import { CreditCard, Key, Eye, EyeSlash, CheckCircle, Warning, Spinner } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
@@ -31,18 +34,24 @@ const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
   sendPaymentReceipts: true
 }
 
-export default function PaymentGatewaySettings() {
-  const [settings, setSettings] = useKV<StripeSettings>('stripe-settings', DEFAULT_STRIPE_SETTINGS)
+export default function StripeGatewaySettings() {
+  // Estado recuperado de la base de datos/KV
+  const [settings, setSettings] = useKV<StripeSettings>('stripe_settings', DEFAULT_STRIPE_SETTINGS)
+
+  // Estados locales para el formulario
   const [publicKey, setPublicKey] = useState('')
   const [secretKey, setSecretKey] = useState('')
   const [webhookSecret, setWebhookSecret] = useState('')
   const [isTestMode, setIsTestMode] = useState(true)
   const [autoRenew, setAutoRenew] = useState(true)
   const [sendReceipts, setSendReceipts] = useState(true)
+  
+  // Estados de UI
   const [showSecretKey, setShowSecretKey] = useState(false)
-  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'verifying' | 'success' | 'error'>('idle')
+  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [isVerifying, setIsVerifying] = useState(false)
 
+  // Sincronizar estado local cuando settings carga
   useEffect(() => {
     if (settings) {
       setPublicKey(settings.publicKey || '')
@@ -51,18 +60,17 @@ export default function PaymentGatewaySettings() {
       setIsTestMode(settings.isTestMode ?? true)
       setAutoRenew(settings.autoRenewSubscriptions ?? true)
       setSendReceipts(settings.sendPaymentReceipts ?? true)
+      
       if (settings.isConfigured) {
         setVerificationStatus('success')
       }
     }
   }, [settings])
 
-  const validateStripeKey = (key: string, type: 'public' | 'secret'): boolean => {
-    if (!key) return false
-    if (type === 'public') {
-      return key.startsWith('pk_test_') || key.startsWith('pk_live_')
-    }
-    return key.startsWith('sk_test_') || key.startsWith('sk_live_')
+  const validateStripeKey = (key: string, type: 'public' | 'secret') => {
+    if (type === 'public') return key.startsWith('pk_');
+    if (type === 'secret') return key.startsWith('sk_');
+    return false;
   }
 
   const handleVerify = async () => {
@@ -72,65 +80,38 @@ export default function PaymentGatewaySettings() {
     }
 
     if (!validateStripeKey(publicKey, 'public')) {
-      toast.error('La clave pública no tiene el formato correcto')
+      toast.error('La clave pública no tiene un formato válido')
       return
     }
-
-    if (!validateStripeKey(secretKey, 'secret')) {
-      toast.error('La clave secreta no tiene el formato correcto')
-      return
-    }
-
+    
     setIsVerifying(true)
-    setVerificationStatus('verifying')
-
+    
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Simulación de verificación (aquí iría tu llamada real a la API)
+      await new Promise(resolve => setTimeout(resolve, 1000))
 
-      const isTestKey = publicKey.startsWith('pk_test_') && secretKey.startsWith('sk_test_')
-      const isLiveKey = publicKey.startsWith('pk_live_') && secretKey.startsWith('sk_live_')
+      const isLiveKey = publicKey.startsWith('pk_live_')
+      const isTestKey = publicKey.startsWith('pk_test_')
 
       if (!isTestKey && !isLiveKey) {
-        setVerificationStatus('error')
-        toast.error('Las claves deben ser ambas de prueba o ambas de producción')
-        return
+         throw new Error('Formato de clave desconocido')
       }
 
       setVerificationStatus('success')
-      setIsTestMode(isTestKey)
+      toast.success('Conexión con Stripe verificada')
+      
+      // Guardar automáticamente al verificar con éxito
+      handleSave()
 
-      const newSettings: StripeSettings = {
-        publicKey,
-        secretKey,
-        webhookSecret,
-        isTestMode: isTestKey,
-        isConfigured: true,
-        autoRenewSubscriptions: autoRenew,
-        sendPaymentReceipts: sendReceipts,
-        lastVerified: Date.now()
-      }
-
-      setSettings(() => newSettings)
-      toast.success('Conexión verificada correctamente')
     } catch (error) {
       setVerificationStatus('error')
-      toast.error('Error al verificar la conexión')
+      toast.error('Error al verificar las credenciales')
     } finally {
       setIsVerifying(false)
     }
   }
 
   const handleSave = () => {
-    if (!publicKey || !secretKey) {
-      toast.error('Las claves son requeridas')
-      return
-    }
-
-    if (!validateStripeKey(publicKey, 'public') || !validateStripeKey(secretKey, 'secret')) {
-      toast.error('Las claves no tienen el formato correcto')
-      return
-    }
-
     const newSettings: StripeSettings = {
       publicKey,
       secretKey,
@@ -139,10 +120,10 @@ export default function PaymentGatewaySettings() {
       isConfigured: verificationStatus === 'success',
       autoRenewSubscriptions: autoRenew,
       sendPaymentReceipts: sendReceipts,
-      lastVerified: settings?.lastVerified
+      lastVerified: Date.now()
     }
-
-    setSettings(() => newSettings)
+    
+    setSettings(newSettings)
     toast.success('Configuración guardada')
   }
 
@@ -151,7 +132,7 @@ export default function PaymentGatewaySettings() {
     setSecretKey('')
     setWebhookSecret('')
     setVerificationStatus('idle')
-    setSettings(() => DEFAULT_STRIPE_SETTINGS)
+    setSettings(DEFAULT_STRIPE_SETTINGS)
     toast.success('Configuración eliminada')
   }
 
@@ -221,9 +202,6 @@ export default function PaymentGatewaySettings() {
                     {showSecretKey ? <EyeSlash className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Comienza con sk_test_ (pruebas) o sk_live_ (producción)
-                </p>
               </div>
 
               <div className="space-y-2">
@@ -235,9 +213,6 @@ export default function PaymentGatewaySettings() {
                   onChange={(e) => setWebhookSecret(e.target.value)}
                   placeholder="whsec_..."
                 />
-                <p className="text-xs text-muted-foreground">
-                  Para verificar webhooks de Stripe
-                </p>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -253,9 +228,7 @@ export default function PaymentGatewaySettings() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Modo de Pruebas</p>
-                  <p className="text-sm text-muted-foreground">
-                    Usar claves de prueba para desarrollo
-                  </p>
+                  <p className="text-sm text-muted-foreground">Usar claves de prueba</p>
                 </div>
                 <Switch
                   checked={isTestMode}
@@ -266,9 +239,6 @@ export default function PaymentGatewaySettings() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Renovación Automática</p>
-                  <p className="text-sm text-muted-foreground">
-                    Renovar membresías automáticamente
-                  </p>
                 </div>
                 <Switch
                   checked={autoRenew}
@@ -279,9 +249,6 @@ export default function PaymentGatewaySettings() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Enviar Recibos</p>
-                  <p className="text-sm text-muted-foreground">
-                    Enviar recibos de pago por correo
-                  </p>
                 </div>
                 <Switch
                   checked={sendReceipts}
