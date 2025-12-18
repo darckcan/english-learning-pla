@@ -4,7 +4,6 @@ import { User } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import { Switch } from './ui/switch'
 import { Label } from './ui/label'
 import { EnvelopeSimple, Bell, BellSlash, CheckCircle, Warning, Clock } from '@phosphor-icons/react'
@@ -17,6 +16,7 @@ import {
 } from '@/lib/email-service'
 import { getDaysRemaining } from '@/lib/membership'
 import { formatDate } from '@/lib/helpers'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 interface EmailNotificationManagerProps {
   users: User[]
@@ -33,6 +33,7 @@ export default function EmailNotificationManager({ users }: EmailNotificationMan
   )
   const [isProcessing, setIsProcessing] = useState(false)
   const [lastCheck, setLastCheck] = useKV<number>('last-notification-check', 0)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (!autoNotifications) return
@@ -59,13 +60,13 @@ export default function EmailNotificationManager({ users }: EmailNotificationMan
 
       if (newNotifications.length > 0) {
         setNotificationHistory((current) => [...(current || []), ...newNotifications])
-        toast.success(`Se enviaron ${newNotifications.length} notificaciones por email`)
+        toast.success(`Se enviaron ${newNotifications.length} notificaciones`)
       }
 
       setLastCheck(Date.now())
     } catch (error) {
       console.error('Error procesando notificaciones:', error)
-      toast.error('Error al procesar notificaciones')
+      toast.error('Error al procesar')
     } finally {
       setIsProcessing(false)
     }
@@ -86,27 +87,19 @@ export default function EmailNotificationManager({ users }: EmailNotificationMan
 
   const getNotificationTypeLabel = (type: EmailNotification['type']): string => {
     switch (type) {
-      case 'expiry-7days':
-        return 'Vence en 7 días'
-      case 'expiry-3days':
-        return 'Vence en 3 días'
-      case 'expiry-1day':
-        return 'Vence en 1 día'
-      case 'expired':
-        return 'Membresía expirada'
+      case 'expiry-7days': return '7 días'
+      case 'expiry-3days': return '3 días'
+      case 'expiry-1day': return '1 día'
+      case 'expired': return 'Expirada'
     }
   }
 
   const getNotificationTypeBadgeVariant = (type: EmailNotification['type']) => {
     switch (type) {
-      case 'expiry-7days':
-        return 'default'
-      case 'expiry-3days':
-        return 'secondary'
-      case 'expiry-1day':
-        return 'destructive'
-      case 'expired':
-        return 'destructive'
+      case 'expiry-7days': return 'default'
+      case 'expiry-3days': return 'secondary'
+      case 'expiry-1day': return 'destructive'
+      case 'expired': return 'destructive'
     }
   }
 
@@ -115,41 +108,37 @@ export default function EmailNotificationManager({ users }: EmailNotificationMan
     .slice(0, 10)
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-6">
       <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <CardHeader className="p-3 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
             <div>
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <EnvelopeSimple className="w-4 h-4 sm:w-5 sm:h-5" />
-                Sistema de Notificaciones por Email
+              <CardTitle className="flex items-center gap-2 text-sm sm:text-lg">
+                <EnvelopeSimple size={16} className="sm:w-5 sm:h-5" />
+                Notificaciones Email
               </CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                Recordatorios automáticos de vencimiento de membresías
+              <CardDescription className="text-[10px] sm:text-sm">
+                Recordatorios de vencimiento
               </CardDescription>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Switch
                 id="auto-notifications"
                 checked={autoNotifications}
                 onCheckedChange={(checked) => {
                   setAutoNotifications(checked)
-                  toast.success(
-                    checked 
-                      ? 'Notificaciones automáticas activadas' 
-                      : 'Notificaciones automáticas desactivadas'
-                  )
+                  toast.success(checked ? 'Activadas' : 'Desactivadas')
                 }}
               />
               <Label htmlFor="auto-notifications" className="cursor-pointer">
                 {autoNotifications ? (
-                  <span className="flex items-center gap-1 text-success text-sm">
-                    <Bell className="w-4 h-4" />
+                  <span className="flex items-center gap-1 text-green-600 text-xs sm:text-sm">
+                    <Bell size={14} className="sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline">Activadas</span>
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1 text-muted-foreground text-sm">
-                    <BellSlash className="w-4 h-4" />
+                  <span className="flex items-center gap-1 text-muted-foreground text-xs sm:text-sm">
+                    <BellSlash size={14} className="sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline">Desactivadas</span>
                   </span>
                 )}
@@ -157,54 +146,39 @@ export default function EmailNotificationManager({ users }: EmailNotificationMan
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4 sm:space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            <Card className="bg-muted/30">
-              <CardHeader className="pb-2 sm:pb-3">
-                <CardTitle className="text-xs sm:text-sm font-medium">Usuarios Pendientes</CardTitle>
+        <CardContent className="p-2 sm:p-6 pt-0 space-y-3 sm:space-y-6">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            <Card className="bg-muted/30 p-2 sm:p-0">
+              <CardHeader className="pb-1 sm:pb-3 p-2 sm:p-6">
+                <CardTitle className="text-[10px] sm:text-sm font-medium">Pendientes</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl sm:text-3xl font-bold text-primary">
+              <CardContent className="p-2 sm:p-6 pt-0">
+                <div className="text-lg sm:text-3xl font-bold text-primary">
                   {usersNeedingNotification.length}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Requieren notificación
-                </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-muted/30">
-              <CardHeader className="pb-2 sm:pb-3">
-                <CardTitle className="text-xs sm:text-sm font-medium">Emails Enviados</CardTitle>
+            <Card className="bg-muted/30 p-2 sm:p-0">
+              <CardHeader className="pb-1 sm:pb-3 p-2 sm:p-6">
+                <CardTitle className="text-[10px] sm:text-sm font-medium">Enviados</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl sm:text-3xl font-bold text-success">
+              <CardContent className="p-2 sm:p-6 pt-0">
+                <div className="text-lg sm:text-3xl font-bold text-green-600">
                   {(notificationHistory || []).length}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Total de notificaciones
-                </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-muted/30">
-              <CardHeader className="pb-2 sm:pb-3">
-                <CardTitle className="text-xs sm:text-sm font-medium">Última Revisión</CardTitle>
+            <Card className="bg-muted/30 p-2 sm:p-0">
+              <CardHeader className="pb-1 sm:pb-3 p-2 sm:p-6">
+                <CardTitle className="text-[10px] sm:text-sm font-medium">Revisión</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-xs sm:text-sm font-semibold">
-                  {lastCheck ? (
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="truncate">{formatDate(lastCheck)}</span>
-                    </span>
-                  ) : (
-                    'Nunca'
-                  )}
+              <CardContent className="p-2 sm:p-6 pt-0">
+                <div className="text-[10px] sm:text-sm font-semibold flex items-center gap-1">
+                  <Clock size={10} className="sm:w-4 sm:h-4" />
+                  <span className="truncate">{lastCheck ? 'Hace poco' : 'Nunca'}</span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Próxima en {autoNotifications ? '1 hora' : 'manual'}
-                </p>
               </CardContent>
             </Card>
           </div>
@@ -213,16 +187,18 @@ export default function EmailNotificationManager({ users }: EmailNotificationMan
             <Button
               onClick={handleManualProcess}
               disabled={isProcessing}
-              className="flex items-center gap-2 w-full sm:w-auto"
+              className="flex items-center gap-2 w-full sm:w-auto h-8"
               size="sm"
             >
-              <EnvelopeSimple className="w-4 h-4" />
-              {isProcessing ? 'Procesando...' : 'Procesar Notificaciones'}
+              <EnvelopeSimple size={14} />
+              <span className="text-xs sm:text-sm">
+                {isProcessing ? 'Procesando...' : 'Procesar'}
+              </span>
             </Button>
             
             {usersNeedingNotification.length > 0 && (
-              <Badge variant="destructive" className="flex items-center gap-1 justify-center">
-                <Warning className="w-3 h-3" />
+              <Badge variant="destructive" className="flex items-center gap-1 justify-center text-xs">
+                <Warning size={12} />
                 {usersNeedingNotification.length} pendiente(s)
               </Badge>
             )}
@@ -230,28 +206,33 @@ export default function EmailNotificationManager({ users }: EmailNotificationMan
 
           {usersNeedingNotification.length > 0 && (
             <Card className="border-destructive/50 bg-destructive/5">
-              <CardHeader>
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Warning className="w-4 h-4" />
-                  Usuarios que Necesitan Notificación
+              <CardHeader className="p-2 sm:p-4">
+                <CardTitle className="text-xs sm:text-sm flex items-center gap-2">
+                  <Warning size={14} />
+                  Usuarios Pendientes
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {usersNeedingNotification.map(user => {
+              <CardContent className="p-2 sm:p-4 pt-0">
+                <div className="space-y-1.5">
+                  {usersNeedingNotification.slice(0, 5).map(user => {
                     const days = getDaysRemaining(user.membership)
                     return (
-                      <div key={user.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 bg-background rounded-md">
-                        <div className="min-w-0">
-                          <div className="font-medium text-sm truncate">{user.fullName || user.username}</div>
-                          <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                      <div key={user.id} className="flex items-center justify-between gap-2 p-2 bg-background rounded-md">
+                        <div className="min-w-0 flex-1">
+                          <div className="font-medium text-xs truncate">{user.fullName || user.username}</div>
+                          <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
                         </div>
-                        <Badge variant={days === null || days <= 1 ? 'destructive' : 'secondary'} className="text-xs w-fit">
-                          {days === null ? 'Revisión' : `${days} día${days !== 1 ? 's' : ''}`}
+                        <Badge variant={days === null || days <= 1 ? 'destructive' : 'secondary'} className="text-[10px] flex-shrink-0">
+                          {days === null ? '?' : `${days}d`}
                         </Badge>
                       </div>
                     )
                   })}
+                  {usersNeedingNotification.length > 5 && (
+                    <p className="text-[10px] text-muted-foreground text-center pt-1">
+                      +{usersNeedingNotification.length - 5} más
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -260,65 +241,44 @@ export default function EmailNotificationManager({ users }: EmailNotificationMan
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base sm:text-lg">Historial de Notificaciones</CardTitle>
-          <CardDescription className="text-xs sm:text-sm">
-            Últimas 10 notificaciones enviadas
+        <CardHeader className="p-3 sm:p-6">
+          <CardTitle className="text-sm sm:text-lg">Historial</CardTitle>
+          <CardDescription className="text-[10px] sm:text-sm">
+            Últimas 10 notificaciones
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-2 sm:p-6 pt-0">
           {recentNotifications.length === 0 ? (
-            <div className="text-center py-6 sm:py-8 text-muted-foreground">
-              <EnvelopeSimple className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No se han enviado notificaciones aún</p>
+            <div className="text-center py-6 text-muted-foreground">
+              <EnvelopeSimple size={32} className="mx-auto mb-2 opacity-50 sm:w-12 sm:h-12" />
+              <p className="text-xs sm:text-sm">Sin notificaciones</p>
             </div>
           ) : (
-            <div className="overflow-x-auto -mx-3 sm:mx-0">
-              <div className="min-w-[600px] sm:min-w-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-xs sm:text-sm">Email</TableHead>
-                      <TableHead className="text-xs sm:text-sm">Tipo</TableHead>
-                      <TableHead className="text-xs sm:text-sm">Fecha</TableHead>
-                      <TableHead className="text-xs sm:text-sm">Estado</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recentNotifications.map((notification, index) => {
-                      const user = users.find(u => u.id === notification.userId)
-                      return (
-                        <TableRow key={`${notification.userId}-${notification.sentAt}-${index}`}>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium text-xs sm:text-sm truncate max-w-[150px] sm:max-w-none">
-                                {user?.fullName || user?.username || 'Usuario eliminado'}
-                              </div>
-                              <div className="text-xs text-muted-foreground truncate max-w-[150px] sm:max-w-none">
-                                {notification.email}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant={getNotificationTypeBadgeVariant(notification.type)} className="text-xs">
-                              {getNotificationTypeLabel(notification.type)}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-xs text-muted-foreground">
-                            {formatDate(notification.sentAt)}
-                          </TableCell>
-                          <TableCell>
-                            <span className="flex items-center gap-1 text-success text-xs">
-                              <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                              <span className="hidden sm:inline">Enviado</span>
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
+            <div className="space-y-1.5 sm:space-y-2">
+              {recentNotifications.map((notification, index) => {
+                const user = users.find(u => u.id === notification.userId)
+                return (
+                  <div
+                    key={`${notification.userId}-${notification.sentAt}-${index}`}
+                    className="flex items-center justify-between gap-2 p-2 sm:p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-xs sm:text-sm truncate">
+                        {user?.fullName || user?.username || 'Eliminado'}
+                      </div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                        {notification.email}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                      <Badge variant={getNotificationTypeBadgeVariant(notification.type)} className="text-[9px] sm:text-xs">
+                        {getNotificationTypeLabel(notification.type)}
+                      </Badge>
+                      <CheckCircle size={12} className="text-green-600 sm:w-4 sm:h-4" />
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           )}
         </CardContent>

@@ -65,11 +65,11 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
 - **Success criteria**: Profesores pueden ver métricas de progreso, lecciones completadas, y puntuaciones
 
 ### Dashboard de Superadmin
-- **Functionality**: Control total - gestión de usuarios, configuración de membresías, pagos, notificaciones
-- **Purpose**: Administración completa de la plataforma
+- **Functionality**: Control total - gestión de usuarios, configuración de membresías, pagos, notificaciones. Interfaz completamente adaptada para móvil con tarjetas compactas en lugar de tablas
+- **Purpose**: Administración completa de la plataforma desde cualquier dispositivo
 - **Trigger**: Superadmin inicia sesión con rol "superadmin"
 - **Progression**: Login → Acceso a panel completo → Gestionar usuarios/membresías/configuración
-- **Success criteria**: Superadmin puede crear/editar/eliminar usuarios, configurar el sistema, ver estadísticas
+- **Success criteria**: Superadmin puede crear/editar/eliminar usuarios, configurar el sistema, ver estadísticas. Interfaz funciona correctamente en móvil sin desbordamiento
 
 ### Práctica de Vocabulario
 - **Functionality**: Modo de revisión y quiz de todo el vocabulario desbloqueado
@@ -215,3 +215,7 @@ Animaciones suaves y funcionales usando Framer Motion - transiciones entre pági
   - Audio buttons más grandes en móvil
   - Sticky headers para contexto en scroll
   - Gestures: swipe para cambiar entre vocabulary items
+  - **SuperAdmin móvil**: Usa tarjetas compactas en lugar de tablas para gestión de usuarios
+  - **Validador de datos móvil**: Badges y mensajes condensados
+  - **Notificaciones email móvil**: Layout compacto con historial en formato tarjetas
+  - Hook `useIsMobile()` para detección de viewport y rendering condicional
