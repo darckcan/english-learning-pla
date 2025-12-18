@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
+import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
@@ -31,107 +31,107 @@ const DEFAULT_STRIPE_SETTINGS: StripeSettings = {
   sendPaymentReceipts: true
 }
 
-export default function PaymentGatewaySettings() {
-  const [settings, setSettings] = useKV<StripeSettings>('stripe-settings', DEFAULT_STRIPE_SETTINGS)
-  const [publicKey, setPublicKey] = useState('')
-  const [secretKey, setSecretKey] = useState('')
-  const [webhookSecret, setWebhookSecret] = useState('')
-  const [isTestMode, setIsTestMode] = useState(true)
+  const [webhookSecret, setWebhookSecret] = useSta
   const [autoRenew, setAutoRenew] = useState(true)
-  const [sendReceipts, setSendReceipts] = useState(true)
-  const [showSecretKey, setShowSecretKey] = useState(false)
-  const [isVerifying, setIsVerifying] = useState(false)
-  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'success' | 'error'>('idle')
-
+  const [showSecretKey, setShowSecretKey] = useS
+  const [verificationStatus, setVerificationStat
   useEffect(() => {
-    if (settings) {
       setPublicKey(settings.publicKey || '')
-      setSecretKey(settings.secretKey || '')
-      setWebhookSecret(settings.webhookSecret || '')
-      setIsTestMode(settings.isTestMode ?? true)
-      setAutoRenew(settings.autoRenewSubscriptions ?? true)
-      setSendReceipts(settings.sendPaymentReceipts ?? true)
+      setWebhookSecret(settings.webhookSecret || '
+      setAutoRenew(settings.autoRenewSubscriptions ?? tr
       if (settings.isConfigured) {
-        setVerificationStatus('success')
       }
-    }
   }, [settings])
 
-  const validateStripeKey = (key: string, type: 'public' | 'secret') => {
-    if (!key) return false
-    if (type === 'public') {
-      return key.startsWith('pk_test_') || key.startsWith('pk_live_')
+    if (type === 'p
     }
-    return key.startsWith('sk_test_') || key.startsWith('sk_live_')
   }
-
   const handleVerify = async () => {
-    if (!publicKey || !secretKey) {
-      toast.error('Ingresa ambas claves para verificar')
-      return
+      toast.error('Ingresa ambas claves para verific
     }
-
     if (!validateStripeKey(publicKey, 'public')) {
-      toast.error('La clave pública no tiene el formato correcto')
       return
+
+      toast.error('La clave secreta no t
     }
-
-    if (!validateStripeKey(secretKey, 'secret')) {
-      toast.error('La clave secreta no tiene el formato correcto')
-      return
-    }
-
-    setIsVerifying(true)
-
+    s
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      const isTestKey = publicKey.startsWith('pk_test_') && secretKey.startsWith('sk_test_')
-      const isLiveKey = publicKey.startsWith('pk_live_') && secretKey.startsWith('sk_live_')
 
-      if (!isTestKey && !isLiveKey) {
-        toast.error('Las claves deben ser ambas de prueba o ambas de producción')
-        setVerificationStatus('error')
-        return
+      const isLiveKey = publicKey.startsWith('pk_live_') && secretKey.sta
+      if (!isTestKey && !i
+        setVerificationStatu
       }
+     
 
-      setVerificationStatus('success')
-      toast.success('Conexión con Stripe verificada correctamente')
+   
 
-      const newSettings: StripeSettings = {
-        publicKey,
-        secretKey,
-        webhookSecret,
-        isTestMode: isTestKey,
         isConfigured: true,
-        autoRenewSubscriptions: autoRenew,
-        sendPaymentReceipts: sendReceipts,
-        lastVerified: Date.now()
+        sendPaymentReceipts: sendRe
       }
-      setSettings(() => newSettings)
-    } catch {
-      setVerificationStatus('error')
-      toast.error('Error al verificar la conexión con Stripe')
-    } finally {
-      setIsVerifying(false)
-    }
+    } catch 
+     
+
   }
-
   const handleSave = () => {
-    if (!validateStripeKey(publicKey, 'public')) {
-      toast.error('La clave pública no tiene el formato correcto')
-      return
-    }
-    if (!validateStripeKey(secretKey, 'secret')) {
-      toast.error('La clave secreta no tiene el formato correcto')
-      return
+      toast.
     }
 
+    }
     const newSettings: StripeSettings = {
-      publicKey,
-      secretKey,
-      webhookSecret,
-      isTestMode,
+      secret
+     
+
+      lastVerified: sett
+
+  }
+  const handleClearConfig = () => {
+    se
+    setVerificationStatus('idle')
+    toast.success('Configuración eliminada')
+
+    <Card>
+        <div className="flex items-center justify-between">
+            <CreditCard className="h-6
+              
+       
+
+              <CheckCircle className="
+            </Badge>
+
+              <Warning className="h-4 w-4 m
+            </Badg
+        </div>
+      <CardContent cla
+          <AccordionItem value
+              <div classNam
+                Claves de API
+            </AccordionTrigger>
+              <div className="sp
+       
+                  value={publicKey}
+             
+                <p className="text-x
+                </p>
+
+                <Label html
+     
+   
+
+                  />
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate
+            
+     
+                  Comienza con sk_test_ (pruebas) 
+              </div>
+            
+     
+
+                  onChange={(e) => setWeb
+                
+                
+              </div>
+          </Accor
       isConfigured: verificationStatus === 'success',
       autoRenewSubscriptions: autoRenew,
       sendPaymentReceipts: sendReceipts,
@@ -294,6 +294,33 @@ export default function PaymentGatewaySettings() {
           >
             {isVerifying ? (
               <>
+                <Spinner className="h-4 w-4 mr-2 animate-spin" />
+                Verificando...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Verificar Conexión
+              </>
+            )}
+          </Button>
+          <Button variant="secondary" onClick={handleSave}>
+            Guardar Configuración
+          </Button>
+          <Button variant="outline" onClick={handleClearConfig}>
+            Limpiar
+          </Button>
+        </div>
+
+        {settings?.lastVerified && (
+          <p className="text-sm text-muted-foreground">
+            Última verificación: {new Date(settings.lastVerified).toLocaleString()}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
                 <Spinner className="h-4 w-4 mr-2 animate-spin" />
                 Verificando...
               </>
