@@ -680,6 +680,9 @@ export default function Dashboard({
         open={paymentModalOpen}
         onClose={() => setPaymentModalOpen(false)}
         user={user}
+        onMembershipUpdate={(membership) => {
+          setUser((prev) => prev ? { ...prev, membership } : null)
+        }}
       />
     </div>
   )

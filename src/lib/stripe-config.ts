@@ -1,5 +1,3 @@
-import { loadStripe, Stripe } from '@stripe/stripe-js'
-
 export interface StripeSettings {
   publicKey: string
   monthlyPriceId: string
@@ -26,7 +24,7 @@ const STORAGE_KEY = 'stripe_settings'
 export async function getStripeSettings(): Promise<StripeSettings> {
   try {
     const stored = await window.spark.kv.get<StripeSettings>(STORAGE_KEY)
-    if (stored && stored.publicKey) {
+    if (stored) {
       return stored
     }
   } catch (e) {
@@ -38,32 +36,6 @@ export async function getStripeSettings(): Promise<StripeSettings> {
 
 export async function saveStripeSettings(settings: StripeSettings): Promise<void> {
   await window.spark.kv.set(STORAGE_KEY, settings)
-  resetStripeInstance()
-}
-
-let stripeInstance: Stripe | null = null
-let stripePromise: Promise<Stripe | null> | null = null
-
-export const getStripe = async (): Promise<Stripe | null> => {
-  if (stripeInstance) return stripeInstance
-  
-  const settings = await getStripeSettings()
-  if (!settings.publicKey) {
-    console.warn('⚠️ Stripe public key not configured')
-    return null
-  }
-  
-  if (!stripePromise) {
-    stripePromise = loadStripe(settings.publicKey)
-  }
-  
-  stripeInstance = await stripePromise
-  return stripeInstance
-}
-
-export const resetStripeInstance = () => {
-  stripeInstance = null
-  stripePromise = null
 }
 
 export interface StripeProduct {

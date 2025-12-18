@@ -16,86 +16,51 @@ export interface CheckoutSessionParams {
   membershipType: 'monthly' | 'lifetime'
 }
 
-export async function createCheckoutSession(params: CheckoutSessionParams): Promise<{ sessionId: string; url: string }> {
-  const settings = await getStripeSettings()
-  
-  if (!settings.isConfigured || !settings.publicKey) {
-    throw new Error('Stripe no está configurado. Contacta al administrador.')
-  }
-
-  const sessionId = `cs_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
-  
-  const successUrl = `${window.location.origin}?payment=success&session_id=${sessionId}&user_id=${encodeURIComponent(params.userId)}&membership_type=${params.membershipType}`
-  const cancelUrl = `${window.location.origin}?payment=cancelled`
-
-  if (params.membershipType === 'monthly' && settings.monthlyPaymentLink) {
-    const url = new URL(settings.monthlyPaymentLink)
-    url.searchParams.set('client_reference_id', params.userId)
-    if (params.customerEmail) {
-      url.searchParams.set('prefilled_email', params.customerEmail)
-    }
-    return { sessionId, url: url.toString() }
-  }
-  
-  if (params.membershipType === 'lifetime' && settings.lifetimePaymentLink) {
-    const url = new URL(settings.lifetimePaymentLink)
-    url.searchParams.set('client_reference_id', params.userId)
-    if (params.customerEmail) {
-      url.searchParams.set('prefilled_email', params.customerEmail)
-    }
-    return { sessionId, url: url.toString() }
-  }
-
-  const priceId = params.membershipType === 'monthly' 
-    ? settings.monthlyPriceId 
-    : settings.lifetimePriceId
-
-  if (!priceId) {
-    throw new Error(`No hay precio configurado para el plan ${params.membershipType}. Configura el Price ID o Payment Link en el panel de administración.`)
-  }
-
-  const checkoutUrl = `https://checkout.stripe.com/c/pay/${priceId}?` + new URLSearchParams({
-    client_reference_id: params.userId,
-    prefilled_email: params.customerEmail,
-    success_url: successUrl,
-    cancel_url: cancelUrl,
-  }).toString()
-
-  return { sessionId, url: checkoutUrl }
+export interface CheckoutResult {
+  sessionId: string
+  url?: string
+  simulatedMode: boolean
 }
 
-export async function redirectToCheckout(params: CheckoutParams): Promise<void> {
+export async function createCheckoutSession(params: CheckoutSessionParams): Promise<CheckoutResult> {
   const settings = await getStripeSettings()
   
-  if (!settings.isConfigured || !settings.publicKey) {
-    throw new Error('Stripe no está configurado. Contacta al administrador.')
-  }
-
   const sessionId = `cs_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
   
-  const successUrl = `${window.location.origin}?payment=success&session_id=${sessionId}&user_id=${encodeURIComponent(params.userId)}&membership_type=${params.membershipType}`
-  const cancelUrl = `${window.location.origin}?payment=cancelled`
+  if (settings.monthlyPaymentLink && params.membershipType === 'monthly') {
+    try {
+      const url = new URL(settings.monthlyPaymentLink)
+      url.searchParams.set('client_reference_id', params.userId)
+      if (params.customerEmail) {
+        url.searchParams.set('prefilled_email', params.customerEmail)
+      }
+      return { sessionId, url: url.toString(), simulatedMode: false }
+    } catch (e) {
+      console.warn('Invalid monthly payment link:', e)
+    }
+  }
+  
+  if (settings.lifetimePaymentLink && params.membershipType === 'lifetime') {
+    try {
+      const url = new URL(settings.lifetimePaymentLink)
+      url.searchParams.set('client_reference_id', params.userId)
+      if (params.customerEmail) {
+        url.searchParams.set('prefilled_email', params.customerEmail)
+      }
+      return { sessionId, url: url.toString(), simulatedMode: false }
+    } catch (e) {
+      console.warn('Invalid lifetime payment link:', e)
+    }
+  }
 
-  const checkoutUrl = `https://checkout.stripe.com/c/pay/${params.priceId}?` + new URLSearchParams({
-    client_reference_id: params.userId,
-    prefilled_email: params.customerEmail,
-    success_url: successUrl,
-    cancel_url: cancelUrl,
-  }).toString()
-
-  window.location.href = checkoutUrl
+  return { sessionId, simulatedMode: true }
 }
 
 export async function isStripeConfigured(): Promise<boolean> {
   try {
     const settings = await getStripeSettings()
-    const hasPaymentMethod = 
-      !!settings.monthlyPriceId || 
-      !!settings.lifetimePriceId || 
-      !!settings.monthlyPaymentLink || 
-      !!settings.lifetimePaymentLink
-    
-    return settings.isConfigured && !!settings.publicKey && hasPaymentMethod
+    const hasPaymentLink = !!settings.monthlyPaymentLink || !!settings.lifetimePaymentLink
+    return hasPaymentLink
   } catch {
     return false
   }
