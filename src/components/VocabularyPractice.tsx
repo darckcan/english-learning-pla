@@ -4,7 +4,7 @@ import { Button } from './ui/button'
 import { Badge } from './ui/badge'
 import { Progress } from './ui/progress'
 import { ArrowLeft, Check, X } from '@phosphor-icons/react'
-import { getLessonsForLevel } from '@/lib/curriculum-lazy'
+import { loadLessonsForLevel } from '@/lib/curriculum-lazy'
 import { Level, VocabularyItem } from '@/lib/types'
 import PronunciationButton from './PronunciationButton'
 import { Input } from './ui/input'
@@ -26,24 +26,31 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
   const [showQuizResult, setShowQuizResult] = useState(false)
   const [correctCount, setCorrectCount] = useState(0)
   const [totalAttempts, setTotalAttempts] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const vocab: (VocabularyItem & { level: Level; lessonTitle: string })[] = []
-    
-    unlockedLevels.forEach((level) => {
-      const lessons = getLessonsForLevel(level) || []
-      lessons.forEach((lesson) => {
-        lesson.vocabulary.forEach((item) => {
-          vocab.push({
-            ...item,
-            level,
-            lessonTitle: lesson.title,
+    const loadVocabulary = async () => {
+      setIsLoading(true)
+      const vocab: (VocabularyItem & { level: Level; lessonTitle: string })[] = []
+      
+      await Promise.all(unlockedLevels.map(async (level) => {
+        const lessons = await loadLessonsForLevel(level)
+        lessons.forEach((lesson) => {
+          lesson.vocabulary.forEach((item) => {
+            vocab.push({
+              ...item,
+              level,
+              lessonTitle: lesson.title,
+            })
           })
         })
-      })
-    })
+      }))
 
-    setAllVocabulary(vocab)
+      setAllVocabulary(vocab)
+      setIsLoading(false)
+    }
+    
+    loadVocabulary()
   }, [unlockedLevels])
 
   const currentWord = allVocabulary[currentIndex]
@@ -113,17 +120,35 @@ export default function VocabularyPractice({ unlockedLevels, onBack }: Vocabular
     setTotalAttempts(0)
   }
 
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto p-3 sm:p-4 md:p-6">
+        <Button variant="ghost" onClick={onBack} className="mb-3 sm:mb-4 h-9 sm:h-10">
+          <ArrowLeft size={16} className="mr-1.5 sm:mr-2 sm:hidden" />
+          <ArrowLeft size={20} className="mr-2 hidden sm:inline" />
+          <span className="text-xs sm:text-sm md:text-base">Volver al Dashboard</span>
+        </Button>
+        <Card>
+          <CardContent className="p-6 sm:p-8 md:p-12 flex flex-col items-center justify-center gap-4">
+            <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+            <p className="text-muted-foreground text-sm sm:text-base">Cargando vocabulario...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   if (allVocabulary.length === 0) {
     return (
       <div className="max-w-4xl mx-auto p-3 sm:p-4 md:p-6">
         <Button variant="ghost" onClick={onBack} className="mb-3 sm:mb-4 h-9 sm:h-10">
           <ArrowLeft size={16} className="mr-1.5 sm:mr-2 sm:hidden" />
           <ArrowLeft size={20} className="mr-2 hidden sm:inline" />
-          <span className="text-xs sm:text-sm md:text-base">Back to Dashboard</span>
+          <span className="text-xs sm:text-sm md:text-base">Volver al Dashboard</span>
         </Button>
         <Card>
           <CardContent className="p-6 sm:p-8 md:p-12 text-center">
-            <p className="text-muted-foreground text-sm sm:text-base">No vocabulary available yet. Complete some lessons first!</p>
+            <p className="text-muted-foreground text-sm sm:text-base">No hay vocabulario disponible aún. ¡Completa algunas lecciones primero!</p>
           </CardContent>
         </Card>
       </div>

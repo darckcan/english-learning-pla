@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from 'react'
-import { User, UserProgress, Level, ThemeType } from '@/lib/types'
+import { useState, useMemo, useEffect, useCallback } from 'react'
+import { User, UserProgress, Level, ThemeType, Lesson } from '@/lib/types'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
@@ -20,7 +20,7 @@ import {
   Palette,
 } from '@phosphor-icons/react'
 import { LEVELS, LEVEL_INFO } from '@/lib/curriculum'
-import { getLessonsForLevel, preloadLevel } from '@/lib/curriculum-lazy'
+import { getLessonsForLevel, loadLessonsForLevel, isLevelLoaded, preloadAdjacentLevels } from '@/lib/curriculum-lazy'
 import { 
   calculateLevelProgress, 
   isStreakAtRisk, 
@@ -63,18 +63,31 @@ export default function Dashboard({
   const [certificateOpen, setCertificateOpen] = useState(false)
   const [selectedCertificateLevel, setSelectedCertificateLevel] = useState<Level | null>(null)
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
+  const [levelLessons, setLevelLessons] = useState<Lesson[]>([])
+  const [isLoadingLessons, setIsLoadingLessons] = useState(false)
 
   const unlockedLevels = user.unlockedLevels || ['Beginner']
   const currentLevelProgress = useMemo(() => calculateLevelProgress(progress, selectedLevel), [progress, selectedLevel])
   
-  const levelLessons = useMemo(() => getLessonsForLevel(selectedLevel), [selectedLevel])
+  const loadLevelLessons = useCallback(async (level: Level) => {
+    if (isLevelLoaded(level)) {
+      setLevelLessons(getLessonsForLevel(level))
+      return
+    }
+    
+    setIsLoadingLessons(true)
+    try {
+      const lessons = await loadLessonsForLevel(level)
+      setLevelLessons(lessons)
+    } finally {
+      setIsLoadingLessons(false)
+    }
+  }, [])
   
   useEffect(() => {
-    const levelIndex = LEVELS.indexOf(selectedLevel)
-    if (levelIndex < LEVELS.length - 1) {
-      preloadLevel(LEVELS[levelIndex + 1])
-    }
-  }, [selectedLevel])
+    loadLevelLessons(selectedLevel)
+    preloadAdjacentLevels(selectedLevel)
+  }, [selectedLevel, loadLevelLessons])
   
   const completedLessons = progress.completedLessons || []
   const totalLessons = completedLessons.length
@@ -320,12 +333,19 @@ export default function Dashboard({
                 <Progress value={currentLevelProgress} className="mt-3 sm:mt-4" />
               </CardHeader>
               <CardContent className="px-3 pb-3 sm:px-6 sm:pb-6">
-                <VirtualizedLessonList
-                  lessons={levelLessons}
-                  progress={progress}
-                  selectedLevel={selectedLevel}
-                  onStartLesson={onStartLesson}
-                />
+                {isLoadingLessons ? (
+                  <div className="flex flex-col items-center justify-center py-12 gap-3">
+                    <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+                    <p className="text-sm text-muted-foreground">Cargando lecciones...</p>
+                  </div>
+                ) : (
+                  <VirtualizedLessonList
+                    lessons={levelLessons}
+                    progress={progress}
+                    selectedLevel={selectedLevel}
+                    onStartLesson={onStartLesson}
+                  />
+                )}
               </CardContent>
             </Card>
                 </motion.div>

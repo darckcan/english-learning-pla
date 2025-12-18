@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { User, UserProgress, LessonScore, Level, CompletedLevel } from '@/lib/types'
+import { useState, useEffect } from 'react'
+import { User, UserProgress, LessonScore, Level, CompletedLevel, Lesson } from '@/lib/types'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Progress } from './ui/progress'
@@ -9,7 +9,7 @@ import { Label } from './ui/label'
 import { Badge } from './ui/badge'
 import { Separator } from './ui/separator'
 import { ArrowLeft, CheckCircle, XCircle, Lightbulb } from '@phosphor-icons/react'
-import { getLessonById } from '@/lib/curriculum-lazy'
+import { getLessonById, getLessonByIdAsync } from '@/lib/curriculum-lazy'
 import { checkAndAwardAchievements, updateStreak, checkLevelCompletion } from '@/lib/helpers'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -35,7 +35,18 @@ export default function LessonView({
   onBack,
   setUserProgress,
 }: LessonViewProps) {
-  const lesson = useMemo(() => getLessonById(lessonId), [lessonId])
+  const [lesson, setLesson] = useState<Lesson | null | undefined>(() => getLessonById(lessonId))
+  const [isLoading, setIsLoading] = useState(!lesson)
+
+  useEffect(() => {
+    if (!lesson) {
+      setIsLoading(true)
+      getLessonByIdAsync(lessonId).then(loadedLesson => {
+        setLesson(loadedLesson)
+        setIsLoading(false)
+      })
+    }
+  }, [lessonId, lesson])
 
   const [section, setSection] = useState<LessonSection>('intro')
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
@@ -44,8 +55,26 @@ export default function LessonView({
   const [showExerciseFeedback, setShowExerciseFeedback] = useState(false)
   const [showHint, setShowHint] = useState(false)
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+          <p className="text-muted-foreground">Cargando lección...</p>
+        </div>
+      </div>
+    )
+  }
+
   if (!lesson) {
-    return <div>Lesson not found</div>
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-muted-foreground">Lección no encontrada</p>
+          <Button onClick={onBack}>Volver al Dashboard</Button>
+        </div>
+      </div>
+    )
   }
 
   const totalSections = 5

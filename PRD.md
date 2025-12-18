@@ -18,7 +18,13 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
 - **Trigger**: Usuario selecciona una lección desde el dashboard
 - **Progression**: Seleccionar lección → Introducción → Vocabulario (con audio) → Gramática → Ejercicios → Shadowing → Completar
 - **Success criteria**: El usuario completa lecciones, obtiene puntos, y progresa a través de los niveles
-- **Optimización**: Las lecciones se cargan solo cuando el usuario selecciona un nivel, con preloading del nivel siguiente. Lista de lecciones virtualizada para rendimiento
+- **Optimización de Velocidad**: 
+  - Las lecciones se cargan asíncronamente solo cuando el usuario selecciona un nivel
+  - Sistema de cache en memoria para evitar recargas
+  - Preloading inteligente de niveles adyacentes (anterior y siguiente)
+  - Lista de lecciones virtualizada con carga incremental (10 items por lote)
+  - Estados de carga visuales mientras se cargan los datos
+  - Uso de `requestIdleCallback` para precargas sin bloquear UI
 
 ### Sistema de Audio Interactivo
 - **Functionality**: Pronunciación de palabras, ejemplos y frases completas usando Web Speech API

@@ -25,7 +25,7 @@ import { User as UserType, UserProgress, Level } from '@/lib/types'
 import { simpleHash, determineLevelFromPlacementScore, getLevelsThroughCurrent } from '@/lib/helpers'
 import { createTrialMembership } from '@/lib/membership'
 import { PLACEMENT_TEST_QUESTIONS } from '@/lib/curriculum'
-import { getLessonsForLevel } from '@/lib/curriculum-lazy'
+import { getLessonsForLevel, loadLessonsForLevel } from '@/lib/curriculum-lazy'
 
 interface TestStep {
   id: string
@@ -372,7 +372,7 @@ export default function TestScriptPanel({ onBack }: TestScriptPanelProps) {
       let lessonsWithIssues = 0
 
       for (const level of levels) {
-        const lessons = getLessonsForLevel(level) || []
+        const lessons = await loadLessonsForLevel(level)
         totalLessons += lessons.length
         log(`   ${level}: ${lessons.length} lecciones`)
         
@@ -405,7 +405,8 @@ export default function TestScriptPanel({ onBack }: TestScriptPanelProps) {
       log('🎓 Simulando completar una lección...')
       await delay(600)
 
-      const testLesson = getLessonsForLevel('Beginner')[0]
+      const beginnerLessons = await loadLessonsForLevel('Beginner')
+      const testLesson = beginnerLessons[0]
       if (testLesson) {
         log(`   Lección: ${testLesson.title}`)
         log(`   📖 Vocabulario: ${testLesson.vocabulary.length} palabras`)
