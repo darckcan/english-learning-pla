@@ -139,19 +139,28 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
   - ✅ Persistencia de datos funciona
 
 ### Sistema de Notificaciones por Email
-- **Functionality**: Notificaciones automáticas para vencimiento de membresías (7, 3, 1 día, y expirada) con soporte para múltiples proveedores de email
-- **Purpose**: Mantener a usuarios informados sobre sus membresías y reducir pérdida de suscriptores
-- **Trigger**: Automático cada hora, o manual desde panel de administrador
+- **Functionality**: Notificaciones automáticas para vencimiento de membresías (7, 3, 1 día, y expirada) y confirmaciones de pago, con soporte para múltiples proveedores de email
+- **Purpose**: Mantener a usuarios informados sobre sus membresías, confirmar pagos exitosos, y reducir pérdida de suscriptores
+- **Trigger**: 
+  - Vencimientos: Automático cada hora, o manual desde panel de administrador
+  - Confirmaciones de pago: Automático tras verificar pago exitoso con Stripe
 - **Progression**: 
   - Configuración → Seleccionar proveedor (Simulación/EmailJS/Webhook) → Guardar credenciales
-  - Modo automático: Sistema verifica usuarios → Detecta vencimientos → Envía emails → Registra historial
+  - Modo automático (vencimientos): Sistema verifica usuarios → Detecta vencimientos → Envía emails → Registra historial
   - Modo manual: Admin click "Procesar Ahora" → Sistema procesa todos pendientes
+  - Confirmación de pago: Pago verificado → Sistema genera email de confirmación → Envía automáticamente → Registra en historial
 - **Proveedores soportados**:
   - **Simulación**: Registra emails en consola del navegador (desarrollo/pruebas)
   - **EmailJS**: Servicio gratuito que funciona desde el frontend (emailjs.com)
     - Requiere plantilla con variables: `{{to_email}}`, `{{subject}}`, `{{message}}`, `{{from_name}}`
     - Error 422 indica que la plantilla no tiene las variables correctas
   - **Webhook**: Envía a servidor personalizado (SendGrid, Mailgun, backend propio)
+- **Plantillas de email**:
+  - Vencimiento 7 días: Recordatorio amigable con opciones de renovación
+  - Vencimiento 3 días: Recordatorio urgente con beneficios destacados
+  - Vencimiento 1 día: Alerta final con lista de acceso que perderá
+  - Membresía expirada: Invitación a reactivar con opciones de pago
+  - **Confirmación de pago**: Recibo detallado con detalles de transacción, tipo de membresía, monto, fecha, y próximos pasos
 - **Success criteria**: 
   - ✅ Admin puede configurar proveedor de email desde panel
   - ✅ Sistema detecta usuarios con membresías por vencer
@@ -159,6 +168,9 @@ Esta es una plataforma educativa completa con múltiples roles de usuario, siste
   - ✅ Historial muestra estado de cada notificación (enviado/simulado/fallido)
   - ✅ Sistema previene envíos duplicados (1 por tipo por día)
   - ✅ Panel de prueba permite verificar configuración con email de test
+  - ✅ Confirmación de pago se envía automáticamente tras pago exitoso
+  - ✅ Email de confirmación incluye ID de transacción, monto, y fecha
+  - ✅ Historial registra emails de confirmación de pago
 
 ## Edge Case Handling
 - **No membresía activa**: Usuario puede acceder solo a trial, se muestra alerta de expiración

@@ -4,7 +4,7 @@ import { getDaysRemaining, getMembershipLabel } from './membership'
 export interface EmailNotification {
   userId: string
   email: string
-  type: 'expiry-7days' | 'expiry-3days' | 'expiry-1day' | 'expired'
+  type: 'expiry-7days' | 'expiry-3days' | 'expiry-1day' | 'expired' | 'payment-confirmation'
   sentAt: number
   status: 'sent' | 'failed' | 'simulated'
   errorMessage?: string
@@ -77,6 +77,95 @@ Equipo Nexus Fluent
 Si tienes alguna pregunta, no dudes en contactarnos.
     `.trim(),
   }
+}
+
+export interface PaymentConfirmationDetails {
+  userName: string
+  userEmail: string
+  membershipType: 'monthly' | 'lifetime'
+  amount: number
+  transactionId: string
+  purchaseDate: Date
+}
+
+export function generatePaymentConfirmationEmail(details: PaymentConfirmationDetails): EmailTemplate {
+  const isLifetime = details.membershipType === 'lifetime'
+  const membershipName = isLifetime ? 'Membresía Vitalicia' : 'Membresía Mensual'
+  const formattedDate = details.purchaseDate.toLocaleDateString('es-MX', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+  
+  const renewalInfo = isLifetime 
+    ? '♾️ Tu membresía es de por vida - ¡nunca expira!'
+    : `📅 Tu membresía se renovará automáticamente el ${new Date(details.purchaseDate.getTime() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}`
+
+  return {
+    subject: `✅ Confirmación de Pago - ${membershipName} de Nexus Fluent`,
+    body: `
+Hola ${details.userName},
+
+¡Gracias por tu compra! Tu pago ha sido procesado exitosamente.
+
+═══════════════════════════════════════════
+📋 DETALLES DE TU COMPRA
+═══════════════════════════════════════════
+
+🏷️ Producto: ${membershipName}
+💰 Monto: $${details.amount.toFixed(2)} USD
+📧 Email: ${details.userEmail}
+🔖 ID de Transacción: ${details.transactionId}
+📅 Fecha de Compra: ${formattedDate}
+
+═══════════════════════════════════════════
+✨ TU MEMBRESÍA ESTÁ ACTIVA
+═══════════════════════════════════════════
+
+${renewalInfo}
+
+🎯 Ahora tienes acceso completo a:
+
+✓ Más de 270 lecciones estructuradas (Beginner a C2)
+✓ Ejercicios ilimitados de gramática y vocabulario
+✓ Audio de pronunciación con hablantes nativos
+✓ Práctica de shadowing para fluidez
+✓ Certificados oficiales al completar niveles
+✓ Sistema de logros y seguimiento de progreso
+${isLifetime ? '✓ Todas las actualizaciones futuras incluidas\n✓ Contenido exclusivo premium' : ''}
+
+═══════════════════════════════════════════
+🚀 PRÓXIMOS PASOS
+═══════════════════════════════════════════
+
+1. Inicia sesión en tu cuenta: https://nexusfluent.app
+2. Continúa desde donde lo dejaste
+3. Explora nuevos niveles y lecciones avanzadas
+4. ¡Practica todos los días para mejores resultados!
+
+═══════════════════════════════════════════
+
+Si tienes alguna pregunta sobre tu compra o necesitas ayuda, 
+no dudes en contactarnos.
+
+¡Gracias por confiar en Nexus Fluent para tu aprendizaje de inglés!
+
+Con gratitud,
+Equipo Nexus Fluent
+
+---
+Este es un recibo de tu transacción. Guarda este email para tus registros.
+    `.trim(),
+  }
+}
+
+export async function sendPaymentConfirmationEmail(
+  details: PaymentConfirmationDetails
+): Promise<EmailResult> {
+  const template = generatePaymentConfirmationEmail(details)
+  return sendEmailWithDetails(details.userEmail, template.subject, template.body)
 }
 
 export function generateExpiryEmail(

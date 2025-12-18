@@ -111,6 +111,7 @@ export default function EmailNotificationManager({ users }: EmailNotificationMan
       case 'expiry-3days': return '3 días'
       case 'expiry-1day': return '1 día'
       case 'expired': return 'Expirada'
+      case 'payment-confirmation': return 'Pago confirmado'
     }
   }
 

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { User } from '@/lib/types'
 import { verifyPayment, isStripeConfigured } from '@/lib/stripe-service'
+import { sendPaymentConfirmationEmail, PaymentConfirmationDetails } from '@/lib/email-service'
 import { toast } from 'sonner'
 import { MembershipPricing, DEFAULT_PRICING } from '@/lib/membership'
 
@@ -13,6 +14,7 @@ interface PaymentRecord {
   type: 'monthly' | 'lifetime'
   status: 'completed' | 'pending' | 'failed'
   date: number
+  emailSent?: boolean
 }
 
 export function useStripePaymentVerification() {
@@ -47,6 +49,7 @@ export function useStripePaymentVerification() {
             const membershipType = result.membershipType as 'monthly' | 'lifetime'
             
             let userEmail = ''
+            let userName = ''
             let amount = membershipType === 'lifetime' 
               ? (pricing?.lifetimePrice || DEFAULT_PRICING.lifetimePrice)
               : (pricing?.monthlyPrice || DEFAULT_PRICING.monthlyPrice)
@@ -56,6 +59,7 @@ export function useStripePaymentVerification() {
               return users.map(u => {
                 if (u.id === result.userId) {
                   userEmail = u.email || u.username
+                  userName = u.fullName || u.username
                   
                   const now = Date.now()
                   const endDate = membershipType === 'lifetime' 
@@ -88,10 +92,40 @@ export function useStripePaymentVerification() {
                 amount,
                 type: membershipType,
                 status: 'completed',
-                date: Date.now()
+                date: Date.now(),
+                emailSent: false
               }
               return [...records, newRecord]
             })
+
+            if (userEmail && userEmail.includes('@')) {
+              const emailDetails: PaymentConfirmationDetails = {
+                userName,
+                userEmail,
+                membershipType,
+                amount,
+                transactionId: sessionId,
+                purchaseDate: new Date()
+              }
+              
+              sendPaymentConfirmationEmail(emailDetails)
+                .then((emailResult) => {
+                  if (emailResult.success) {
+                    console.log('✅ Email de confirmación de pago enviado a:', userEmail)
+                    setPayments((current) => {
+                      const records = current || []
+                      return records.map(r => 
+                        r.id === sessionId ? { ...r, emailSent: true } : r
+                      )
+                    })
+                  } else {
+                    console.warn('⚠️ No se pudo enviar email de confirmación:', emailResult.message)
+                  }
+                })
+                .catch((error) => {
+                  console.error('❌ Error enviando email de confirmación:', error)
+                })
+            }
 
             toast.success(
               membershipType === 'lifetime' 
